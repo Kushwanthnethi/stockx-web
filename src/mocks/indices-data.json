@@ -1,0 +1,16 @@
+[
+    {
+        "symbol": "^NSEI",
+        "name": "NIFTY 50",
+        "price": 24530.70,
+        "change": 120.50,
+        "changePercent": 0.49
+    },
+    {
+        "symbol": "^BSESN",
+        "name": "SENSEX",
+        "price": 81220.30,
+        "change": 450.80,
+        "changePercent": 0.56
+    }
+]

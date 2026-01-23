@@ -1,0 +1,168 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { MessageSquare, Heart, Share2, TrendingUp, TrendingDown, Info } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { formatDistanceToNow } from "date-fns";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { StockBadge } from "@/components/shared/stock-badge";
+import { getFeedPosts, type Post } from "@/mocks/handlers";
+import { FeedPost } from "@/components/features/feed/feed-post";
+import { useAuth } from "@/providers/auth-provider";
+import { UserNav } from "@/components/layout/user-nav";
+import { NewsWidget } from "@/components/features/news/news-widget";
+
+import { ModeToggle } from "@/components/mode-toggle";
+
+
+
+import { TrendingWidget } from "@/components/features/stocks/trending-widget";
+import { IndicesTicker } from "@/components/features/stocks/indices-ticker";
+import { WatchlistWidget } from "@/components/features/stocks/watchlist-widget";
+import { AppSidebar } from "@/components/layout/app-sidebar";
+import { SiteHeader } from "@/components/layout/site-header";
+
+function FeedSidebar() {
+    return (
+        <div className="hidden lg:block w-80 space-y-6">
+            {/* Watchlist Widget */}
+            <WatchlistWidget />
+
+            {/* Trending Box */}
+            <TrendingWidget />
+
+            {/* News Widget */}
+            <NewsWidget />
+
+            {/* Footer / Legal */}
+            <div className="text-xs text-muted-foreground px-2 space-y-2">
+                <div className="flex gap-2 flex-wrap">
+                    <Link href="/legal/terms" className="hover:underline hover:text-foreground transition-colors">Terms of Service</Link>
+                    <span>·</span>
+                    <Link href="/legal/privacy" className="hover:underline hover:text-foreground transition-colors">Privacy Policy</Link>
+                    <span>·</span>
+                    <Link href="/legal/cookies" className="hover:underline hover:text-foreground transition-colors">Cookies</Link>
+                </div>
+                <p>© 2026 StockX Inc.</p>
+            </div>
+        </div>
+    );
+}
+
+
+
+// --- Main Page Component ---
+
+import { CreatePost } from "@/components/features/feed/create-post";
+
+// ... existing imports
+
+export default function Home() {
+    const { user } = useAuth();
+    const [posts, setPosts] = useState<any[]>([]); // Changed type to any[] for now as DB shape might differ slightly from mock
+    const [loading, setLoading] = useState(true);
+
+    const fetchPosts = async () => {
+        try {
+            const token = localStorage.getItem('accessToken');
+            const headers: HeadersInit = {};
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
+            const res = await fetch('http://localhost:3333/posts', {
+                headers
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                setPosts(data);
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchPosts();
+    }, []);
+
+    return (
+        <div className="min-h-screen bg-background text-foreground font-sans">
+            {/* Sticky Top Nav */}
+            <SiteHeader />
+
+            {/* Main Content Layout */}
+            <main className="container max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+                {/* Left Sidebar (Nav) */}
+                <AppSidebar />
+
+                {/* Center Feed */}
+                <div className="lg:col-span-7">
+                    {/* Live Indices Ticker */}
+                    <IndicesTicker />
+
+                    {/* Create Post Input */}
+                    {user && <CreatePost onPostCreated={fetchPosts} />}
+
+                    {/* Posts Feed */}
+                    <div>
+                        {loading ? (
+                            <div className="space-y-4">
+                                {[1, 2, 3].map(i => (
+                                    <div key={i} className="h-40 rounded-lg bg-card animate-pulse border border-border" />
+                                ))}
+                            </div>
+                        ) : posts.length > 0 ? (
+                            posts.map(post => {
+                                // Prepare user object
+                                const postUser = {
+                                    id: post.user?.id || 'unknown',
+                                    name: post.user?.firstName || post.user?.handle || 'Anonymous',
+                                    handle: post.user?.handle || 'anon',
+                                    avatarUrl: post.user?.avatarUrl,
+                                    verified: false
+                                };
+
+                                return (
+                                    <FeedPost key={post.id} post={{
+                                        ...post,
+                                        user: postUser,
+                                        timestamp: formatDistanceToNow(new Date(post.createdAt), { addSuffix: true })
+                                    }} />
+                                );
+                            })
+                        ) : (
+                            <div className="text-center py-10 text-muted-foreground">
+                                <p className="text-lg font-medium">No posts yet</p>
+                                <p>Be the first to share your market insights!</p>
+                            </div>
+                        )}
+                    </div>
+
+
+                    {/* End of Feed Disclaimer */}
+                    <div className="mt-8 p-4 bg-yellow-50/50 dark:bg-yellow-900/10 rounded-lg border border-yellow-100 dark:border-yellow-900 text-yellow-800 dark:text-yellow-500 text-xs flex gap-2 items-start">
+                        <Info size={16} className="mt-0.5 flex-shrink-0" />
+                        <p>
+                            <strong>Disclaimer:</strong> Content on StockX is for educational purposes only.
+                            No content here constitutes financial advice or a recommendation to buy/sell equities.
+                            Please consult a SEBI registered investment advisor before making trades.
+                        </p>
+                    </div>
+                </div>
+
+                {/* Right Sidebar */}
+                <div className="lg:col-span-3">
+                    <FeedSidebar />
+                </div>
+
+            </main>
+        </div>
+    );
+}
