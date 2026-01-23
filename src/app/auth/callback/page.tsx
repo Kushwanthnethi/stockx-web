@@ -15,11 +15,11 @@ function AuthCallbackContent() {
             // Store the token
             localStorage.setItem('accessToken', token);
 
-            // Redirect to home/dashboard
-            router.push('/');
+            // Redirect to home/dashboard (Hard Reload to ensure AuthProvider picks up token)
+            window.location.href = '/';
         } else {
             // Handle error or redirect to login
-            router.push('/login?error=AuthFailed');
+            window.location.href = '/login?error=AuthFailed';
         }
     }, [router, searchParams]);
 
