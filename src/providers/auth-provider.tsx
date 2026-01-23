@@ -11,6 +11,7 @@ interface User {
     lastName?: string;
     handle: string;
     avatarUrl?: string;
+    role?: string;
 }
 
 interface AuthContextType {
