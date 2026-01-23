@@ -3,6 +3,7 @@ import { Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/providers/auth-provider';
 import { cn } from '@/lib/utils';
+import { API_BASE_URL } from '@/lib/config';
 
 interface WatchButtonProps {
     symbol: string;
@@ -30,7 +31,7 @@ export function WatchButton({ symbol, className }: WatchButtonProps) {
             // Or we can just try to toggle? No.
             // Let's assume we can check via getWatchlist or similar. 
             // Actually, let's implement a 'check' or just fetch all.
-            const res = await fetch(`http://localhost:3333/stocks/user/${user.id}/watchlist`);
+            const res = await fetch(`${API_BASE_URL}/stocks/user/${user.id}/watchlist`);
             if (res.ok) {
                 const data = await res.json();
                 const found = data.find((w: any) => w.stockSymbol === symbol);
@@ -45,7 +46,7 @@ export function WatchButton({ symbol, className }: WatchButtonProps) {
         if (!user) return;
         setLoading(true);
         try {
-            const res = await fetch(`http://localhost:3333/stocks/${symbol}/watch`, {
+            const res = await fetch(`${API_BASE_URL}/stocks/${symbol}/watch`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userId: user.id })

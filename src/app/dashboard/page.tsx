@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { StockBadge } from "@/components/shared/stock-badge";
 import { Button } from "@/components/ui/button";
 import { LiveStockTicker } from "@/components/features/stocks/live-stock-ticker";
+import { API_BASE_URL } from "@/lib/config";
 
 export default function DashboardPage() {
     const { user } = useAuth();
@@ -26,7 +27,7 @@ export default function DashboardPage() {
 
     const fetchWatchlist = async () => {
         try {
-            const res = await fetch(`http://localhost:3333/stocks/user/${user?.id}/watchlist`);
+            const res = await fetch(`${API_BASE_URL}/stocks/user/${user?.id}/watchlist`);
             if (res.ok) {
                 const data = await res.json();
                 setWatchlist(data);

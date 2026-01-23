@@ -11,6 +11,7 @@ import { AppSidebar } from "@/components/layout/app-sidebar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { SiteHeader } from "@/components/layout/site-header";
+import { API_BASE_URL } from "@/lib/config";
 
 export default function BookmarksPage() {
     const { user, isLoading: authLoading } = useAuth();
@@ -27,10 +28,10 @@ export default function BookmarksPage() {
             try {
                 const token = localStorage.getItem('accessToken');
                 const [postsRes, stocksRes] = await Promise.all([
-                    fetch('http://localhost:3333/posts/user/bookmarks', {
+                    fetch(`${API_BASE_URL}/posts/user/bookmarks`, {
                         headers: { 'Authorization': `Bearer ${token}` }
                     }),
-                    fetch(`http://localhost:3333/stocks/user/${user.id}/watchlist`)
+                    fetch(`${API_BASE_URL}/stocks/user/${user.id}/watchlist`)
                 ]);
 
                 if (postsRes.ok) {

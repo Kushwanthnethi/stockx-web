@@ -24,6 +24,7 @@ import { PeerComparison } from "@/components/features/stocks/peer-comparison";
 import { SmartMoney } from "@/components/features/stocks/smart-money";
 import { QuarterlyResults } from "@/components/features/stocks/quarterly-results";
 import { ManagementCommentary } from "@/components/features/stocks/management-commentary";
+import { API_BASE_URL } from "@/lib/config";
 
 export default function StockDetailsPage() {
     const params = useParams();
@@ -39,7 +40,7 @@ export default function StockDetailsPage() {
             // Only show full loading spinner on first load
             if (!data) setLoading(true);
             try {
-                const res = await fetch(`http://localhost:3333/stocks/${encodeURIComponent(symbol)}`);
+                const res = await fetch(`${API_BASE_URL}/stocks/${encodeURIComponent(symbol)}`);
                 if (!res.ok) {
                     const errorText = await res.text().catch(() => "Unknown error");
                     throw new Error(errorText || "Stock not found");

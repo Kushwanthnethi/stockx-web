@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { MessageSquare } from "lucide-react";
 import { FeedPost } from "../feed/feed-post";
+import { API_BASE_URL } from "@/lib/config";
 
 interface StockInsightsProps {
     symbol: string;
@@ -17,7 +18,7 @@ export function StockInsights({ symbol }: StockInsightsProps) {
             setLoading(true);
             try {
                 // Fetch posts that mention this stock (e.g. $RELIANCE)
-                const res = await fetch(`http://localhost:3333/posts/symbol/${symbol}`);
+                const res = await fetch(`${API_BASE_URL}/posts/symbol/${symbol}`);
                 if (res.ok) {
                     const data = await res.json();
                     setPosts(data);

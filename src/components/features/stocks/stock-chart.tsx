@@ -6,6 +6,7 @@ import { format } from 'date-fns';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { API_BASE_URL } from '@/lib/config';
 
 interface StockChartProps {
     symbol: string;
@@ -22,7 +23,7 @@ export function StockChart({ symbol }: StockChartProps) {
         const fetchHistory = async () => {
             setLoading(true);
             try {
-                const res = await fetch(`http://localhost:3333/stocks/${symbol}/history?range=${range}`);
+                const res = await fetch(`${API_BASE_URL}/stocks/${symbol}/history?range=${range}`);
                 if (res.ok) {
                     const history = await res.json();
                     setData(history);

@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { formatDistanceToNow } from "date-fns";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { API_BASE_URL } from "@/lib/config";
 
 export function UsersTable() {
     const [users, setUsers] = useState<any[]>([]);
@@ -26,7 +27,7 @@ export function UsersTable() {
         try {
             setLoading(true);
             const token = localStorage.getItem("accessToken");
-            const res = await fetch(`http://localhost:3333/admin/users?page=${page}&limit=10&search=${search}`, {
+            const res = await fetch(`${API_BASE_URL}/admin/users?page=${page}&limit=10&search=${search}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             if (res.ok) {

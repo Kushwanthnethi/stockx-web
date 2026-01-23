@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Search, TrendingUp, Clock, Calendar, X, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { API_BASE_URL } from "@/lib/config";
 
 // Types
 interface SearchResult {
@@ -57,7 +58,7 @@ export function CommandMenu() {
             try { setRecents(JSON.parse(saved)); } catch (e) { console.error(e); }
         }
 
-        fetch("http://localhost:3333/stocks/trending")
+        fetch(`${API_BASE_URL}/stocks/trending`)
             .then(res => res.json())
             .then(data => setTrending(data.slice(0, 3)))
             .catch(err => console.error("Failed to load trending", err));
@@ -95,7 +96,7 @@ export function CommandMenu() {
         setLoading(true);
         const timer = setTimeout(async () => {
             try {
-                const res = await fetch(`http://localhost:3333/stocks/search?q=${encodeURIComponent(query)}`);
+                const res = await fetch(`${API_BASE_URL}/stocks/search?q=${encodeURIComponent(query)}`);
                 if (res.ok) {
                     const data = await res.json();
                     setResults(data);

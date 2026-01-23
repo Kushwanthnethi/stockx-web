@@ -7,6 +7,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { API_BASE_URL } from "@/lib/config";
 
 // Static Verdict Definition (without price data)
 const VERDICT_DEFINITIONS = [
@@ -478,7 +479,7 @@ export default function VerdictPage() {
                 const symbols = VERDICT_DEFINITIONS.map(v => v.symbol.endsWith('.NS') ? v.symbol : `${v.symbol}.NS`);
 
                 // Call our new batch endpoint
-                const res = await fetch('http://localhost:3333/stocks/batch', {
+                const res = await fetch(`${API_BASE_URL}/stocks/batch`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ symbols })

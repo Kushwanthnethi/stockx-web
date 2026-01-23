@@ -9,6 +9,7 @@ import { ProfileHeader } from "@/components/features/profile/profile-header";
 import { SiteHeader } from "@/components/layout/site-header";
 import Link from "next/link";
 import { ActivityGraph } from "@/components/features/profile/activity-graph";
+import { API_BASE_URL } from "@/lib/config";
 
 export default function ProfilePage() {
     const { handle } = useParams();
@@ -25,7 +26,7 @@ export default function ProfilePage() {
             if (!handle) return;
             try {
                 // Fetch Profile
-                const res = await fetch(`http://localhost:3333/users/profile/${handle}`);
+                const res = await fetch(`${API_BASE_URL}/users/profile/${handle}`);
                 let profileId = null;
 
                 if (res.ok) {
@@ -34,7 +35,7 @@ export default function ProfilePage() {
                     profileId = data.id;
 
                     // Fetch Visits
-                    const resVisits = await fetch(`http://localhost:3333/users/${profileId}/visits`);
+                    const resVisits = await fetch(`${API_BASE_URL}/users/${profileId}/visits`);
                     if (resVisits.ok) {
                         setVisits(await resVisits.json());
                     }
@@ -42,7 +43,7 @@ export default function ProfilePage() {
 
                 // Fetch Posts (Mocking for now or generic feed filtered)
                 // ideally GET /users/:handle/posts
-                const resPosts = await fetch(`http://localhost:3333/posts`); // Temporary
+                const resPosts = await fetch(`${API_BASE_URL}/posts`); // Temporary
                 if (resPosts.ok) {
                     const allPosts = await resPosts.json();
                     const userPosts = allPosts.filter((p: any) => p.user?.handle === handle);
@@ -51,7 +52,7 @@ export default function ProfilePage() {
 
                 // Check Follow Status
                 if (currentUser && token && profileId) {
-                    const resFollow = await fetch(`http://localhost:3333/users/${profileId}/is-following`, {
+                    const resFollow = await fetch(`${API_BASE_URL}/users/${profileId}/is-following`, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
                     if (resFollow.ok) {
@@ -75,7 +76,7 @@ export default function ProfilePage() {
         setFollowLoading(true);
         try {
             const endpoint = isFollowing ? 'unfollow' : 'follow';
-            const res = await fetch(`http://localhost:3333/users/${profile.id}/${endpoint}`, {
+            const res = await fetch(`${API_BASE_URL}/users/${profile.id}/${endpoint}`, {
                 method: "POST",
                 headers: { Authorization: `Bearer ${token}` }
             });

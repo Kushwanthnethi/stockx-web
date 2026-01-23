@@ -15,6 +15,7 @@ import { InvestorCard } from "@/components/features/investors/investor-card";
 import { PortfolioTable } from "@/components/features/investors/portfolio-table";
 import { CommandMenu } from "@/components/shared/command-menu";
 import { isMarketOpen } from "@/lib/market-time";
+import { API_BASE_URL } from "@/lib/config";
 
 export default function ExplorePage() {
     const [stocks, setStocks] = useState<MarketStock[]>([]);
@@ -37,7 +38,7 @@ export default function ExplorePage() {
         const fetchMarket = async () => {
             setLoading(true);
             try {
-                const res = await fetch(`http://localhost:3333/stocks/market?page=${page}&limit=${PAGE_SIZE}`);
+                const res = await fetch(`${API_BASE_URL}/stocks/market?page=${page}&limit=${PAGE_SIZE}`);
                 if (res.ok) {
                     const data = await res.json();
                     setStocks(data);
@@ -57,7 +58,7 @@ export default function ExplorePage() {
         const fetchInvestors = async () => {
             setLoadingInvestors(true);
             try {
-                const res = await fetch('http://localhost:3333/investors');
+                const res = await fetch(`${API_BASE_URL}/investors`);
                 if (res.ok) {
                     const data = await res.json();
                     setInvestors(data);

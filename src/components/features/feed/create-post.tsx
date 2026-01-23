@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Loader2, Image as ImageIcon, X, Smile, BarChart2, FileText, Gift } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { API_BASE_URL } from '@/lib/config';
 
 export function CreatePost({ onPostCreated }: { onPostCreated?: () => void }) {
     const { user, isLoading } = useAuth();
@@ -29,7 +30,7 @@ export function CreatePost({ onPostCreated }: { onPostCreated?: () => void }) {
         setIsPosting(true);
         try {
             const token = localStorage.getItem('accessToken');
-            const res = await fetch('http://localhost:3333/posts', {
+            const res = await fetch(`${API_BASE_URL}/posts`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -64,7 +65,7 @@ export function CreatePost({ onPostCreated }: { onPostCreated?: () => void }) {
 
         try {
             const token = localStorage.getItem('accessToken');
-            const res = await fetch('http://localhost:3333/posts/upload', {
+            const res = await fetch(`${API_BASE_URL}/posts/upload`, {
                 method: 'POST',
                 headers: {
                     Authorization: `Bearer ${token}`,

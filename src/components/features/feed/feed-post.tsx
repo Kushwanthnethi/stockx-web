@@ -15,6 +15,7 @@ import {
 import Link from "next/link";
 import { useAuth } from "@/providers/auth-provider";
 import { Users, UserPlus } from "lucide-react";
+import { API_BASE_URL } from "@/lib/config";
 
 const formatContent = (content: string) => {
     if (!content) return null;
@@ -104,7 +105,7 @@ export function FeedPost({ post }: { post: any }) {
 
         try {
             const endpoint = isFollowing ? 'unfollow' : 'follow';
-            const res = await fetch(`http://localhost:3333/users/${displayPost.user.id}/${endpoint}`, {
+            const res = await fetch(`${API_BASE_URL}/users/${displayPost.user.id}/${endpoint}`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -134,7 +135,7 @@ export function FeedPost({ post }: { post: any }) {
         setLikes(isLiked ? likes - 1 : likes + 1);
 
         try {
-            const res = await fetch(`http://localhost:3333/posts/${post.id}/like`, {
+            const res = await fetch(`${API_BASE_URL}/posts/${post.id}/like`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -160,7 +161,7 @@ export function FeedPost({ post }: { post: any }) {
         setReshareCount(reshareCount + 1);
 
         try {
-            const res = await fetch(`http://localhost:3333/posts/${post.id}/reshare`, {
+            const res = await fetch(`${API_BASE_URL}/posts/${post.id}/reshare`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -174,7 +175,7 @@ export function FeedPost({ post }: { post: any }) {
     };
 
     const handleSocialShare = (platform: string) => {
-        const postUrl = `http://localhost:3000/post/${post.id}`;
+        const postUrl = `${window.location.origin}/post/${post.id}`;
         const text = `Check out this post on StockX: ${post.content?.substring(0, 50)}...`;
         let url = '';
 
@@ -198,7 +199,7 @@ export function FeedPost({ post }: { post: any }) {
                 // Track backend share
                 const token = localStorage.getItem('accessToken');
                 if (token) {
-                    fetch(`http://localhost:3333/posts/${post.id}/share`, {
+                    fetch(`${API_BASE_URL}/posts/${post.id}/share`, {
                         method: 'POST',
                         headers: { 'Authorization': `Bearer ${token}` }
                     }).catch(() => { });
@@ -211,7 +212,7 @@ export function FeedPost({ post }: { post: any }) {
             // Track backend share
             const token = localStorage.getItem('accessToken');
             if (token) {
-                fetch(`http://localhost:3333/posts/${post.id}/share`, {
+                fetch(`${API_BASE_URL}/posts/${post.id}/share`, {
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${token}` }
                 }).catch(() => { });
@@ -230,7 +231,7 @@ export function FeedPost({ post }: { post: any }) {
         setIsBookmarked(!isBookmarked);
 
         try {
-            const res = await fetch(`http://localhost:3333/posts/${post.id}/bookmark`, {
+            const res = await fetch(`${API_BASE_URL}/posts/${post.id}/bookmark`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -248,7 +249,7 @@ export function FeedPost({ post }: { post: any }) {
             if (comments.length === 0) {
                 setIsLoadingComments(true);
                 try {
-                    const res = await fetch(`http://localhost:3333/posts/${post.id}/comments`);
+                    const res = await fetch(`${API_BASE_URL}/posts/${post.id}/comments`);
                     if (res.ok) {
                         const data = await res.json();
                         setComments(data);
@@ -275,7 +276,7 @@ export function FeedPost({ post }: { post: any }) {
         }
 
         try {
-            const res = await fetch(`http://localhost:3333/posts/${post.id}/comments`, {
+            const res = await fetch(`${API_BASE_URL}/posts/${post.id}/comments`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,

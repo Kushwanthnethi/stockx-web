@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from "recharts";
 import { formatDistanceToNow } from "date-fns";
 import { Button } from "@/components/ui/button";
+import { API_BASE_URL } from "@/lib/config";
 
 export default function ResultAnalysisPage() {
     const params = useParams();
@@ -22,7 +23,7 @@ export default function ResultAnalysisPage() {
     useEffect(() => {
         const fetchDetails = async () => {
             try {
-                const res = await fetch(`http://localhost:3333/stocks/${symbol}/earnings-analysis`);
+                const res = await fetch(`${API_BASE_URL}/stocks/${symbol}/earnings-analysis`);
                 if (res.ok) {
                     const json = await res.json();
                     setData(json);

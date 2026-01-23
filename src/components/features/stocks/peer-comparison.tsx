@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import { API_BASE_URL } from '@/lib/config';
 
 interface PeerComparisonProps {
     symbol: string;
@@ -16,7 +17,7 @@ export function PeerComparison({ symbol }: PeerComparisonProps) {
         const fetchPeers = async () => {
             setLoading(true);
             try {
-                const res = await fetch(`http://localhost:3333/stocks/${symbol}/peers`);
+                const res = await fetch(`${API_BASE_URL}/stocks/${symbol}/peers`);
                 if (res.ok) {
                     const data = await res.json();
                     setPeers(data);

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { WatchButton } from "@/components/features/stocks/watch-button";
 import { Calendar, ChevronRight, TrendingUp, Search, ArrowUpRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { API_BASE_URL } from "@/lib/config";
 
 interface EarningEvent {
     symbol: string;
@@ -30,7 +31,7 @@ export function ResultsCalendar() {
     useEffect(() => {
         const fetchCalendar = async () => {
             try {
-                const res = await fetch('http://localhost:3333/stocks/earnings-calendar');
+                const res = await fetch(`${API_BASE_URL}/stocks/earnings-calendar`);
                 if (res.ok) {
                     const data = await res.json();
                     setEvents(data);

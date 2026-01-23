@@ -5,6 +5,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { ArrowUp, ArrowDown, Minus, TrendingUp, TrendingDown, DollarSign } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
+import { API_BASE_URL } from '@/lib/config';
 
 interface QuarterlyData {
     period: string;
@@ -40,7 +41,7 @@ export function QuarterlyResults({ symbol }: { symbol: string }) {
     useEffect(() => {
         const fetchQuarterly = async () => {
             try {
-                const res = await fetch(`http://localhost:3333/stocks/${encodeURIComponent(symbol)}/quarterly`);
+                const res = await fetch(`${API_BASE_URL}/stocks/${encodeURIComponent(symbol)}/quarterly`);
                 if (res.ok) {
                     try {
                         const result = await res.json();

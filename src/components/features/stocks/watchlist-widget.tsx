@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { API_BASE_URL } from '@/lib/config';
 import { useAuth } from '@/providers/auth-provider';
 import { LiveStockTicker } from './live-stock-ticker';
 
@@ -19,7 +20,7 @@ export function WatchlistWidget() {
 
     const fetchWatchlist = async () => {
         try {
-            const res = await fetch(`http://localhost:3333/stocks/user/${user?.id}/watchlist`);
+            const res = await fetch(`${API_BASE_URL}/stocks/user/${user?.id}/watchlist`);
             if (res.ok) {
                 const data = await res.json();
                 setWatchlist(data);

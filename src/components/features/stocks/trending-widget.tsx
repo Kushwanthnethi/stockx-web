@@ -6,6 +6,7 @@ import { TrendingUp, TrendingDown, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { isMarketOpen } from "@/lib/market-time";
+import { API_BASE_URL } from "@/lib/config";
 
 export function TrendingWidget() {
     const [trending, setTrending] = useState<any[]>([]);
@@ -16,7 +17,7 @@ export function TrendingWidget() {
         const fetchTrending = async () => {
             // ... (same as before)
             try {
-                const res = await fetch('http://localhost:3333/stocks/trending');
+                const res = await fetch(`${API_BASE_URL}/stocks/trending`);
                 if (res.ok) {
                     const data = await res.json();
                     setTrending(data.map((stock: any) => ({

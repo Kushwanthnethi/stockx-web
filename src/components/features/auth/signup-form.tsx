@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Loader2 } from "lucide-react"
+import { API_BASE_URL } from "@/lib/config"
 
 export function SignupForm({ className }: React.HTMLAttributes<HTMLDivElement>) {
     const [isLoading, setIsLoading] = React.useState<boolean>(false)
@@ -32,7 +33,7 @@ export function SignupForm({ className }: React.HTMLAttributes<HTMLDivElement>) 
         const lastName = nameParts.slice(1).join(' ') || '';
 
         try {
-            const res = await fetch('http://localhost:3333/auth/register', {
+            const res = await fetch(`${API_BASE_URL}/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password, firstName, lastName }),
@@ -121,7 +122,7 @@ export function SignupForm({ className }: React.HTMLAttributes<HTMLDivElement>) 
                 </div>
             </div>
 
-            <Button variant="outline" type="button" disabled={isLoading} className="gap-2" onClick={() => window.location.href = 'http://localhost:3333/auth/google'}>
+            <Button variant="outline" type="button" disabled={isLoading} className="gap-2" onClick={() => window.location.href = `${API_BASE_URL}/auth/google`}>
                 {isLoading ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 ) : (

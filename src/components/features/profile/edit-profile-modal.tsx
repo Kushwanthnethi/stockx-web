@@ -17,6 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/providers/auth-provider";
 import { Edit } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { API_BASE_URL } from "@/lib/config";
 
 interface EditProfileModalProps {
     profile: any;
@@ -39,7 +40,7 @@ export function EditProfileModal({ profile, trigger }: EditProfileModalProps) {
         setLoading(true);
 
         try {
-            const res = await fetch("http://localhost:3333/users/me", {
+            const res = await fetch(`${API_BASE_URL}/users/me`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

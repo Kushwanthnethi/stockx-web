@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/providers/auth-provider";
+import { API_BASE_URL } from "@/lib/config";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -50,13 +51,13 @@ export function GuestAuthModal() {
     };
 
     const handleGoogleLogin = () => {
-        window.location.href = "http://localhost:3333/auth/google";
+        window.location.href = `${API_BASE_URL}/auth/google`;
     };
 
     const handleEmailLogin = async () => {
         try {
             setError("");
-            const res = await fetch("http://localhost:3333/auth/login", {
+            const res = await fetch(`${API_BASE_URL}/auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password }),
@@ -76,7 +77,7 @@ export function GuestAuthModal() {
     const handleRegister = async () => {
         try {
             setError("");
-            const res = await fetch("http://localhost:3333/auth/register", {
+            const res = await fetch(`${API_BASE_URL}/auth/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password, firstName, lastName }),

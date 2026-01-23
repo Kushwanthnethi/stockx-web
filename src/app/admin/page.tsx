@@ -11,6 +11,7 @@ import { UsersTable } from "@/components/features/admin/users-table";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns";
 import { Trash2 } from "lucide-react";
+import { API_BASE_URL } from "@/lib/config";
 
 export default function AdminPage() {
     const { user, isLoading, logout } = useAuth();
@@ -31,7 +32,7 @@ export default function AdminPage() {
     const fetchStats = async () => {
         try {
             const token = localStorage.getItem('accessToken');
-            const res = await fetch('http://localhost:3333/admin/stats', {
+            const res = await fetch(`${API_BASE_URL}/admin/stats`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.ok) {
@@ -46,7 +47,7 @@ export default function AdminPage() {
     const fetchPosts = async () => {
         try {
             const token = localStorage.getItem('accessToken');
-            const res = await fetch('http://localhost:3333/posts', {
+            const res = await fetch(`${API_BASE_URL}/posts`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.ok) {
@@ -70,7 +71,7 @@ export default function AdminPage() {
 
         try {
             const token = localStorage.getItem('accessToken');
-            const res = await fetch(`http://localhost:3333/posts/${postId}`, {
+            const res = await fetch(`${API_BASE_URL}/posts/${postId}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });

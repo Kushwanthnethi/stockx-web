@@ -6,6 +6,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { MessageSquareQuote, Target, TrendingUp, AlertCircle, Quote } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { API_BASE_URL } from "@/lib/config";
 
 interface Props {
     symbol: string;
@@ -20,7 +21,7 @@ export function ManagementCommentary({ symbol }: Props) {
         const fetchNews = async () => {
             try {
                 // Using the stock news endpoint as a proxy for "Commentary" sources for now
-                const res = await fetch(`http://localhost:3333/stocks/${encodeURIComponent(symbol)}/news`);
+                const res = await fetch(`${API_BASE_URL}/stocks/${encodeURIComponent(symbol)}/news`);
                 if (res.ok) {
                     const data = await res.json();
                     setNews(data.slice(0, 3)); // Take top 3 recent news items

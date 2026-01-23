@@ -9,6 +9,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { API_BASE_URL } from "@/lib/config";
 
 interface UserListModalProps {
     isOpen: boolean;
@@ -30,7 +31,7 @@ export function UserListModal({ isOpen, onClose, userId, type }: UserListModalPr
     const fetchUsers = async () => {
         setLoading(true);
         try {
-            const res = await fetch(`http://localhost:3333/users/${userId}/${type}`);
+            const res = await fetch(`${API_BASE_URL}/users/${userId}/${type}`);
             if (res.ok) {
                 const data = await res.json();
                 setUsers(data);

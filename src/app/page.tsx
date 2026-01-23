@@ -56,6 +56,7 @@ function FeedSidebar() {
 // --- Main Page Component ---
 
 import { CreatePost } from "@/components/features/feed/create-post";
+import { API_BASE_URL } from "@/lib/config";
 
 // ... existing imports
 
@@ -72,7 +73,7 @@ export default function Home() {
                 headers['Authorization'] = `Bearer ${token}`;
             }
 
-            const res = await fetch('http://localhost:3333/posts', {
+            const res = await fetch(`${API_BASE_URL}/posts`, {
                 headers
             });
 

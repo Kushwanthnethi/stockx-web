@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { ExternalLink } from "lucide-react";
 import Link from 'next/link';
+import { API_BASE_URL } from '@/lib/config';
 
 interface StockNewsProps {
     symbol: string;
@@ -14,7 +15,7 @@ export function StockNews({ symbol }: StockNewsProps) {
     useEffect(() => {
         const fetchNews = async () => {
             try {
-                const res = await fetch(`http://localhost:3333/stocks/${encodeURIComponent(symbol)}/news`);
+                const res = await fetch(`${API_BASE_URL}/stocks/${encodeURIComponent(symbol)}/news`);
                 if (res.ok) {
                     const data = await res.json();
                     setNews(data);

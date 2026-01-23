@@ -6,6 +6,7 @@ import { TrendingUp, TrendingDown, RefreshCw, Zap, Moon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { getMarketSession, MarketSession, getMarketStatusText } from "@/lib/market-time";
+import { API_BASE_URL } from "@/lib/config";
 
 export function IndicesTicker() {
     const [indices, setIndices] = useState<any[]>([]);
@@ -19,7 +20,7 @@ export function IndicesTicker() {
 
         const fetchIndices = async () => {
             try {
-                const res = await fetch('http://localhost:3333/stocks/indices');
+                const res = await fetch(`${API_BASE_URL}/stocks/indices`);
                 if (res.ok) {
                     const data = await res.json();
                     setIndices(data);

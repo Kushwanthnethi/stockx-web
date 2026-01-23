@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ExternalLink, Loader2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { API_BASE_URL } from '@/lib/config';
 
 interface NewsItem {
     uuid: string;
@@ -21,7 +22,7 @@ export function NewsWidget() {
     useEffect(() => {
         async function fetchNews() {
             try {
-                const res = await fetch('http://localhost:3333/stocks/news');
+                const res = await fetch(`${API_BASE_URL}/stocks/news`);
                 if (res.ok) {
                     const data = await res.json();
                     setNews(data);

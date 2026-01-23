@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Link from "next/link";
 import { SiteHeader } from "@/components/layout/site-header";
+import { API_BASE_URL } from "@/lib/config";
 
 export default function NotificationsPage() {
     const { user, isLoading: authLoading } = useAuth();
@@ -32,7 +33,7 @@ export default function NotificationsPage() {
             setLoading(true);
             try {
                 const token = localStorage.getItem('accessToken');
-                const res = await fetch('http://localhost:3333/notifications', {
+                const res = await fetch(`${API_BASE_URL}/notifications`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 if (res.ok) {
