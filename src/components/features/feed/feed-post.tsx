@@ -72,6 +72,14 @@ export function FeedPost({ post }: { post: any }) {
     const [isLoadingComments, setIsLoadingComments] = React.useState(false);
     const [imageError, setImageError] = React.useState(false);
 
+    // Edit/Delete State
+    const [isEditing, setIsEditing] = React.useState(false);
+    const [editContent, setEditContent] = React.useState(post.content);
+    const [hasReported, setHasReported] = React.useState(false); // Client-side temp hide
+    const [isDeleted, setIsDeleted] = React.useState(false); // Client-side temp hide
+
+    if (isDeleted) return null; // Hide post if deleted/blocked/reported
+
     // Update local state if prop changes (e.g. from a parent refresh)
     // Update local state if prop changes (e.g. from a parent refresh)
     React.useEffect(() => {
@@ -296,6 +304,89 @@ export function FeedPost({ post }: { post: any }) {
         }
     };
 
+    // --- Action Handlers ---
+
+    const handleDelete = async () => {
+        if (!confirm("Are you sure you want to delete this post?")) return;
+        const token = localStorage.getItem('accessToken');
+        if (!token) return;
+
+        try {
+            const res = await fetch(`${API_BASE_URL}/posts/${post.id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+                setIsDeleted(true);
+            }
+        } catch (e) {
+            console.error("Failed to delete post", e);
+        }
+    };
+
+    const handleUpdate = async () => {
+        const token = localStorage.getItem('accessToken');
+        if (!token) return;
+
+        try {
+            const res = await fetch(`${API_BASE_URL}/posts/${post.id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ content: editContent })
+            });
+            if (res.ok) {
+                setIsEditing(false);
+                post.content = editContent; // Mutate prop or reload? Mutating for instant feedback
+            }
+        } catch (e) {
+            console.error("Failed to update post", e);
+        }
+    };
+
+    const handleReport = async () => {
+        const token = localStorage.getItem('accessToken');
+        if (!token) {
+            setShowLoginModal(true);
+            return;
+        }
+        if (!confirm("Report this post? It will be hidden from your feed.")) return;
+
+        try {
+            await fetch(`${API_BASE_URL}/posts/${post.id}/report`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            setIsDeleted(true); // Hide it immediately
+            setHasReported(true);
+        } catch (e) {
+            console.error("Failed to report", e);
+        }
+    };
+
+    const handleBlock = async () => {
+        const token = localStorage.getItem('accessToken');
+        if (!token) {
+            setShowLoginModal(true);
+            return;
+        }
+        if (!confirm(`Block @${displayPost.user?.handle}? You will no longer see their posts.`)) return;
+
+        try {
+            await fetch(`${API_BASE_URL}/users/${displayPost.user?.id}/block`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            setIsDeleted(true); // Hide this post immediately
+            alert(`Blocked @${displayPost.user?.handle}`);
+            window.location.reload(); // Reload to filter out all their posts? Or just hide this one
+        } catch (e) {
+            console.error("Failed to block", e);
+        }
+    };
+
 
 
     return (
@@ -308,8 +399,31 @@ export function FeedPost({ post }: { post: any }) {
                     </Link>
                 </div>
             )}
-            <Card className="border-border shadow-sm hover:border-primary/20 transition-colors bg-card">
-                <CardHeader className="flex flex-row items-start space-y-0 pb-3 pt-5 gap-3">
+            <Card className="border-border shadow-sm hover:border-primary/20 transition-colors bg-card relative">
+                <div className="absolute top-4 right-4 z-10">
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full hover:bg-muted">
+                                <MoreHorizontal size={16} className="text-muted-foreground" />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-40">
+                            {currentUser && displayPost.user && currentUser.id === displayPost.user.id ? (
+                                <>
+                                    <DropdownMenuItem onClick={() => setIsEditing(true)}>Edit Post</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={handleDelete} className="text-red-500 focus:text-red-500">Delete Post</DropdownMenuItem>
+                                </>
+                            ) : (
+                                <>
+                                    <DropdownMenuItem onClick={handleReport}>Report Post</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={handleBlock}>Block User</DropdownMenuItem>
+                                </>
+                            )}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+
+                <CardHeader className="flex flex-row items-start space-y-0 pb-3 pt-5 gap-3 pr-12">
                     {/* Avatar */}
                     <Link href={`/u/${displayPost.user?.handle}`} className="h-10 w-10 rounded-full bg-muted overflow-hidden flex-shrink-0 hover:opacity-80 transition-opacity">
                         <img src={displayPost.user?.avatarUrl || "https://github.com/shadcn.png"} alt={displayPost.user?.handle} className="h-full w-full object-cover" />
@@ -362,7 +476,21 @@ export function FeedPost({ post }: { post: any }) {
                 </CardHeader>
 
                 <CardContent className="pb-3 text-base text-foreground whitespace-pre-line leading-relaxed">
-                    {formatContent(displayPost.content)}
+                    {isEditing ? (
+                        <div className="space-y-3">
+                            <textarea
+                                value={editContent}
+                                onChange={(e) => setEditContent(e.target.value)}
+                                className="w-full min-h-[100px] p-3 rounded-md bg-muted text-sm focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                            />
+                            <div className="flex gap-2 justify-end">
+                                <Button size="sm" variant="outline" onClick={() => setIsEditing(false)}>Cancel</Button>
+                                <Button size="sm" onClick={handleUpdate}>Save</Button>
+                            </div>
+                        </div>
+                    ) : (
+                        formatContent(displayPost.content)
+                    )}
 
                     {displayPost.imageUrl && !imageError && (
                         <div className="mt-3 rounded-xl overflow-hidden border border-border max-h-[512px] flex items-center justify-center bg-muted/50">
