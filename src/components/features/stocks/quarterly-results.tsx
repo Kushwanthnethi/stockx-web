@@ -157,18 +157,18 @@ export function QuarterlyResults({ symbol }: { symbol: string }) {
 
                                 {/* Current */}
                                 <TableCell className="text-right font-mono font-bold text-foreground">
-                                    {row.isPct ? fmtPct(current[row.key]) : fmtVal(current[row.key], row.isCurrency)}
+                                    {row.isPct ? fmtPct((current as any)[row.key]) : fmtVal((current as any)[row.key], row.isCurrency)}
                                 </TableCell>
 
                                 {/* Prev */}
                                 <TableCell className="text-right font-mono text-muted-foreground">
-                                    {row.isPct ? fmtPct(prev?.[row.key]) : fmtVal(prev?.[row.key], row.isCurrency)}
+                                    {row.isPct ? fmtPct((prev as any)?.[row.key]) : fmtVal((prev as any)?.[row.key], row.isCurrency)}
                                 </TableCell>
 
                                 {/* QoQ Growth */}
                                 <TableCell className="text-right">
                                     <div className="flex justify-end">
-                                        <GrowthIndicator value={growth.qoq[row.growthKey]} />
+                                        <GrowthIndicator value={growth.qoq[row.growthKey as any]} />
                                     </div>
                                 </TableCell>
 
@@ -176,11 +176,11 @@ export function QuarterlyResults({ symbol }: { symbol: string }) {
                                 {hasYearAgo && (
                                     <>
                                         <TableCell className="text-right font-mono text-muted-foreground">
-                                            {row.isPct ? fmtPct(yearAgo[row.key]) : fmtVal(yearAgo[row.key], row.isCurrency)}
+                                            {row.isPct ? fmtPct((yearAgo as any)[row.key]) : fmtVal((yearAgo as any)[row.key], row.isCurrency)}
                                         </TableCell>
                                         <TableCell className="text-right">
                                             <div className="flex justify-end">
-                                                <GrowthIndicator value={growth.yoy[row.growthKey]} />
+                                                <GrowthIndicator value={growth.yoy[row.growthKey as any]} />
                                             </div>
                                         </TableCell>
                                     </>
