@@ -37,8 +37,9 @@ export function MobileHeader() {
 
             {/* Center: Logo */}
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                <Link href="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                    <TrendingUp className="h-6 w-6 text-foreground fill-current" />
+                <Link href="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex items-center gap-2">
+                    <TrendingUp className="h-6 w-6 text-green-500" />
+                    <span className="font-bold text-xl tracking-tight">StockX</span>
                 </Link>
             </div>
 
