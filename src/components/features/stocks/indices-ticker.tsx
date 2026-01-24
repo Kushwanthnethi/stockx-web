@@ -133,23 +133,24 @@ export function IndicesTicker() {
             </div>
 
             {/* Mobile View: Compact Horizontal Scroll */}
-            <div className="md:hidden flex overflow-x-auto pb-2 gap-3 no-scrollbar snap-x">
+            <div className="md:hidden flex overflow-x-auto pb-2 gap-3 no-scrollbar snap-x px-1">
                 {indices.map((index) => (
-                    <div key={index.symbol} className="snap-center shrink-0 min-w-[140px] bg-card/50 backdrop-blur-sm border border-border rounded-lg p-3 flex flex-col justify-between shadow-sm">
-                        <div className="flex justify-between items-center mb-1">
-                            <span className="font-bold text-sm tracking-tight">{index.symbol}</span>
-                            <span className={cn(
-                                "text-[10px] font-bold px-1.5 py-0.5 rounded-full flex items-center gap-0.5",
-                                index.change >= 0 ? "bg-green-500/10 text-green-600" : "bg-red-500/10 text-red-600"
-                            )}>
-                                {index.changePercent >= 0 ? '+' : ''}{index.changePercent.toFixed(2)}%
-                            </span>
+                    <div key={index.symbol} className="snap-center shrink-0 min-w-[85vw] bg-card border-l-4 border-l-primary rounded-lg p-5 flex items-center justify-between shadow-sm">
+                        <div className="flex flex-col">
+                            <span className="font-bold text-xl tracking-tight mb-1">{index.symbol}</span>
+                            <div className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Index</div>
                         </div>
-                        <div className="flex items-end justify-between">
-                            <span className="text-lg font-bold tabular-nums tracking-tight">
-                                {index.price.toLocaleString(undefined, { maximumFractionDigits: 0, minimumFractionDigits: 0 })}
-                            </span>
-                            {index.change >= 0 ? <TrendingUp size={12} className="text-green-500 mb-1" /> : <TrendingDown size={12} className="text-red-500 mb-1" />}
+                        <div className="text-right">
+                            <div className="text-2xl font-bold tabular-nums tracking-tight">
+                                {index.price.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 })}
+                            </div>
+                            <div className={cn(
+                                "text-sm font-bold flex items-center justify-end gap-1 tabular-nums mt-1",
+                                index.change >= 0 ? "text-green-500" : "text-red-500"
+                            )}>
+                                {index.change >= 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
+                                {Math.abs(index.change).toFixed(2)} ({index.changePercent.toFixed(2)}%)
+                            </div>
                         </div>
                     </div>
                 ))}
