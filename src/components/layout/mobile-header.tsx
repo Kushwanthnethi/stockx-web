@@ -30,7 +30,7 @@ export function MobileHeader() {
                     </div>
                 ) : (
                     <Link href="/login">
-                        <Button variant="ghost" size="sm" className="font-semibold text-xs h-8 px-2">Log in</Button>
+                        <Button variant="secondary" size="sm" className="font-semibold text-xs h-8 px-3 rounded-full">Log in</Button>
                     </Link>
                 )}
             </div>

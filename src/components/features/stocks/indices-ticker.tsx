@@ -133,6 +133,9 @@ export function IndicesTicker() {
             </div>
 
             {/* Mobile View: Static Grid (Fit 2 items) */}
+            <div className="md:hidden px-1 mb-2">
+                <h4 className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-2">Indian Stock Market Analysis</h4>
+            </div>
             <div className="md:hidden grid grid-cols-2 gap-2 px-1">
                 {indices.map((index) => (
                     <div key={index.symbol} className="bg-card border-l-4 border-l-primary rounded-lg p-3 flex flex-col justify-between shadow-sm">
