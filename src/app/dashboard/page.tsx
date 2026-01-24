@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ArrowUp, ArrowDown, TrendingUp, DollarSign } from "lucide-react";
 import { useAuth } from "@/providers/auth-provider";
 import { AppSidebar } from "@/components/layout/app-sidebar";
-import { SiteHeader } from "@/components/layout/site-header";
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { StockBadge } from "@/components/shared/stock-badge";
 import { Button } from "@/components/ui/button";
@@ -42,7 +42,7 @@ export default function DashboardPage() {
     if (!user) {
         return (
             <div className="min-h-screen bg-background">
-                <SiteHeader />
+
                 <div className="flex flex-col items-center justify-center h-[calc(100vh-64px)]">
                     <h1 className="text-2xl font-bold mb-4">Please log in to view your dashboard</h1>
                     <Button asChild><Link href="/login">Login</Link></Button>
@@ -53,7 +53,7 @@ export default function DashboardPage() {
 
     return (
         <div className="min-h-screen bg-background text-foreground font-sans">
-            <SiteHeader />
+
             <main className="container max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
                 <AppSidebar />
 

@@ -6,7 +6,7 @@ import { useAuth } from "@/providers/auth-provider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FeedPost } from "@/components/features/feed/feed-post";
 import { ProfileHeader } from "@/components/features/profile/profile-header";
-import { SiteHeader } from "@/components/layout/site-header";
+
 import Link from "next/link";
 import { ActivityGraph } from "@/components/features/profile/activity-graph";
 import { API_BASE_URL } from "@/lib/config";
@@ -107,7 +107,7 @@ export default function ProfilePage() {
     return (
         <div className="min-h-screen bg-background text-foreground pb-20">
             {/* Header */}
-            <SiteHeader />
+
 
             <ProfileHeader
                 profile={profile}
