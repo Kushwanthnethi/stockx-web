@@ -163,16 +163,7 @@ export default function Home() {
                         </p>
                     </div>
 
-                    {/* Mobile Only Widgets */}
-                    <div className="lg:hidden mt-8 space-y-8">
-                        <div className="pt-8 border-t">
-                            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-                                <TrendingUp className="text-blue-500" size={20} />
-                                Market News
-                            </h3>
-                            <NewsWidget />
-                        </div>
-                    </div>
+
                 </div>
 
                 {/* Right Sidebar */}
