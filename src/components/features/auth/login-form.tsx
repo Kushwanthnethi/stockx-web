@@ -22,12 +22,13 @@ export function LoginForm({ className }: React.HTMLAttributes<HTMLDivElement>) {
             password: { value: string };
         };
         const email = target.email.value;
+        const password = target.password.value;
 
         try {
             const res = await fetch(`${API_BASE_URL}/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email }),
+                body: JSON.stringify({ email, password }),
             });
 
             if (res.ok) {
