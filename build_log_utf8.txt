@@ -1,0 +1,70 @@
+﻿
+> stockx-web@0.1.0 build
+> next build
+
+node.exe : ΓÜá Warning: Next.js 
+inferred your workspace root, but it 
+may not be correct.
+At line:1 char:1
++ & "C:\Program Files\nodejs/node.exe" 
+"C:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecif 
+   ied: (ΓÜá Warning: Ne...not be corr  
+  ect.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCom 
+   mandError
+ 
+ We detected multiple lockfiles and 
+selected the directory of 
+C:\Users\varsh\package-lock.json as the 
+root directory.
+ To silence this warning, set 
+`turbopack.root` in your Next.js 
+config, or consider removing one of the 
+lockfiles if it's not needed.
+   See https://nextjs.org/docs/app/api-r
+eference/config/next-config-js/turbopack
+#root-directory for more information.
+ Detected additional lockfiles: 
+   * C:\Users\varsh\.gemini\antigravity\
+scratch\stockx-web\package-lock.json
+
+Γû▓ Next.js 16.1.3 (Turbopack)
+
+  Creating an optimized production build ...
+Γ£ô Compiled successfully in 11.8s
+  Running TypeScript ...
+Failed to compile.
+
+../../../../node_modules/@types/react/in
+dex.d.ts:5:10
+Type error: '>' expected.
+
+[0m [90m 3 |[39m [36mexport[39m 
+[36mdefault[39m [36mfunction[39m 
+[33mHome[39m() {
+ [90m 4 |[39m   [36mreturn[39m (
+[31m[1m>[22m[39m[90m 5 |[39m     
+[33m<[39m[33mdiv[39m 
+className[33m=[39m[32m"min-h-screen 
+bg-gray-50 
+text-gray-800"[39m[33m>[39m
+ [90m   |[39m          
+[31m[1m^[22m[39m
+ [90m 6 |[39m       {[90m/* Navbar 
+*/[39m}
+ [90m 7 |[39m       
+[33m<[39m[33mnav[39m 
+className[33m=[39m[32m"flex 
+justify-between items-center p-5 
+bg-white shadow-md"[39m[33m>[39m
+ [90m 8 |[39m         
+[33m<[39m[33mh1[39m 
+className[33m=[39m[32m"text-2xl 
+font-bold text-orange-500"[39m[33m>[3
+9m[33mSwiggyClone[39m[33m<[39m[33m/
+[39m[33mh1[39m[33m>[39m[0m
+Next.js build worker exited with code: 
+1 and signal: null
