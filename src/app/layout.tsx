@@ -12,6 +12,7 @@ export const metadata: Metadata = {
 
 import { AuthProvider } from "@/providers/auth-provider";
 import { GuestAuthModal } from "@/components/shared/guest-auth-modal";
+import { SiteHeader } from "@/components/layout/site-header";
 
 // ... (imports)
 
@@ -36,6 +37,7 @@ export default function RootLayout({
                 >
                     <AuthProvider>
                         <GuestAuthModal />
+                        <SiteHeader />
                         {children}
                     </AuthProvider>
                 </ThemeProvider>

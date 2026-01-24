@@ -79,26 +79,7 @@ export default function ExplorePage() {
     return (
         <div className="min-h-screen bg-background text-foreground font-sans">
             {/* Header */}
-            <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-sm">
-                <div className="container flex h-14 items-center justify-between px-4 max-w-6xl mx-auto">
-                    <div className="font-bold text-xl tracking-tighter flex items-center gap-1">
-                        <Link href="/" className="flex items-center gap-1">
-                            <TrendingUp className="text-green-600" />
-                            StockX
-                        </Link>
-                    </div>
-                    <div className="flex items-center gap-4">
-                        <div className="hidden md:block w-full max-w-sm">
-                            <CommandMenu />
-                        </div>
-                        {user ? <UserNav /> : (
-                            <Link href="/login">
-                                <Button size="sm">Log In</Button>
-                            </Link>
-                        )}
-                    </div>
-                </div>
-            </header>
+
 
             <main className="container max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Left Sidebar */}

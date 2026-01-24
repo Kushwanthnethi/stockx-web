@@ -73,24 +73,7 @@ export default function StockDetailsPage() {
 
     return (
         <div className="min-h-screen bg-background text-foreground">
-            {/* Header */}
-            <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-sm">
-                <div className="container flex h-14 items-center justify-between px-4 max-w-6xl mx-auto">
-                    <div className="flex items-center gap-4">
-                        <Link href="/explore">
-                            <Button variant="ghost" size="icon">
-                                <ArrowLeft className="h-5 w-5" />
-                            </Button>
-                        </Link>
-                        <Link href="/" className="font-bold text-xl tracking-tighter flex items-center gap-1">
-                            StockX
-                        </Link>
-                    </div>
-                    <div className="flex-1 max-w-md mx-4">
-                        <CommandMenu />
-                    </div>
-                </div>
-            </header>
+
 
             <main className="container max-w-4xl mx-auto px-4 py-8">
                 {loading && !data ? (
