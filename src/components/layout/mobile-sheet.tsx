@@ -49,11 +49,11 @@ export function MobileSheet() {
             {/* Content Sidebar */}
             <div
                 className={cn(
-                    "fixed inset-y-0 left-0 z-[100] h-full w-[85%] max-w-sm border-r bg-background shadow-2xl transition ease-in-out duration-300 transform",
+                    "fixed inset-y-0 left-0 z-[100] h-full w-[85%] max-w-sm border-r bg-background/95 backdrop-blur-xl shadow-2xl transition ease-in-out duration-300 transform",
                     open ? "translate-x-0" : "-translate-x-full"
                 )}
             >
-                <div className="flex items-center justify-between mb-8 px-2">
+                <div className="flex items-center justify-between mb-8 px-2 pt-4">
                     <Link href="/" className="font-bold text-xl tracking-tighter flex items-center gap-1">
                         StockX
                     </Link>

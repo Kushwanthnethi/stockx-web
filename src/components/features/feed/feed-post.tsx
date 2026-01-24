@@ -431,34 +431,41 @@ export function FeedPost({ post }: { post: any }) {
 
                     {/* Header Info */}
                     <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                            <Link href={`/u/${displayPost.user?.handle}`} className="font-semibold text-foreground truncate hover:underline">
-                                {displayPost.user?.name || displayPost.user?.firstName}
-                            </Link>
-                            {displayPost.user?.verified && (
-                                <span className="text-blue-500" title="Verified">
-                                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.818-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.437 2.25c-.415-.165-.866-.25-1.336-.25-2.11 0-3.818 1.79-3.818 4 0 .495.083.965.238 1.4-1.272.65-2.147 2.02-2.147 3.6 0 1.457.748 2.795 1.867 3.61-.593 1.374-.153 2.973 1.054 3.738C5.232 20.35 6.136 20.5 7 20.5c.983 0 1.93-.19 2.802-.516.48.064.974.14 1.488.166.38.643.904 1.15 1.517 1.44.825.388 1.745.388 2.57 0 .613-.29 1.14-.796 1.517-1.44 2.198-.113 4.093-1.638 4.608-3.805 1.12-.815 1.868-2.153 1.868-3.61zM12 16.5c-3.038 0-5.5-2.462-5.5-5.5s2.462-5.5 5.5-5.5 5.5 2.462 5.5 5.5-2.462 5.5-5.5 5.5z" /></svg>
-                                </span>
-                            )}
-                            <Link href={`/u/${displayPost.user?.handle}`} className="text-muted-foreground text-sm hover:underline">@{displayPost.user?.handle}</Link>
-                            <span className="text-muted-foreground text-sm">· {new Date(displayPost.createdAt || Date.now()).toLocaleDateString()}</span>
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-2">
+                            <div className="flex items-center gap-1">
+                                <Link href={`/u/${displayPost.user?.handle}`} className="font-semibold text-foreground truncate hover:underline">
+                                    {displayPost.user?.name || displayPost.user?.firstName}
+                                </Link>
+                                {displayPost.user?.verified && (
+                                    <span className="text-blue-500" title="Verified">
+                                        <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.818-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.437 2.25c-.415-.165-.866-.25-1.336-.25-2.11 0-3.818 1.79-3.818 4 0 .495.083.965.238 1.4-1.272.65-2.147 2.02-2.147 3.6 0 1.457.748 2.795 1.867 3.61-.593 1.374-.153 2.973 1.054 3.738C5.232 20.35 6.136 20.5 7 20.5c.983 0 1.93-.19 2.802-.516.48.064.974.14 1.488.166.38.643.904 1.15 1.517 1.44.825.388 1.745.388 2.57 0 .613-.29 1.14-.796 1.517-1.44 2.198-.113 4.093-1.638 4.608-3.805 1.12-.815 1.868-2.153 1.868-3.61zM12 16.5c-3.038 0-5.5-2.462-5.5-5.5s2.462-5.5 5.5-5.5 5.5 2.462 5.5 5.5-2.462 5.5-5.5 5.5z" /></svg>
+                                    </span>
+                                )}
+                            </div>
+
+                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                <Link href={`/u/${displayPost.user?.handle}`} className="hover:underline">@{displayPost.user?.handle}</Link>
+                                <span>· {new Date(displayPost.createdAt || Date.now()).toLocaleDateString()}</span>
+                            </div>
 
                             {/* Follow Button */}
                             {currentUser && displayPost.user && currentUser.handle !== displayPost.user.handle && !isFollowing && (
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="h-5 px-2 ml-2 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-full border border-blue-200"
-                                    onClick={handleFollow}
-                                    disabled={followLoading}
-                                >
-                                    {followLoading ? "..." : (
-                                        <>
-                                            <UserPlus size={12} className="mr-1" />
-                                            Follow
-                                        </>
-                                    )}
-                                </Button>
+                                <div className="sm:ml-2">
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="h-5 px-2 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-full border border-blue-200"
+                                        onClick={handleFollow}
+                                        disabled={followLoading}
+                                    >
+                                        {followLoading ? "..." : (
+                                            <>
+                                                <UserPlus size={12} className="mr-1" />
+                                                Follow
+                                            </>
+                                        )}
+                                    </Button>
+                                </div>
                             )}
                         </div>
 
