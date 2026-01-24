@@ -11,7 +11,7 @@ import { AppSidebar } from "@/components/layout/app-sidebar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Link from "next/link";
-import { SiteHeader } from "@/components/layout/site-header";
+
 import { API_BASE_URL } from "@/lib/config";
 
 export default function NotificationsPage() {
@@ -73,7 +73,7 @@ export default function NotificationsPage() {
     return (
         <div className="min-h-screen bg-background text-foreground font-sans">
             {/* Sticky Header */}
-            <SiteHeader />
+
 
             <main className="container max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Left Sidebar */}

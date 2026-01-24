@@ -6,12 +6,12 @@ import { ResultsCalendar } from '@/components/features/results/results-calendar'
 import { Megaphone, CalendarCheck } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { AppSidebar } from "@/components/layout/app-sidebar";
-import { SiteHeader } from "@/components/layout/site-header";
+
 
 export default function ResultsPage() {
     return (
         <div className="min-h-screen bg-background text-foreground font-sans">
-            <SiteHeader />
+
             <main className="container max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Left Sidebar */}
                 <AppSidebar />
