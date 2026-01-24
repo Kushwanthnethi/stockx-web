@@ -71,7 +71,8 @@ export function IndicesTicker() {
 
     return (
         <div className="mb-6">
-            <div className="flex items-center gap-2 mb-3 px-1">
+            {/* Status Header */}
+            <div className="flex items-center gap-2 mb-3 px-1 mt-2">
                 {marketSession === MarketSession.OPEN ? (
                     <>
                         <span className="relative flex h-3 w-3">
@@ -88,7 +89,7 @@ export function IndicesTicker() {
                             <span className="relative inline-flex rounded-full h-3 w-3 bg-orange-400 opacity-75"></span>
                         </span>
                         <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-2">
-                            {statusText} <span className="text-xs text-muted-foreground normal-case tracking-normal">(Price Discovery Phase)</span>
+                            {statusText} <span className="text-xs text-muted-foreground normal-case tracking-normal">(Price Discovery)</span>
                         </h3>
                     </>
                 ) : (

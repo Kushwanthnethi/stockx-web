@@ -81,7 +81,7 @@ export default function ExplorePage() {
             {/* Header */}
 
 
-            <main className="container max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <main className="container max-w-7xl mx-auto px-4 py-8 pt-20 grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Left Sidebar */}
                 <AppSidebar />
 

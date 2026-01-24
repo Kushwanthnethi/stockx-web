@@ -112,8 +112,10 @@ export default function Home() {
                     {/* Live Indices Ticker */}
                     <IndicesTicker />
 
-                    {/* Create Post Input */}
-                    {user && <CreatePost onPostCreated={fetchPosts} />}
+                    {/* Create Post Input (Desktop Only) */}
+                    <div className="hidden md:block">
+                        {user && <CreatePost onPostCreated={fetchPosts} />}
+                    </div>
 
                     {/* Posts Feed */}
                     <div>
