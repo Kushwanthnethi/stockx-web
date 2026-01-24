@@ -482,7 +482,7 @@ export function FeedPost({ post }: { post: any }) {
                     </div>
                 </CardHeader>
 
-                <CardContent className="pb-3 text-base text-foreground whitespace-pre-line leading-relaxed">
+                <CardContent className="pb-3 text-[15px] md:text-base text-foreground whitespace-pre-line leading-normal md:leading-relaxed">
                     {isEditing ? (
                         <div className="space-y-3">
                             <textarea

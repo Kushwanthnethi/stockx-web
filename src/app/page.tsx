@@ -105,7 +105,7 @@ export default function Home() {
 
                 {/* Center Feed */}
                 <div className="lg:col-span-7">
-                    <h1 className="text-xl md:text-2xl font-bold mb-4 text-foreground">
+                    <h1 className="text-lg md:text-2xl font-bold mb-4 text-foreground">
                         Indian Stock Market Analysis & Investor Insights
                     </h1>
 
