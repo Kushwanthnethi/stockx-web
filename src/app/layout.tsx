@@ -8,6 +8,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
     title: "StocksX – Indian Stock Market Analysis & Insights",
     description: "Where Indian investors share insights, not tips.",
+    icons: {
+        icon: "/favicon.png",
+    },
 };
 
 import { AuthProvider } from "@/providers/auth-provider";
