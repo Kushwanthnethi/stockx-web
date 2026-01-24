@@ -14,20 +14,25 @@ export function MobileHeader() {
 
     return (
         <header className="md:hidden fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border h-14 px-4 flex items-center justify-between transition-transform duration-300">
-            {/* Left: Avatar (Drawer Trigger) */}
+            {/* Left: Avatar (Drawer Trigger) or Login */}
             <div className="flex items-center">
-                {/* We can wrap MobileSheet trigger around the avatar or just have a button */}
-                <div className="relative">
-                    <MobileSheet trigger={
-                        <button className="rounded-full overflow-hidden h-8 w-8 border border-border">
-                            <img
-                                src={user?.avatarUrl || "https://github.com/shadcn.png"}
-                                alt="Profile"
-                                className="h-full w-full object-cover"
-                            />
-                        </button>
-                    } />
-                </div>
+                {user ? (
+                    <div className="relative">
+                        <MobileSheet trigger={
+                            <button className="rounded-full overflow-hidden h-8 w-8 border border-border">
+                                <img
+                                    src={user.avatarUrl || "https://github.com/shadcn.png"}
+                                    alt="Profile"
+                                    className="h-full w-full object-cover"
+                                />
+                            </button>
+                        } />
+                    </div>
+                ) : (
+                    <Link href="/login">
+                        <Button variant="ghost" size="sm" className="font-semibold text-xs h-8 px-2">Log in</Button>
+                    </Link>
+                )}
             </div>
 
             {/* Center: Logo */}
@@ -37,13 +42,19 @@ export function MobileHeader() {
                 </Link>
             </div>
 
-            {/* Right: Settings / Actions */}
+            {/* Right: Settings / Actions or Sign Up */}
             <div className="flex items-center">
-                <Link href="/settings">
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <Settings className="h-5 w-5" />
-                    </Button>
-                </Link>
+                {user ? (
+                    <Link href="/settings">
+                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Settings className="h-5 w-5" />
+                        </Button>
+                    </Link>
+                ) : (
+                    <Link href="/signup">
+                        <Button size="sm" className="h-7 text-xs px-3 rounded-full">Sign up</Button>
+                    </Link>
+                )}
             </div>
         </header>
     );
