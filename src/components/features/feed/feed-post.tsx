@@ -97,7 +97,15 @@ export function FeedPost({ post }: { post: any }) {
         setIsFollowing(displayPost.isFollowingAuthor || false);
     }, [post.likeCount, post.likedByMe, post._count, post.comments, post.reshareCount, post.isFollowingAuthor, post.originalPost]);
 
+    // Haptic Helper
+    const vibrate = () => {
+        if (typeof navigator !== 'undefined' && navigator.vibrate) {
+            navigator.vibrate(10); // Light tap
+        }
+    };
+
     const handleFollow = async () => {
+        vibrate();
         if (!currentUser) {
             setShowLoginModal(true);
             return;
@@ -129,6 +137,7 @@ export function FeedPost({ post }: { post: any }) {
     };
 
     const handleLike = async () => {
+        vibrate();
         const token = localStorage.getItem('accessToken');
         if (!token) {
             setShowLoginModal(true);
@@ -228,6 +237,7 @@ export function FeedPost({ post }: { post: any }) {
         }
     }
     const handleBookmark = async () => {
+        vibrate();
         const token = localStorage.getItem('accessToken');
         if (!token) {
             setShowLoginModal(true);
@@ -390,7 +400,7 @@ export function FeedPost({ post }: { post: any }) {
 
 
     return (
-        <div className="mb-4">
+        <div className="mb-4 last:mb-20">
             {isReshare && (
                 <div className="flex items-center gap-2 mb-1 ml-4 text-muted-foreground text-sm">
                     <Repeat2 size={14} />

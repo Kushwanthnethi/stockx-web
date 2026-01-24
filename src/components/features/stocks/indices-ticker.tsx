@@ -103,7 +103,8 @@ export function IndicesTicker() {
                 )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Desktop View: Grid of Cards */}
+            <div className="hidden md:grid md:grid-cols-2 gap-4">
                 {indices.map((index) => (
                     <Card key={index.symbol} className="bg-card border-l-4 border-l-primary shadow-sm hover:shadow-md transition-shadow">
                         <CardContent className="p-4 flex items-center justify-between">
@@ -127,6 +128,29 @@ export function IndicesTicker() {
                             </div>
                         </CardContent>
                     </Card>
+                ))}
+            </div>
+
+            {/* Mobile View: Compact Horizontal Scroll */}
+            <div className="md:hidden flex overflow-x-auto pb-2 gap-3 no-scrollbar snap-x">
+                {indices.map((index) => (
+                    <div key={index.symbol} className="snap-center shrink-0 min-w-[140px] bg-card/50 backdrop-blur-sm border border-border rounded-lg p-3 flex flex-col justify-between shadow-sm">
+                        <div className="flex justify-between items-center mb-1">
+                            <span className="font-bold text-sm tracking-tight">{index.symbol}</span>
+                            <span className={cn(
+                                "text-[10px] font-bold px-1.5 py-0.5 rounded-full flex items-center gap-0.5",
+                                index.change >= 0 ? "bg-green-500/10 text-green-600" : "bg-red-500/10 text-red-600"
+                            )}>
+                                {index.changePercent >= 0 ? '+' : ''}{index.changePercent.toFixed(2)}%
+                            </span>
+                        </div>
+                        <div className="flex items-end justify-between">
+                            <span className="text-lg font-bold tabular-nums tracking-tight">
+                                {index.price.toLocaleString(undefined, { maximumFractionDigits: 0, minimumFractionDigits: 0 })}
+                            </span>
+                            {index.change >= 0 ? <TrendingUp size={12} className="text-green-500 mb-1" /> : <TrendingDown size={12} className="text-red-500 mb-1" />}
+                        </div>
+                    </div>
                 ))}
             </div>
         </div>

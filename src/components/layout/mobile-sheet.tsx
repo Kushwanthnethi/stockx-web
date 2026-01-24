@@ -8,8 +8,20 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SIDEBAR_ITEMS } from "./app-sidebar";
+import { TrendingUp, Megaphone, Gavel, Bell, Bookmark, User, FileText } from "lucide-react";
 
-export function MobileSheet() {
+// Custom items for Mobile Drawer (Profile Menu) as per user request
+// Order: StockX Screener, Result Corner, Verdict, Notifications, Bookmarks (Saved), About
+const MOBILE_DRAWER_ITEMS = [
+    { label: "StockX Screener", href: "/explore", icon: TrendingUp },
+    { label: "Result Corner", href: "/results", icon: Megaphone },
+    { label: "Verdict", href: "/verdict", icon: Gavel, isNew: true },
+    { label: "Notifications", href: "/notifications", icon: Bell },
+    { label: "Bookmarks", href: "/bookmarks", icon: Bookmark },
+    { label: "About", href: "/about", icon: User },
+];
+
+export function MobileSheet({ trigger, className }: { trigger?: React.ReactNode, className?: string }) {
     const [open, setOpen] = React.useState(false);
     const pathname = usePathname();
 
@@ -39,11 +51,15 @@ export function MobileSheet() {
     }, [open]);
 
     return (
-        <div className="md:hidden">
-            <Button variant="ghost" size="icon" onClick={() => setOpen(true)} className="mr-2">
-                <Menu className="h-5 w-5" />
-                <span className="sr-only">Toggle Menu</span>
-            </Button>
+        <div className={cn("md:hidden", className)}>
+            {trigger ? (
+                <div onClick={() => setOpen(true)}>{trigger}</div>
+            ) : (
+                <Button variant="ghost" size="icon" onClick={() => setOpen(true)} className="mr-2">
+                    <Menu className="h-5 w-5" />
+                    <span className="sr-only">Toggle Menu</span>
+                </Button>
+            )}
 
             {mounted && open && (
                 // Use Portal to break out of any parent stacking contexts (like filters/transforms)
@@ -76,7 +92,7 @@ export function MobileSheet() {
                                 </div>
 
                                 <div className="space-y-2">
-                                    {SIDEBAR_ITEMS.map((item) => (
+                                    {MOBILE_DRAWER_ITEMS.map((item) => (
                                         <Link key={item.href} href={item.href} onClick={() => setOpen(false)}>
                                             <Button
                                                 variant="ghost"
