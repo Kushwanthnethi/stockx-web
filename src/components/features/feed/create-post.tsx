@@ -79,6 +79,12 @@ export function CreatePost({ onPostCreated }: { onPostCreated?: () => void }) {
                 // Backend returns relative path (e.g. /uploads/filename.jpg)
                 // We store the relative path in state and DB
                 setImageUrl(data.url);
+            } else if (res.status === 401) {
+                alert('Session expired. Please log in again.');
+                // Optional: redirect to login
+                // window.location.href = '/login';
+            } else {
+                console.error('Failed to upload image', res.statusText);
             }
         } catch (error) {
             console.error('Error uploading image', error);
