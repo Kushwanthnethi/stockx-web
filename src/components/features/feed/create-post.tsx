@@ -46,7 +46,8 @@ export function CreatePost({ onPostCreated }: { onPostCreated?: () => void }) {
                     onPostCreated();
                 }
             } else {
-                console.error('Failed to post');
+                const errorData = await res.json().catch(() => ({}));
+                console.error('Failed to post', res.status, errorData);
             }
         } catch (error) {
             console.error('Error posting', error);
@@ -75,7 +76,9 @@ export function CreatePost({ onPostCreated }: { onPostCreated?: () => void }) {
 
             if (res.ok) {
                 const data = await res.json();
-                setImageUrl(data.url);
+                // Backend now returns relative path (e.g. /uploads/filename.jpg)
+                // We construct the full URL here
+                setImageUrl(`${API_BASE_URL}${data.url}`);
             }
         } catch (error) {
             console.error('Error uploading image', error);
