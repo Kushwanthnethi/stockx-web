@@ -455,9 +455,9 @@ export function FeedPost({ post }: { post: any }) {
                             </div>
 
                             <div className="flex items-center gap-1 text-sm text-muted-foreground min-w-0">
-                                <Link href={`/u/${displayPost.user?.handle}`} className="hover:underline hidden sm:inline">@{displayPost.user?.handle}</Link>
-                                <span className="hidden sm:inline">·</span>
-                                <span className="whitespace-nowrap">
+                                <Link href={`/u/${displayPost.user?.handle}`} className="hover:underline truncate">@{displayPost.user?.handle}</Link>
+                                <span className="flex-shrink-0">·</span>
+                                <span className="whitespace-nowrap flex-shrink-0">
                                     {formatDistanceToNow(new Date(displayPost.createdAt || Date.now()), { addSuffix: true })
                                         .replace("about ", "")
                                         .replace("less than a minute", "just now")}
