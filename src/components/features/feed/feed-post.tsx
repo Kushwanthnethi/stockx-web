@@ -16,6 +16,7 @@ import Link from "next/link";
 import { useAuth } from "@/providers/auth-provider";
 import { Users, UserPlus } from "lucide-react";
 import { API_BASE_URL } from "@/lib/config";
+import { formatDistanceToNow } from "date-fns";
 
 const formatContent = (content: string) => {
     if (!content) return null;
@@ -453,9 +454,14 @@ export function FeedPost({ post }: { post: any }) {
                                 )}
                             </div>
 
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                <Link href={`/u/${displayPost.user?.handle}`} className="hover:underline">@{displayPost.user?.handle}</Link>
-                                <span>· {new Date(displayPost.createdAt || Date.now()).toLocaleDateString()}</span>
+                            <div className="flex items-center gap-1 text-sm text-muted-foreground min-w-0">
+                                <Link href={`/u/${displayPost.user?.handle}`} className="hover:underline hidden sm:inline">@{displayPost.user?.handle}</Link>
+                                <span className="hidden sm:inline">·</span>
+                                <span className="whitespace-nowrap">
+                                    {formatDistanceToNow(new Date(displayPost.createdAt || Date.now()), { addSuffix: true })
+                                        .replace("about ", "")
+                                        .replace("less than a minute", "just now")}
+                                </span>
                             </div>
 
                             {/* Follow Button */}
