@@ -442,7 +442,7 @@ export function FeedPost({ post }: { post: any }) {
 
                     {/* Header Info */}
                     <div className="flex-1 min-w-0">
-                        <div className="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-2">
+                        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
                             <div className="flex items-center gap-1">
                                 <Link href={`/u/${displayPost.user?.handle}`} className="font-semibold text-foreground truncate hover:underline">
                                     {displayPost.user?.name || displayPost.user?.firstName}
@@ -466,7 +466,7 @@ export function FeedPost({ post }: { post: any }) {
 
                             {/* Follow Button */}
                             {currentUser && displayPost.user && currentUser.handle !== displayPost.user.handle && !isFollowing && (
-                                <div className="sm:ml-2">
+                                <div className="">
                                     <Button
                                         variant="ghost"
                                         size="sm"
