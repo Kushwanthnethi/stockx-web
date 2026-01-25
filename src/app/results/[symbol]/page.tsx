@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { SiteHeader } from "@/components/layout/site-header";
+
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -88,7 +88,7 @@ export default function ResultAnalysisPage() {
 
     return (
         <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/20">
-            <SiteHeader />
+
             <main className="container max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Apps Sidebar Integration */}
                 <AppSidebar />
