@@ -79,7 +79,7 @@ export function FeedPost({ post }: { post: any }) {
     const [hasReported, setHasReported] = React.useState(false); // Client-side temp hide
     const [isDeleted, setIsDeleted] = React.useState(false); // Client-side temp hide
 
-    if (isDeleted) return null; // Hide post if deleted/blocked/reported
+    // if (isDeleted) return null; // MOVED TO RENDER
 
     // Update local state if prop changes (e.g. from a parent refresh)
     // Update local state if prop changes (e.g. from a parent refresh)
@@ -399,6 +399,8 @@ export function FeedPost({ post }: { post: any }) {
     };
 
 
+
+    if (isDeleted) return null;
 
     return (
         <div className="mb-4 last:mb-20">
