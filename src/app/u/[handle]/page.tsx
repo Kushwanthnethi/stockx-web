@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useAuth } from "@/providers/auth-provider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { LogOut } from "lucide-react";
 import { FeedPost } from "@/components/features/feed/feed-post";
 import { ProfileHeader } from "@/components/features/profile/profile-header";
 
@@ -13,7 +15,7 @@ import { API_BASE_URL } from "@/lib/config";
 
 export default function ProfilePage() {
     const { handle } = useParams();
-    const { user: currentUser, token } = useAuth();
+    const { user: currentUser, token, logout } = useAuth();
     const [profile, setProfile] = useState<any>(null);
     const [posts, setPosts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -116,6 +118,17 @@ export default function ProfilePage() {
                 onFollowToggle={handleFollow}
                 followLoading={followLoading}
             />
+
+            {/* Mobile Sign Out Button */}
+            {isOwner && (
+                <div className="md:hidden px-4 mb-4">
+                    <Button variant="destructive" className="w-full gap-2" onClick={logout}>
+                        <LogOut className="h-4 w-4" />
+                        Sign Out
+                    </Button>
+                </div>
+            )}
+
 
             <div className="container max-w-5xl mx-auto px-4">
                 <Tabs defaultValue="overview" className="w-full">
