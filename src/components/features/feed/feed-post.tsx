@@ -513,7 +513,7 @@ export function FeedPost({ post }: { post: any }) {
                         <div className="mt-3 rounded-xl overflow-hidden border border-border max-h-[512px] flex items-center justify-center bg-muted/50">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
-                                src={displayPost.imageUrl}
+                                src={displayPost.imageUrl.startsWith('http') ? displayPost.imageUrl : `${API_BASE_URL}${displayPost.imageUrl}`}
                                 alt="Post content"
                                 className="w-full h-full object-contain"
                                 onError={() => setImageError(true)}

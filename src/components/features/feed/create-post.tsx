@@ -76,9 +76,9 @@ export function CreatePost({ onPostCreated }: { onPostCreated?: () => void }) {
 
             if (res.ok) {
                 const data = await res.json();
-                // Backend now returns relative path (e.g. /uploads/filename.jpg)
-                // We construct the full URL here
-                setImageUrl(`${API_BASE_URL}${data.url}`);
+                // Backend returns relative path (e.g. /uploads/filename.jpg)
+                // We store the relative path in state and DB
+                setImageUrl(data.url);
             }
         } catch (error) {
             console.error('Error uploading image', error);
@@ -105,7 +105,11 @@ export function CreatePost({ onPostCreated }: { onPostCreated?: () => void }) {
 
                         {imageUrl && (
                             <div className="relative mt-2 rounded-lg overflow-hidden border">
-                                <img src={imageUrl} alt="Upload preview" className="max-h-60 w-full object-cover" />
+                                <img
+                                    src={imageUrl.startsWith('http') ? imageUrl : `${API_BASE_URL}${imageUrl}`}
+                                    alt="Upload preview"
+                                    className="max-h-60 w-full object-cover"
+                                />
                                 <button
                                     onClick={() => setImageUrl(null)}
                                     className="absolute top-2 right-2 p-1 bg-black/50 rounded-full text-white hover:bg-black/70 transition-colors"
