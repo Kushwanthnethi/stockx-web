@@ -100,13 +100,19 @@ export default function StockOfTheWeekPage() {
         const fetchData = async () => {
             try {
                 const [latestRes, archiveRes] = await Promise.all([
-                    fetch(`${API_BASE_URL}/stocks/weekly/latest`),
-                    fetch(`${API_BASE_URL}/stocks/weekly/archive`)
+                    fetch(`${API_BASE_URL}/stocks/weekly/latest?t=${Date.now()}`),
+                    fetch(`${API_BASE_URL}/stocks/weekly/archive?t=${Date.now()}`)
                 ]);
 
                 if (latestRes.ok) {
                     const text = await latestRes.text();
-                    setLatest(text ? JSON.parse(text) : null);
+                    console.log("DEBUG: Latest Stock Data Raw:", text); // Debug log
+                    const data = text ? JSON.parse(text) : null;
+                    if (data) {
+                        console.log("DEBUG: Narrative Length:", data.narrative?.length);
+                        console.log("DEBUG: Narrative Content:", data.narrative);
+                    }
+                    setLatest(data);
                 }
                 if (archiveRes.ok) {
                     const text = await archiveRes.text();
@@ -254,28 +260,39 @@ export default function StockOfTheWeekPage() {
 
                                                 // Parse Structured Text
                                                 const sections = latest.narrative.split(/\d\.\s\*\*/);
-                                                // sections[0] might be intro text or empty
-                                                // sections[1..n] will start with "Title**\nBody"
+
+                                                // Check if we actually found sections
+                                                if (sections.length <= 1) {
+                                                    // Fallback to raw text if structure is missing
+                                                    return (
+                                                        <div className="bg-card/30 rounded-xl p-6 border border-border/40">
+                                                            <div className="text-lg leading-relaxed text-muted-foreground whitespace-pre-line font-light">
+                                                                {latest.narrative}
+                                                            </div>
+                                                        </div>
+                                                    );
+                                                }
 
                                                 return (
                                                     <div className="space-y-6">
                                                         {sections.map((section: string, idx: number) => {
                                                             if (!section.trim()) return null;
 
-                                                            // Logic to split Title and Body
-                                                            // content format: "Title**\nBody..."
                                                             const parts = section.split("**");
-                                                            if (parts.length < 2 && idx === 0) {
-                                                                // Intro text without numbering
+
+                                                            // Handle cases where split doesn't find a title divider
+                                                            if (parts.length < 2) {
                                                                 return (
-                                                                    <p key={idx} className="text-muted-foreground leading-relaxed">
-                                                                        {section.trim()}
-                                                                    </p>
+                                                                    <div key={idx} className="bg-card/30 rounded-xl p-5 border border-border/40">
+                                                                        <p className="text-base text-muted-foreground/90 leading-relaxed font-light">
+                                                                            {section.trim()}
+                                                                        </p>
+                                                                    </div>
                                                                 );
                                                             }
 
                                                             const title = parts[0]?.trim();
-                                                            const body = parts.slice(1).join("**").trim(); // Reconstruct if multiple ** (unlikely)
+                                                            const body = parts.slice(1).join("**").trim();
 
                                                             if (!title) return null;
 
