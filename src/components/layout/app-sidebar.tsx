@@ -1,14 +1,15 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Home, TrendingUp, Bell, Bookmark, Megaphone, Gavel, User } from "lucide-react";
+import { Home, TrendingUp, Bell, Bookmark, Megaphone, Gavel, User, Target } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 export const SIDEBAR_ITEMS = [
     { label: "Home", href: "/", icon: Home },
     { label: "StockX Screener", href: "/explore", icon: TrendingUp },
+    { label: "Stock of the Week", href: "/stock-of-the-week", icon: Target, isNew: true },
     { label: "Result Corner", href: "/results", icon: Megaphone },
-    { label: "Verdict", href: "/verdict", icon: Gavel, isNew: true },
+    { label: "Verdict", href: "/verdict", icon: Gavel },
     { label: "Notifications", href: "/notifications", icon: Bell },
     { label: "Bookmarks", href: "/bookmarks", icon: Bookmark },
     { label: "About", href: "/about", icon: User },
