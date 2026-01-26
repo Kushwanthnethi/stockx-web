@@ -103,12 +103,12 @@ export default function StockOfTheWeekPage() {
                 ]);
 
                 if (latestRes.ok) {
-                    const data = await latestRes.json();
-                    setLatest(data);
+                    const text = await latestRes.text();
+                    setLatest(text ? JSON.parse(text) : null);
                 }
                 if (archiveRes.ok) {
-                    const data = await archiveRes.json();
-                    setArchive(data);
+                    const text = await archiveRes.text();
+                    setArchive(text ? JSON.parse(text) : []);
                 }
             } catch (error) {
                 console.error("Failed to fetch weekly stock", error);
