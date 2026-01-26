@@ -9,6 +9,8 @@ import { API_BASE_URL } from "@/lib/config";
 import { Loader2, TrendingUp, AlertTriangle, Target, DollarSign, Activity, Calendar, ArrowRight, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { AppSidebar } from "@/components/layout/app-sidebar";
+import { Button } from "@/components/ui/button";
 
 // --- Helpers ---
 const formatINR = (value: number) => {
@@ -81,11 +83,11 @@ const StatCard = ({ label, value, subtext, delay }: { label: string; value: stri
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay, duration: 0.5 }}
-        className="bg-card/50 backdrop-blur-md border border-border/50 rounded-xl p-4 md:p-6 flex flex-col gap-2 hover:bg-card/80 transition-colors"
+        className="bg-card/40 backdrop-blur-sm border border-border/30 rounded-lg p-3 md:p-4 flex flex-col gap-1 hover:bg-card/60 transition-colors"
     >
-        <span className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">{label}</span>
-        <span className="text-xl md:text-2xl font-bold tracking-tight">{value}</span>
-        {subtext && <span className="text-xs text-muted-foreground">{subtext}</span>}
+        <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">{label}</span>
+        <span className="text-lg md:text-xl font-bold tracking-tight text-foreground">{value}</span>
+        {subtext && <span className="text-[10px] text-muted-foreground">{subtext}</span>}
     </motion.div>
 );
 
@@ -120,120 +122,123 @@ export default function StockOfTheWeekPage() {
         fetchData();
     }, []);
 
-    if (loading) {
-        return (
-            <div className="flex h-screen items-center justify-center bg-background">
-                <Loader2 className="h-10 w-10 animate-spin text-primary" />
-            </div>
-        );
-    }
-
+    // Layout Wrapper
     return (
-        <div className="relative min-h-[calc(100vh-4rem)] bg-background pb-20">
-            {/* Background Decorations - Lower z-index to not cover sidebar */}
-            <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] -z-10 pointer-events-none" />
-            <div className="fixed bottom-0 left-0 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[100px] -z-10 pointer-events-none" />
+        <div className="container max-w-7xl mx-auto px-4 py-6">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                {/* Left Sidebar - Re-added to fix visibility issue */}
+                <AppSidebar />
 
-            <div className="container max-w-6xl mx-auto px-4 py-8 space-y-12">
+                {/* Main Content Area */}
+                <main className="lg:col-span-10 space-y-10">
 
-                {/* Header Title */}
-                <motion.div
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-border/30 pb-6"
-                >
-                    <div className="space-y-2">
-                        <div className="flex items-center gap-2">
-                            <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 rounded-full px-3">
+                    {/* Page Header */}
+                    <div className="flex flex-col gap-2 border-b border-border/30 pb-6">
+                        <motion.div
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className="flex items-center gap-3"
+                        >
+                            <Badge variant="outline" className="border-primary/30 text-primary bg-primary/5 uppercase tracking-widest text-[10px] font-bold py-1">
                                 Weekly Intelligence
                             </Badge>
-                            <span className="text-sm text-muted-foreground font-medium flex items-center gap-1">
-                                <Calendar className="w-3.5 h-3.5" />
+                            <span className="text-xs text-muted-foreground flex items-center gap-1">
+                                <Calendar className="w-3 h-3" />
                                 Updated Sundays 12:00 PM
                             </span>
-                        </div>
-                        <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">
-                            Stock of the <span className="text-primary">Week</span>
-                        </h1>
-                        <p className="text-lg text-muted-foreground max-w-2xl">
+                        </motion.div>
+                        <motion.h1
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="text-4xl md:text-5xl font-black tracking-tight"
+                        >
+                            Stock of the <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-500">Week</span>
+                        </motion.h1>
+                        <motion.p
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.1 }}
+                            className="text-lg text-muted-foreground/80 max-w-3xl leading-relaxed"
+                        >
                             Our highest conviction idea. Analyzed by AI, grounded in data, built for the week ahead.
-                        </p>
+                        </motion.p>
                     </div>
-                </motion.div>
 
-                {/* Hero Section: The Pick */}
-                {!latest ? (
-                    <Card className="border-dashed h-64 flex items-center justify-center text-center">
-                        <div className="space-y-2">
-                            <Activity className="h-8 w-8 text-muted-foreground mx-auto" />
-                            <p className="text-muted-foreground">Market Scanning in Progress...</p>
+                    {/* Content Loading State */}
+                    {loading && (
+                        <div className="h-64 flex flex-col items-center justify-center border border-dashed border-border/50 rounded-2xl bg-muted/5">
+                            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground mb-4" />
+                            <p className="text-sm text-muted-foreground">Scanning the market universe...</p>
                         </div>
-                    </Card>
-                ) : (
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.6 }}
-                        className="relative"
-                    >
-                        {/* THE GOLDEN CARD */}
-                        <div className="relative overflow-hidden rounded-3xl border border-border/50 bg-gradient-to-br from-card to-background shadow-2xl">
-                            {/* Decorative Top Banner */}
-                            <div className="h-2 w-full bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500" />
+                    )}
 
-                            <div className="p-6 md:p-10 grid gap-10 md:grid-cols-12">
+                    {/* Active Pick Display */}
+                    {!loading && latest && (
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.98 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.5 }}
+                            className="group relative overflow-hidden rounded-[2rem] border border-border/50 bg-background shadow-2xl"
+                        >
+                            {/* Premium Grid Background Effect */}
+                            <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
+                            <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-blue-500/5 opacity-50" />
 
-                                {/* Left: Ticker & Gauge */}
-                                <div className="md:col-span-5 flex flex-col items-center md:items-start text-center md:text-left gap-6 border-b md:border-b-0 md:border-r border-border/50 pb-8 md:pb-0 md:pr-8">
-                                    <div className="space-y-1">
-                                        <h2 className="text-6xl md:text-7xl font-black tracking-tighter text-foreground">
+                            <div className="relative p-6 md:p-10 grid gap-12 md:grid-cols-12">
+
+                                {/* Left Column: Identity & Gauge */}
+                                <div className="md:col-span-5 flex flex-col gap-6 md:border-r border-border/50 md:pr-10">
+                                    <div>
+                                        <h2 className="text-6xl font-black tracking-tighter text-foreground leading-none mb-2">
                                             {latest.stockSymbol}
                                         </h2>
-                                        <p className="text-xl md:text-2xl font-medium text-muted-foreground truncate max-w-[280px]">
+                                        <p className="text-xl font-medium text-muted-foreground truncate w-full">
                                             {latest.stock?.companyName}
                                         </p>
                                     </div>
 
-                                    <div className="flex items-center gap-4 bg-muted/30 p-4 rounded-xl w-full justify-center md:justify-start">
-                                        <span className="text-3xl font-bold flex items-baseline gap-1">
-                                            {formatINR(latest.priceAtSelection)}
-                                            <span className="text-xs font-normal text-muted-foreground uppercase ml-1">Entry</span>
-                                        </span>
+                                    <div className="flex items-center gap-6">
+                                        <div className="bg-card/50 backdrop-blur border border-border/50 rounded-2xl p-4 flex-1">
+                                            <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider block mb-1">Entry Price</span>
+                                            <span className="text-3xl font-bold text-foreground">
+                                                {formatINR(latest.priceAtSelection)}
+                                            </span>
+                                        </div>
                                     </div>
 
-                                    <div className="mt-2 w-full flex justify-center md:justify-start">
+                                    <div className="flex justify-center py-4">
                                         <ConvictionGauge score={latest.convictionScore} />
                                     </div>
 
-                                    <div className="w-full grid grid-cols-2 gap-3 mt-auto">
-                                        <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3 text-center">
-                                            <div className="text-xs text-green-600 dark:text-green-400 font-bold uppercase mb-1">Target</div>
-                                            <div className="font-mono font-bold">{formatINR(latest.targetPrice)}</div>
+                                    <div className="grid grid-cols-2 gap-3 mt-auto">
+                                        <div className="flex flex-col p-3 rounded-lg bg-green-500/10 border border-green-500/10">
+                                            <span className="text-[10px] font-bold uppercase text-green-500 mb-1">Target</span>
+                                            <span className="font-mono font-bold text-lg">{formatINR(latest.targetPrice)}</span>
                                         </div>
-                                        <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 text-center">
-                                            <div className="text-xs text-red-600 dark:text-red-400 font-bold uppercase mb-1">Stop Loss</div>
-                                            <div className="font-mono font-bold">{formatINR(latest.stopLoss)}</div>
+                                        <div className="flex flex-col p-3 rounded-lg bg-red-500/10 border border-red-500/10">
+                                            <span className="text-[10px] font-bold uppercase text-red-500 mb-1">Stop Loss</span>
+                                            <span className="font-mono font-bold text-lg">{formatINR(latest.stopLoss)}</span>
                                         </div>
                                     </div>
                                 </div>
 
-                                {/* Right: Narrative & Stats */}
-                                <div className="md:col-span-7 flex flex-col gap-8">
-
+                                {/* Right Column: Narrative & Logic */}
+                                <div className="md:col-span-7 flex flex-col justify-between gap-8">
                                     <div className="space-y-4">
-                                        <div className="flex items-center gap-2 mb-2">
-                                            <div className="h-6 w-1 bg-primary rounded-full" />
-                                            <h3 className="text-lg font-bold uppercase tracking-widest text-muted-foreground">The Thesis</h3>
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-px bg-border flex-1" />
+                                            <span className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">Investment Thesis</span>
+                                            <div className="h-px bg-border flex-1" />
                                         </div>
-                                        <div className="prose prose-lg prose-invert max-w-none text-foreground/90 leading-relaxed font-light">
-                                            {latest.narrative?.split('\n').map((line: string, i: number) => (
-                                                <p key={i} className="mb-4">{line}</p>
-                                            ))}
+
+                                        <div className="prose prose-neutral dark:prose-invert max-w-none">
+                                            <div className="text-lg leading-relaxed text-muted-foreground whitespace-pre-line font-light">
+                                                {latest.narrative || "Analysis pending..."}
+                                            </div>
                                         </div>
                                     </div>
 
-                                    {/* Mini Logic Grid */}
-                                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-auto">
+                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 border-t border-border/40">
                                         <StatCard
                                             label="ROE"
                                             value={`${(latest.stock.returnOnEquity * 100).toFixed(1)}%`}
@@ -253,94 +258,91 @@ export default function StockOfTheWeekPage() {
                                             subtext="Size"
                                         />
                                         <StatCard
-                                            label="Momentum"
-                                            value={latest.stock.changePercent > 0 ? "+ Bullish" : "Neutral"}
+                                            label="Trend"
+                                            value={latest.stock.changePercent > 0 ? "Bullish" : "Bearish"}
                                             delay={0.5}
-                                            subtext="Trend"
+                                            subtext="Momentum"
                                         />
                                     </div>
                                 </div>
                             </div>
+                        </motion.div>
+                    )}
+
+                    {/* Empty State */}
+                    {!loading && !latest && (
+                        <div className="h-64 flex flex-col items-center justify-center border border-dashed border-border rounded-2xl bg-muted/5">
+                            <Activity className="h-10 w-10 text-muted-foreground mb-4 opacity-50" />
+                            <h3 className="text-lg font-medium text-foreground">No active pick for this week</h3>
+                            <p className="text-sm text-muted-foreground mt-1">Check back on Sunday at 12:00 PM.</p>
                         </div>
-                    </motion.div>
-                )}
+                    )}
 
-                <Separator className="bg-border/50" />
-
-                {/* Archive Table */}
-                {archive.length > 0 && (
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="space-y-6"
-                    >
+                    {/* Archive Section */}
+                    <div className="pt-10 space-y-6">
                         <div className="flex items-center justify-between">
-                            <h3 className="text-2xl font-bold tracking-tight">Performance Archive</h3>
-                            <Button variant="outline" size="sm" className="hidden md:flex">View Methodology</Button>
+                            <h3 className="text-xl font-bold tracking-tight flex items-center gap-2">
+                                <Activity className="w-5 h-5 text-muted-foreground" />
+                                Performance Archive
+                            </h3>
                         </div>
 
-                        <div className="rounded-xl border border-border/40 overflow-hidden bg-card/30 backdrop-blur-sm">
-                            <table className="w-full text-sm">
-                                <thead className="bg-muted/50 border-b border-border/40">
-                                    <tr>
-                                        <th className="px-6 py-4 text-left font-semibold text-muted-foreground uppercase tracking-wider text-xs">Date</th>
-                                        <th className="px-6 py-4 text-left font-semibold text-muted-foreground uppercase tracking-wider text-xs">Asset</th>
-                                        <th className="px-6 py-4 text-right font-semibold text-muted-foreground uppercase tracking-wider text-xs">Entry Price</th>
-                                        <th className="px-6 py-4 text-right font-semibold text-muted-foreground uppercase tracking-wider text-xs">Result</th>
-                                        <th className="px-6 py-4 text-center font-semibold text-muted-foreground uppercase tracking-wider text-xs">Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-border/30">
-                                    {archive.map((pick: any, i) => {
-                                        const pnl = pick.finalPrice ? ((pick.finalPrice - pick.priceAtSelection) / pick.priceAtSelection) * 100 : 0;
-                                        return (
-                                            <motion.tr
-                                                initial={{ opacity: 0, x: -10 }}
-                                                whileInView={{ opacity: 1, x: 0 }}
-                                                transition={{ delay: i * 0.05 }}
-                                                key={pick.id}
-                                                className="group hover:bg-muted/30 transition-colors"
-                                            >
-                                                <td className="px-6 py-4 text-muted-foreground font-medium">
-                                                    {new Date(pick.weekStartDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    <div className="font-bold text-foreground group-hover:text-primary transition-colors">{pick.stockSymbol}</div>
-                                                </td>
-                                                <td className="px-6 py-4 text-right font-mono text-muted-foreground">
-                                                    {formatINR(pick.priceAtSelection)}
-                                                </td>
-                                                <td className="px-6 py-4 text-right font-mono">
-                                                    {pick.finalPrice ? (
-                                                        <span className={pnl >= 0 ? "text-green-500 font-bold" : "text-red-500 font-bold"}>
-                                                            {pnl > 0 ? "+" : ""}{pnl.toFixed(2)}%
-                                                        </span>
-                                                    ) : (
-                                                        <span className="text-muted-foreground">-</span>
-                                                    )}
-                                                </td>
-                                                <td className="px-6 py-4 text-center">
-                                                    {pick.finalPrice ? (
-                                                        <Badge variant="outline" className="border-border text-muted-foreground">Closed</Badge>
-                                                    ) : (
-                                                        <Badge className="bg-green-500/10 text-green-500 hover:bg-green-500/20 border-green-500/20">Active</Badge>
-                                                    )}
-                                                </td>
-                                            </motion.tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
-                        </div>
-                    </motion.div>
-                )}
+                        {archive.length > 0 ? (
+                            <div className="rounded-xl border border-border/50 overflow-hidden bg-card/50">
+                                <table className="w-full text-sm text-left">
+                                    <thead className="bg-muted/30 border-b border-border/50 text-xs uppercase text-muted-foreground font-semibold tracking-wider">
+                                        <tr>
+                                            <th className="px-6 py-4">Week</th>
+                                            <th className="px-6 py-4">Stock</th>
+                                            <th className="px-6 py-4 text-right">Entry</th>
+                                            <th className="px-6 py-4 text-right">Result</th>
+                                            <th className="px-6 py-4 text-center">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-border/50">
+                                        {archive.map((pick: any) => {
+                                            const pnl = pick.finalPrice ? ((pick.finalPrice - pick.priceAtSelection) / pick.priceAtSelection) * 100 : 0;
+                                            return (
+                                                <tr key={pick.id} className="hover:bg-muted/20 transition-colors">
+                                                    <td className="px-6 py-4 font-medium text-muted-foreground">
+                                                        {new Date(pick.weekStartDate).toLocaleDateString()}
+                                                    </td>
+                                                    <td className="px-6 py-4 font-bold text-foreground">
+                                                        {pick.stockSymbol}
+                                                    </td>
+                                                    <td className="px-6 py-4 text-right font-mono text-muted-foreground">
+                                                        {formatINR(pick.priceAtSelection)}
+                                                    </td>
+                                                    <td className="px-6 py-4 text-right font-mono">
+                                                        {pick.finalPrice ? (
+                                                            <span className={pnl >= 0 ? "text-green-500" : "text-red-500"}>
+                                                                {pnl > 0 ? "+" : ""}{pnl.toFixed(2)}%
+                                                            </span>
+                                                        ) : (
+                                                            <span className="text-muted-foreground">-</span>
+                                                        )}
+                                                    </td>
+                                                    <td className="px-6 py-4 text-center">
+                                                        {pick.finalPrice ? (
+                                                            <Badge variant="outline">Closed</Badge>
+                                                        ) : (
+                                                            <Badge className="bg-green-500/10 text-green-500 border-green-500/20">Active</Badge>
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                        ) : (
+                            <div className="text-center py-10 border border-dashed rounded-xl border-border/50 text-muted-foreground text-sm">
+                                Archive will populate after the next cycle.
+                            </div>
+                        )}
+                    </div>
+                </main>
             </div>
         </div>
     );
 }
-
-// Added imports here to be safe if they were missing before, 
-// though typically imports are at the top. 
-// Just ensuring `Button` is imported for the archive section above.
-import { Button } from "@/components/ui/button";
