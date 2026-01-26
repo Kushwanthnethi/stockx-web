@@ -129,10 +129,10 @@ export default function StockOfTheWeekPage() {
     }
 
     return (
-        <div className="min-h-screen bg-background pb-20 relative overflow-hidden">
-            {/* Background Decorations */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] -z-10" />
-            <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[100px] -z-10" />
+        <div className="relative min-h-[calc(100vh-4rem)] bg-background pb-20">
+            {/* Background Decorations - Lower z-index to not cover sidebar */}
+            <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px] -z-10 pointer-events-none" />
+            <div className="fixed bottom-0 left-0 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[100px] -z-10 pointer-events-none" />
 
             <div className="container max-w-6xl mx-auto px-4 py-8 space-y-12">
 
