@@ -100,19 +100,13 @@ export default function StockOfTheWeekPage() {
         const fetchData = async () => {
             try {
                 const [latestRes, archiveRes] = await Promise.all([
-                    fetch(`${API_BASE_URL}/stocks/weekly/latest?t=${Date.now()}`),
-                    fetch(`${API_BASE_URL}/stocks/weekly/archive?t=${Date.now()}`)
+                    fetch(`${API_BASE_URL}/stocks/weekly/latest`),
+                    fetch(`${API_BASE_URL}/stocks/weekly/archive`)
                 ]);
 
                 if (latestRes.ok) {
                     const text = await latestRes.text();
-                    console.log("DEBUG: Latest Stock Data Raw:", text); // Debug log
-                    const data = text ? JSON.parse(text) : null;
-                    if (data) {
-                        console.log("DEBUG: Narrative Length:", data.narrative?.length);
-                        console.log("DEBUG: Narrative Content:", data.narrative);
-                    }
-                    setLatest(data);
+                    setLatest(text ? JSON.parse(text) : null);
                 }
                 if (archiveRes.ok) {
                     const text = await archiveRes.text();
