@@ -236,11 +236,18 @@ export default function StockOfTheWeekPage() {
                                             {(() => {
                                                 if (!latest.narrative) return <p className="text-muted-foreground">Analysis pending...</p>;
 
-                                                // If short fallback text (legacy or error), show as before
-                                                if (latest.narrative.length < 300 && !latest.narrative.includes("**")) {
+                                                // If really short/empty (likely error state), show trust builder
+                                                if (latest.narrative.length < 50) {
+                                                    return <p className="text-muted-foreground">Analysis pending...</p>;
+                                                }
+
+                                                // If unstructured (no bold headers found), just show the text clearly
+                                                if (!latest.narrative.includes("**")) {
                                                     return (
-                                                        <div className="text-lg leading-relaxed text-muted-foreground whitespace-pre-line font-light">
-                                                            {latest.narrative}
+                                                        <div className="bg-card/30 rounded-xl p-6 border border-border/40">
+                                                            <div className="text-lg leading-relaxed text-muted-foreground whitespace-pre-line font-light">
+                                                                {latest.narrative}
+                                                            </div>
                                                         </div>
                                                     );
                                                 }
