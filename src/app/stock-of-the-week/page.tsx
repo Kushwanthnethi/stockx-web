@@ -180,16 +180,16 @@ export default function StockOfTheWeekPage() {
                             transition={{ duration: 0.5 }}
                             className="group relative overflow-hidden rounded-[2rem] border border-border/50 bg-background shadow-2xl"
                         >
-                            {/* Premium Grid Background Effect */}
-                            <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
+                            {/* Premium Grid Background Effect - CSS Only */}
+                            <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
                             <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 via-transparent to-blue-500/5 opacity-50" />
 
                             <div className="relative p-6 md:p-10 grid gap-12 md:grid-cols-12">
 
                                 {/* Left Column: Identity & Gauge */}
-                                <div className="md:col-span-5 flex flex-col gap-6 md:border-r border-border/50 md:pr-10">
+                                <div className="md:col-span-5 flex flex-col gap-6 md:border-r border-border/50 md:pr-10 z-10">
                                     <div>
-                                        <h2 className="text-6xl font-black tracking-tighter text-foreground leading-none mb-2">
+                                        <h2 className="text-5xl md:text-6xl font-black tracking-tighter text-foreground leading-none mb-2 break-words">
                                             {latest.stockSymbol}
                                         </h2>
                                         <p className="text-xl font-medium text-muted-foreground truncate w-full">
@@ -223,18 +223,83 @@ export default function StockOfTheWeekPage() {
                                 </div>
 
                                 {/* Right Column: Narrative & Logic */}
-                                <div className="md:col-span-7 flex flex-col justify-between gap-8">
-                                    <div className="space-y-4">
+                                <div className="md:col-span-7 flex flex-col justify-between gap-8 z-10">
+                                    <div className="space-y-6">
                                         <div className="flex items-center gap-3">
                                             <div className="h-px bg-border flex-1" />
                                             <span className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">Investment Thesis</span>
                                             <div className="h-px bg-border flex-1" />
                                         </div>
 
-                                        <div className="prose prose-neutral dark:prose-invert max-w-none">
-                                            <div className="text-lg leading-relaxed text-muted-foreground whitespace-pre-line font-light">
-                                                {latest.narrative || "Analysis pending..."}
-                                            </div>
+                                        <div className="space-y-8">
+                                            {/* Structured Thesis Parser */}
+                                            {(() => {
+                                                if (!latest.narrative) return <p className="text-muted-foreground">Analysis pending...</p>;
+
+                                                // If short fallback text (legacy or error), show as before
+                                                if (latest.narrative.length < 300 && !latest.narrative.includes("**")) {
+                                                    return (
+                                                        <div className="text-lg leading-relaxed text-muted-foreground whitespace-pre-line font-light">
+                                                            {latest.narrative}
+                                                        </div>
+                                                    );
+                                                }
+
+                                                // Parse Structured Text
+                                                const sections = latest.narrative.split(/\d\.\s\*\*/);
+                                                // sections[0] might be intro text or empty
+                                                // sections[1..n] will start with "Title**\nBody"
+
+                                                return (
+                                                    <div className="space-y-6">
+                                                        {sections.map((section: string, idx: number) => {
+                                                            if (!section.trim()) return null;
+
+                                                            // Logic to split Title and Body
+                                                            // content format: "Title**\nBody..."
+                                                            const parts = section.split("**");
+                                                            if (parts.length < 2 && idx === 0) {
+                                                                // Intro text without numbering
+                                                                return (
+                                                                    <p key={idx} className="text-muted-foreground leading-relaxed">
+                                                                        {section.trim()}
+                                                                    </p>
+                                                                );
+                                                            }
+
+                                                            const title = parts[0]?.trim();
+                                                            const body = parts.slice(1).join("**").trim(); // Reconstruct if multiple ** (unlikely)
+
+                                                            if (!title) return null;
+
+                                                            return (
+                                                                <div key={idx} className="bg-card/30 rounded-xl p-5 border border-border/40">
+                                                                    <h3 className="text-sm font-bold uppercase tracking-wider text-primary mb-2 flex items-center gap-2">
+                                                                        <Target className="w-4 h-4" />
+                                                                        {title}
+                                                                    </h3>
+                                                                    <p className="text-base text-muted-foreground/90 leading-relaxed font-light">
+                                                                        {body}
+                                                                    </p>
+                                                                </div>
+                                                            );
+                                                        })}
+                                                    </div>
+                                                );
+                                            })()}
+
+                                            {/* Trust Builder (Only if really short/fallback) */}
+                                            {latest.narrative && latest.narrative.length < 150 && (
+                                                <div className="mt-6 p-4 rounded-xl bg-blue-500/5 border border-blue-500/10">
+                                                    <h4 className="text-sm font-semibold text-blue-500 mb-1 flex items-center gap-2">
+                                                        <Activity className="w-4 h-4" />
+                                                        Why was this selected?
+                                                    </h4>
+                                                    <p className="text-sm text-muted-foreground">
+                                                        Our AI models identified <strong>{latest.stockSymbol}</strong> based on a convergence of high ROE ({latest.stock.returnOnEquity ? (latest.stock.returnOnEquity * 100).toFixed(1) : '-'}%), attractive valuations, and positive momentum. Full qualitative analysis is generating...
+                                                    </p>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
 
