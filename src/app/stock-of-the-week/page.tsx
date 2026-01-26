@@ -91,6 +91,103 @@ const StatCard = ({ label, value, subtext, delay }: { label: string; value: stri
     </motion.div>
 );
 
+const NarrativeSection = ({ narrative, stockSymbol, stock }: { narrative: string, stockSymbol: string, stock: any }) => {
+    const [expanded, setExpanded] = useState(false);
+
+    if (!narrative) return <p className="text-muted-foreground">Analysis pending...</p>;
+
+    // Clean up stars if using fallback parsing
+    const cleanNarrative = narrative;
+
+    // Parse Structured Text
+    const sections = cleanNarrative.split(/\d\.\s\*\*/);
+
+    // Fallback Handling
+    if (sections.length <= 1) {
+        const isLong = cleanNarrative.length > 500;
+        const contentToShow = expanded || !isLong ? cleanNarrative : cleanNarrative.substring(0, 500) + "...";
+
+        return (
+            <div className="bg-card/30 rounded-xl p-6 border border-border/40">
+                <div className="text-lg leading-relaxed text-muted-foreground whitespace-pre-line font-light">
+                    {contentToShow}
+                </div>
+                {isLong && (
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setExpanded(!expanded)}
+                        className="mt-4 text-primary hover:text-primary/80 p-0 h-auto font-bold uppercase text-xs tracking-wider"
+                    >
+                        {expanded ? "Read Less" : "Read More"}
+                    </Button>
+                )}
+            </div>
+        );
+    }
+
+    // Structured Handling
+    const visibleSections = expanded ? sections : sections.slice(0, 2); // Show first 2 sections initially
+
+    return (
+        <div className="space-y-6">
+            {visibleSections.map((section: string, idx: number) => {
+                if (!section.trim()) return null;
+
+                const parts = section.split("**");
+                if (parts.length < 2) {
+                    return (
+                        <div key={idx} className="bg-card/30 rounded-xl p-5 border border-border/40">
+                            <p className="text-base text-muted-foreground/90 leading-relaxed font-light">
+                                {section.trim()}
+                            </p>
+                        </div>
+                    );
+                }
+
+                const title = parts[0]?.trim();
+                const body = parts.slice(1).join("**").trim();
+
+                if (!title) return null;
+
+                return (
+                    <div key={idx} className="bg-card/30 rounded-xl p-5 border border-border/40">
+                        <h3 className="text-sm font-bold uppercase tracking-wider text-primary mb-2 flex items-center gap-2">
+                            <Target className="w-4 h-4" />
+                            {title}
+                        </h3>
+                        <p className="text-base text-muted-foreground/90 leading-relaxed font-light">
+                            {body}
+                        </p>
+                    </div>
+                );
+            })}
+
+            <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setExpanded(!expanded)}
+                className="text-primary hover:text-primary/80 font-bold uppercase text-xs tracking-wider border border-primary/20 hover:bg-primary/5 px-4 py-2 mt-2"
+            >
+                {expanded ? "Show Less" : "Read Full Analysis"} <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+
+            {/* Trust Builder (Only if really short/fallback but we have minimal structure) */}
+            {narrative.length < 300 && (
+                <div className="mt-6 p-4 rounded-xl bg-blue-500/5 border border-blue-500/10">
+                    <h4 className="text-sm font-semibold text-blue-500 mb-1 flex items-center gap-2">
+                        <Activity className="w-4 h-4" />
+                        Why was this selected?
+                    </h4>
+                    <p className="text-sm text-muted-foreground">
+                        Our AI models identified <strong>{stockSymbol}</strong> based on a convergence of high ROE ({stock.returnOnEquity ? (stock.returnOnEquity * 100).toFixed(1) : '-'}%), attractive valuations, and positive momentum.
+                    </p>
+                </div>
+            )}
+        </div>
+    );
+};
+
 export default function StockOfTheWeekPage() {
     const [latest, setLatest] = useState<any>(null);
     const [archive, setArchive] = useState<any[]>([]);
@@ -193,7 +290,7 @@ export default function StockOfTheWeekPage() {
                             <div className="relative p-6 md:p-10 grid gap-12 md:grid-cols-12">
 
                                 {/* Left Column: Identity & Gauge */}
-                                <div className="md:col-span-5 flex flex-col gap-6 md:border-r border-border/50 md:pr-10 z-10">
+                                <div className="md:col-span-4 flex flex-col gap-6 md:border-r border-border/50 md:pr-10 z-10">
                                     <div>
                                         <h2 className="text-5xl md:text-6xl font-black tracking-tighter text-foreground leading-none mb-2 break-words">
                                             {latest.stockSymbol}
@@ -229,7 +326,7 @@ export default function StockOfTheWeekPage() {
                                 </div>
 
                                 {/* Right Column: Narrative & Logic */}
-                                <div className="md:col-span-7 flex flex-col justify-between gap-8 z-10">
+                                <div className="md:col-span-8 flex flex-col justify-between gap-8 z-10">
                                     <div className="space-y-6">
                                         <div className="flex items-center gap-3">
                                             <div className="h-px bg-border flex-1" />
@@ -237,95 +334,10 @@ export default function StockOfTheWeekPage() {
                                             <div className="h-px bg-border flex-1" />
                                         </div>
 
-                                        <div className="space-y-8">
-                                            {/* Structured Thesis Parser */}
-                                            {(() => {
-                                                if (!latest.narrative) return <p className="text-muted-foreground">Analysis pending...</p>;
-
-                                                // If really short/empty (likely error state), show trust builder
-                                                if (latest.narrative.length < 50) {
-                                                    return <p className="text-muted-foreground">Analysis pending...</p>;
-                                                }
-
-                                                // If unstructured (no bold headers found), just show the text clearly
-                                                if (!latest.narrative.includes("**")) {
-                                                    return (
-                                                        <div className="bg-card/30 rounded-xl p-6 border border-border/40">
-                                                            <div className="text-lg leading-relaxed text-muted-foreground whitespace-pre-line font-light">
-                                                                {latest.narrative}
-                                                            </div>
-                                                        </div>
-                                                    );
-                                                }
-
-                                                // Parse Structured Text
-                                                const sections = latest.narrative.split(/\d\.\s\*\*/);
-
-                                                // Check if we actually found sections
-                                                if (sections.length <= 1) {
-                                                    // Fallback to raw text if structure is missing
-                                                    return (
-                                                        <div className="bg-card/30 rounded-xl p-6 border border-border/40">
-                                                            <div className="text-lg leading-relaxed text-muted-foreground whitespace-pre-line font-light">
-                                                                {latest.narrative}
-                                                            </div>
-                                                        </div>
-                                                    );
-                                                }
-
-                                                return (
-                                                    <div className="space-y-6">
-                                                        {sections.map((section: string, idx: number) => {
-                                                            if (!section.trim()) return null;
-
-                                                            const parts = section.split("**");
-
-                                                            // Handle cases where split doesn't find a title divider
-                                                            if (parts.length < 2) {
-                                                                return (
-                                                                    <div key={idx} className="bg-card/30 rounded-xl p-5 border border-border/40">
-                                                                        <p className="text-base text-muted-foreground/90 leading-relaxed font-light">
-                                                                            {section.trim()}
-                                                                        </p>
-                                                                    </div>
-                                                                );
-                                                            }
-
-                                                            const title = parts[0]?.trim();
-                                                            const body = parts.slice(1).join("**").trim();
-
-                                                            if (!title) return null;
-
-                                                            return (
-                                                                <div key={idx} className="bg-card/30 rounded-xl p-5 border border-border/40">
-                                                                    <h3 className="text-sm font-bold uppercase tracking-wider text-primary mb-2 flex items-center gap-2">
-                                                                        <Target className="w-4 h-4" />
-                                                                        {title}
-                                                                    </h3>
-                                                                    <p className="text-base text-muted-foreground/90 leading-relaxed font-light">
-                                                                        {body}
-                                                                    </p>
-                                                                </div>
-                                                            );
-                                                        })}
-                                                    </div>
-                                                );
-                                            })()}
-
-                                            {/* Trust Builder (Only if really short/fallback) */}
-                                            {latest.narrative && latest.narrative.length < 150 && (
-                                                <div className="mt-6 p-4 rounded-xl bg-blue-500/5 border border-blue-500/10">
-                                                    <h4 className="text-sm font-semibold text-blue-500 mb-1 flex items-center gap-2">
-                                                        <Activity className="w-4 h-4" />
-                                                        Why was this selected?
-                                                    </h4>
-                                                    <p className="text-sm text-muted-foreground">
-                                                        Our AI models identified <strong>{latest.stockSymbol}</strong> based on a convergence of high ROE ({latest.stock.returnOnEquity ? (latest.stock.returnOnEquity * 100).toFixed(1) : '-'}%), attractive valuations, and positive momentum. Full qualitative analysis is generating...
-                                                    </p>
-                                                </div>
-                                            )}
-                                        </div>
+                                        <NarrativeSection narrative={latest.narrative} stockSymbol={latest.stockSymbol} stock={latest.stock} />
                                     </div>
+
+
 
                                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 border-t border-border/40">
                                         <StatCard
@@ -355,17 +367,20 @@ export default function StockOfTheWeekPage() {
                                     </div>
                                 </div>
                             </div>
-                        </motion.div>
-                    )}
+                        </motion.div >
+                    )
+                    }
 
                     {/* Empty State */}
-                    {!loading && !latest && (
-                        <div className="h-64 flex flex-col items-center justify-center border border-dashed border-border rounded-2xl bg-muted/5">
-                            <Activity className="h-10 w-10 text-muted-foreground mb-4 opacity-50" />
-                            <h3 className="text-lg font-medium text-foreground">No active pick for this week</h3>
-                            <p className="text-sm text-muted-foreground mt-1">Check back on Sunday at 12:00 PM.</p>
-                        </div>
-                    )}
+                    {
+                        !loading && !latest && (
+                            <div className="h-64 flex flex-col items-center justify-center border border-dashed border-border rounded-2xl bg-muted/5">
+                                <Activity className="h-10 w-10 text-muted-foreground mb-4 opacity-50" />
+                                <h3 className="text-lg font-medium text-foreground">No active pick for this week</h3>
+                                <p className="text-sm text-muted-foreground mt-1">Check back on Sunday at 12:00 PM.</p>
+                            </div>
+                        )
+                    }
 
                     {/* Archive Section */}
                     <div className="pt-10 space-y-6">
@@ -430,8 +445,8 @@ export default function StockOfTheWeekPage() {
                             </div>
                         )}
                     </div>
-                </main>
-            </div>
-        </div>
+                </main >
+            </div >
+        </div >
     );
 }
