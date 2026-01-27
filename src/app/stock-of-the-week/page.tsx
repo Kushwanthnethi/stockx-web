@@ -295,10 +295,10 @@ export default function StockOfTheWeekPage() {
                                 {/* Left Column: Identity & Gauge */}
                                 <div className="md:col-span-4 flex flex-col gap-6 md:border-r border-border/50 md:pr-10 z-10">
                                     <div>
-                                        <h2 className="text-5xl md:text-6xl font-black tracking-tighter text-foreground leading-none mb-2 break-words">
+                                        <h2 className="text-4xl md:text-6xl font-black tracking-tighter text-foreground leading-none mb-2 break-words">
                                             {latest.stockSymbol}
                                         </h2>
-                                        <p className="text-xl font-medium text-muted-foreground truncate w-full">
+                                        <p className="text-lg md:text-xl font-medium text-muted-foreground truncate w-full">
                                             {latest.stock?.companyName}
                                         </p>
                                     </div>
@@ -306,7 +306,7 @@ export default function StockOfTheWeekPage() {
                                     <div className="flex items-center gap-6">
                                         <div className="bg-card/50 backdrop-blur border border-border/50 rounded-2xl p-4 flex-1">
                                             <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider block mb-1">Entry Price</span>
-                                            <span className="text-3xl font-bold text-foreground">
+                                            <span className="text-2xl md:text-3xl font-bold text-foreground">
                                                 {formatINR(latest.priceAtSelection)}
                                             </span>
                                         </div>
@@ -319,11 +319,11 @@ export default function StockOfTheWeekPage() {
                                     <div className="grid grid-cols-2 gap-3 mt-auto">
                                         <div className="flex flex-col p-3 rounded-lg bg-green-500/10 border border-green-500/10">
                                             <span className="text-[10px] font-bold uppercase text-green-500 mb-1">Target</span>
-                                            <span className="font-mono font-bold text-lg">{formatINR(latest.targetPrice)}</span>
+                                            <span className="font-mono font-bold text-base md:text-lg">{formatINR(latest.targetPrice)}</span>
                                         </div>
                                         <div className="flex flex-col p-3 rounded-lg bg-red-500/10 border border-red-500/10">
                                             <span className="text-[10px] font-bold uppercase text-red-500 mb-1">Stop Loss</span>
-                                            <span className="font-mono font-bold text-lg">{formatINR(latest.stopLoss)}</span>
+                                            <span className="font-mono font-bold text-base md:text-lg">{formatINR(latest.stopLoss)}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -342,7 +342,7 @@ export default function StockOfTheWeekPage() {
 
 
 
-                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 border-t border-border/40">
+                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 md:gap-3 pt-6 border-t border-border/40">
                                         <StatCard
                                             label="ROE"
                                             value={`${(latest.stock.returnOnEquity * 100).toFixed(1)}%`}
