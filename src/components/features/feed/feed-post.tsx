@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { motion } from "framer-motion";
 import { MessageSquare, Heart, Share2, TrendingUp, TrendingDown, Repeat2, MoreHorizontal, Link as LinkIcon, Facebook, Linkedin, Twitter, Bookmark } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -403,7 +404,14 @@ export function FeedPost({ post }: { post: any }) {
     if (isDeleted) return null;
 
     return (
-        <div className="mb-4 last:mb-20">
+        <motion.div
+            layout
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="mb-4 last:mb-20"
+        >
             {isReshare && (
                 <div className="flex items-center gap-2 mb-1 ml-4 text-muted-foreground text-sm">
                     <Repeat2 size={14} />
@@ -655,6 +663,6 @@ export function FeedPost({ post }: { post: any }) {
                     )}
                 </CardFooter>
             </Card>
-        </div>
+        </motion.div>
     );
 }

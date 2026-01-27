@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { MessageSquare, Heart, Share2, TrendingUp, TrendingDown, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -13,16 +13,16 @@ import { FeedPost } from "@/components/features/feed/feed-post";
 import { useAuth } from "@/providers/auth-provider";
 import { UserNav } from "@/components/layout/user-nav";
 import { NewsWidget } from "@/components/features/news/news-widget";
-
+import { AppSidebar } from "@/components/layout/app-sidebar";
+import { SiteHeader } from "@/components/layout/site-header";
 import { ModeToggle } from "@/components/mode-toggle";
-
-
-
 import { TrendingWidget } from "@/components/features/stocks/trending-widget";
 import { IndicesTicker } from "@/components/features/stocks/indices-ticker";
 import { WatchlistWidget } from "@/components/features/stocks/watchlist-widget";
-import { AppSidebar } from "@/components/layout/app-sidebar";
-import { SiteHeader } from "@/components/layout/site-header";
+import { CreatePost } from "@/components/features/feed/create-post";
+import { API_BASE_URL } from "@/lib/config";
+import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
+import { AnimatePresence } from "framer-motion";
 
 function FeedSidebar() {
     return (
@@ -50,19 +50,6 @@ function FeedSidebar() {
         </div>
     );
 }
-
-
-
-// --- Main Page Component ---
-
-import { CreatePost } from "@/components/features/feed/create-post";
-import { API_BASE_URL } from "@/lib/config";
-
-// ... existing imports
-
-// ... existing imports
-import { useRef } from "react";
-import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 
 export default function Home() {
     const { user } = useAuth();
@@ -126,16 +113,9 @@ export default function Home() {
         enabled: hasMore && !loading
     });
 
-    const handlePostCreated = () => {
-        // Reset feed on new post
-        setPage(1);
-        fetchPosts(1, true);
-    };
-
     return (
         <div className="min-h-screen bg-background text-foreground font-sans">
             {/* Sticky Top Nav */}
-
 
             {/* Main Content Layout */}
             <main className="container max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -174,7 +154,7 @@ export default function Home() {
                     </div>
 
                     {/* Posts Feed */}
-                    <div>
+                    <AnimatePresence mode="popLayout">
                         {loading ? (
                             <div className="space-y-4">
                                 {[1, 2, 3].map(i => (
@@ -206,13 +186,12 @@ export default function Home() {
                                 <p>Be the first to share your market insights!</p>
                             </div>
                         )}
+                    </AnimatePresence>
 
-                        {/* Infinite Scroll Sensor & Loader */}
-                        <div ref={loadMoreRef} className="h-10 flex w-full items-center justify-center p-4">
-                            {hasMore && posts.length > 0 && <span className="text-muted-foreground text-sm animate-pulse">Loading more posts...</span>}
-                        </div>
+                    {/* Infinite Scroll Sensor & Loader */}
+                    <div ref={loadMoreRef} className="h-10 flex w-full items-center justify-center p-4">
+                        {hasMore && posts.length > 0 && <span className="text-muted-foreground text-sm animate-pulse">Loading more posts...</span>}
                     </div>
-
 
                     {/* End of Feed Disclaimer */}
                     <div className="mt-8 p-4 bg-yellow-50/50 dark:bg-yellow-900/10 rounded-lg border border-yellow-100 dark:border-yellow-900 text-yellow-800 dark:text-yellow-500 text-xs flex gap-2 items-start">
@@ -223,7 +202,6 @@ export default function Home() {
                             Please consult a SEBI registered investment advisor before making trades.
                         </p>
                     </div>
-
 
                 </div>
 
