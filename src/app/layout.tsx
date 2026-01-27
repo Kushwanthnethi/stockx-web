@@ -44,7 +44,7 @@ export default function RootLayout({
                     <AuthProvider>
                         <GuestAuthModal />
                         <SiteHeader />
-                        <MobileHeader />
+
                         {children}
                         <FloatingPostButton />
                         <BottomNav />
