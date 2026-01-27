@@ -15,12 +15,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         '/notifications',
         '/login',
         '/signup',
-    ].map((route) => ({
-        url: `${baseUrl}${route}`,
-        lastModified: new Date(),
-        changeFrequency: 'daily' as const,
-        priority: 1,
-    }))
+    ].map((route) => {
+        const isRoot = route === '';
+        return {
+            url: `${baseUrl}${route}`,
+            lastModified: new Date(),
+            changeFrequency: 'daily' as const,
+            priority: isRoot ? 1 : 0.8,
+        }
+    })
 
     // TODO: Fetch top 100 stocks from API and add them here dynamically
     // const stocks = await fetch(API_URL).then(res => res.json())
