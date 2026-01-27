@@ -14,7 +14,7 @@ import { useAuth } from "@/providers/auth-provider";
 import { UserNav } from "@/components/layout/user-nav";
 import { NewsWidget } from "@/components/features/news/news-widget";
 import { AppSidebar } from "@/components/layout/app-sidebar";
-import { SiteHeader } from "@/components/layout/site-header";
+
 import { ModeToggle } from "@/components/mode-toggle";
 import { TrendingWidget } from "@/components/features/stocks/trending-widget";
 import { IndicesTicker } from "@/components/features/stocks/indices-ticker";
@@ -115,8 +115,7 @@ export default function Home() {
 
     return (
         <div className="min-h-screen bg-background text-foreground font-sans">
-            {/* Sticky Top Nav */}
-            <SiteHeader />
+
 
             {/* Main Content Layout */}
             <main className="container max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
