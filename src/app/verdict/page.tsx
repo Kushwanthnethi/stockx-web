@@ -8,6 +8,7 @@ import { AppSidebar } from "@/components/layout/app-sidebar";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { API_BASE_URL } from "@/lib/config";
+import { PremiumGuard } from "@/components/shared/premium-guard";
 
 // Static Verdict Definition (without price data)
 const VERDICT_DEFINITIONS = [
@@ -561,6 +562,8 @@ export default function VerdictPage() {
         }, 600);
     };
 
+
+
     return (
         <div className="min-h-screen bg-background text-foreground font-sans">
 
@@ -571,98 +574,100 @@ export default function VerdictPage() {
 
                 {/* Main Content */}
                 <div className="lg:col-span-10">
-                    <div className="flex flex-col gap-6">
+                    <PremiumGuard>
+                        <div className="flex flex-col gap-6">
 
-                        {/* Header Section */}
-                        <div className="flex flex-col gap-4 border-b pb-8 bg-card/30 p-6 rounded-2xl">
-                            <div className="flex items-center gap-2 text-primary font-semibold tracking-wide uppercase text-sm">
-                                <Sparkles className="h-4 w-4" />
-                                <span>Premium Intelligence | NIFTY 50 Coverage</span>
-                            </div>
-                            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight lg:text-6xl">
-                                The <span className="text-primary">Verdict</span>
-                            </h1>
-                            <p className="max-w-3xl text-lg text-muted-foreground leading-relaxed">
-                                We translate complex market noise into clear, psychological signals.
-                                Answering the only question that matters: <span className="text-foreground font-medium italic">"If I were a long-term investor, what would I do now?"</span>
-                            </p>
+                            {/* Header Section */}
+                            <div className="flex flex-col gap-4 border-b pb-8 bg-card/30 p-6 rounded-2xl">
+                                <div className="flex items-center gap-2 text-primary font-semibold tracking-wide uppercase text-sm">
+                                    <Sparkles className="h-4 w-4" />
+                                    <span>Premium Intelligence | NIFTY 50 Coverage</span>
+                                </div>
+                                <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight lg:text-6xl">
+                                    The <span className="text-primary">Verdict</span>
+                                </h1>
+                                <p className="max-w-3xl text-lg text-muted-foreground leading-relaxed">
+                                    We translate complex market noise into clear, psychological signals.
+                                    Answering the only question that matters: <span className="text-foreground font-medium italic">"If I were a long-term investor, what would I do now?"</span>
+                                </p>
 
-                            <div className="flex items-center gap-4 mt-4">
-                                <div className="relative flex-1 max-w-sm">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                                    <Input
-                                        placeholder="Search Nifty 50 Verdicts..."
-                                        className="pl-9 bg-background/50"
-                                        value={filter}
-                                        onChange={(e) => setFilter(e.target.value)}
-                                    />
-                                </div>
-                                <div className="flex items-center px-3 py-1 bg-muted/50 rounded-full text-xs text-muted-foreground">
-                                    <span className="w-2 h-2 rounded-full bg-blue-500 mr-2"></span>
-                                    Live / Closing Prices (Delayed 15m)
+                                <div className="flex items-center gap-4 mt-4">
+                                    <div className="relative flex-1 max-w-sm">
+                                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                        <Input
+                                            placeholder="Search Nifty 50 Verdicts..."
+                                            className="pl-9 bg-background/50"
+                                            value={filter}
+                                            onChange={(e) => setFilter(e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="flex items-center px-3 py-1 bg-muted/50 rounded-full text-xs text-muted-foreground">
+                                        <span className="w-2 h-2 rounded-full bg-blue-500 mr-2"></span>
+                                        Live / Closing Prices (Delayed 15m)
+                                    </div>
                                 </div>
                             </div>
+
+                            {/* Content Grid */}
+                            {isFetchingPrices && verdicts.length === 0 ? (
+                                <div className="flex justify-center items-center py-20">
+                                    <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                                    {visibleVerdicts.map((verdict) => (
+                                        <VerdictCard
+                                            key={verdict.id}
+                                            {...verdict}
+                                            // Use Closing Price Format
+                                            price={`₹${verdict.price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`}
+                                            change={`${verdict.change > 0 ? '+' : ''}${verdict.change.toFixed(2)}`}
+                                            isPositiveChange={verdict.change >= 0}
+                                        />
+                                    ))}
+                                </div>
+                            )}
+
+                            {/* Load More Section */}
+                            {hasMore && !isFetchingPrices && (
+                                <div className="flex justify-center pt-8">
+                                    <Button
+                                        variant="outline"
+                                        className="gap-2 min-w-[200px]"
+                                        onClick={handleLoadMore}
+                                        disabled={isLoadingMore}
+                                    >
+                                        {isLoadingMore ? (
+                                            <>
+                                                <RefreshCw className="h-4 w-4 animate-spin" />
+                                                Loading Data...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <ArrowDownCircle className="h-4 w-4" />
+                                                Load More Nifty 50 Data
+                                            </>
+                                        )}
+                                    </Button>
+                                </div>
+                            )}
+
+                            {!hasMore && filteredVerdicts.length > 0 && (
+                                <div className="flex justify-center pt-8 text-muted-foreground text-sm opacity-60">
+                                    You've reached the end of the list.
+                                </div>
+                            )}
+
+                            {filteredVerdicts.length === 0 && !isFetchingPrices && (
+                                <div className="text-center py-12 text-muted-foreground bg-muted/20 rounded-xl">
+                                    <p>No verdicts found for "{filter}"</p>
+                                    <Button variant="link" onClick={() => setFilter('')} className="mt-2 text-primary">
+                                        Clear Search
+                                    </Button>
+                                </div>
+                            )}
                         </div>
-
-                        {/* Content Grid */}
-                        {isFetchingPrices && verdicts.length === 0 ? (
-                            <div className="flex justify-center items-center py-20">
-                                <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
-                            </div>
-                        ) : (
-                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                                {visibleVerdicts.map((verdict) => (
-                                    <VerdictCard
-                                        key={verdict.id}
-                                        {...verdict}
-                                        // Use Closing Price Format
-                                        price={`₹${verdict.price.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`}
-                                        change={`${verdict.change > 0 ? '+' : ''}${verdict.change.toFixed(2)}`}
-                                        isPositiveChange={verdict.change >= 0}
-                                    />
-                                ))}
-                            </div>
-                        )}
-
-                        {/* Load More Section */}
-                        {hasMore && !isFetchingPrices && (
-                            <div className="flex justify-center pt-8">
-                                <Button
-                                    variant="outline"
-                                    className="gap-2 min-w-[200px]"
-                                    onClick={handleLoadMore}
-                                    disabled={isLoadingMore}
-                                >
-                                    {isLoadingMore ? (
-                                        <>
-                                            <RefreshCw className="h-4 w-4 animate-spin" />
-                                            Loading Data...
-                                        </>
-                                    ) : (
-                                        <>
-                                            <ArrowDownCircle className="h-4 w-4" />
-                                            Load More Nifty 50 Data
-                                        </>
-                                    )}
-                                </Button>
-                            </div>
-                        )}
-
-                        {!hasMore && filteredVerdicts.length > 0 && (
-                            <div className="flex justify-center pt-8 text-muted-foreground text-sm opacity-60">
-                                You've reached the end of the list.
-                            </div>
-                        )}
-
-                        {filteredVerdicts.length === 0 && !isFetchingPrices && (
-                            <div className="text-center py-12 text-muted-foreground bg-muted/20 rounded-xl">
-                                <p>No verdicts found for "{filter}"</p>
-                                <Button variant="link" onClick={() => setFilter('')} className="mt-2 text-primary">
-                                    Clear Search
-                                </Button>
-                            </div>
-                        )}
-                    </div>
+                    </PremiumGuard>
                 </div>
             </main>
         </div>
