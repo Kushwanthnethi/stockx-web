@@ -227,7 +227,7 @@ export default function StockOfTheWeekPage() {
 
     // Layout Wrapper
     return (
-        <div className="container max-w-7xl mx-auto px-4 py-6">
+        <div className="container max-w-7xl mx-auto px-4 pt-20 pb-40 md:py-6">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Left Sidebar - Re-added to fix visibility issue */}
                 <AppSidebar />
