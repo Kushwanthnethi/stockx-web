@@ -116,6 +116,7 @@ export default function Home() {
     return (
         <div className="min-h-screen bg-background text-foreground font-sans">
             {/* Sticky Top Nav */}
+            <SiteHeader />
 
             {/* Main Content Layout */}
             <main className="container max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -133,7 +134,7 @@ export default function Home() {
                     <IndicesTicker />
 
                     {/* Create Post Input (Desktop Only) */}
-                    <div className="hidden md:block">
+                    <div className="mb-6">
                         {user && (
                             <CreatePost
                                 onPostCreated={() => { }} // Deprecated in favor of optimistic handlers

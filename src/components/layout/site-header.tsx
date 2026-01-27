@@ -33,7 +33,7 @@ function AuthButtons() {
 
 export function SiteHeader() {
     return (
-        <header className="hidden md:block md:sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-sm">
+        <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-sm supports-[backdrop-filter]:bg-background/60">
             <div className="container flex h-14 items-center justify-between px-4 max-w-7xl mx-auto">
                 <div className="flex items-center gap-1">
                     <MobileSheet />
