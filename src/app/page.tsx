@@ -154,7 +154,23 @@ export default function Home() {
 
                     {/* Create Post Input (Desktop Only) */}
                     <div className="hidden md:block">
-                        {user && <CreatePost onPostCreated={handlePostCreated} />}
+                        {user && (
+                            <CreatePost
+                                onPostCreated={() => { }} // Deprecated in favor of optimistic handlers
+                                onOptimisticAdd={(newPost: any) => {
+                                    setPosts(prev => [newPost, ...prev]);
+                                    // Scroll to top smoothly
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                onPostSuccess={(tempId: string, realPost: any) => {
+                                    setPosts(prev => prev.map(p => p.id === tempId ? realPost : p));
+                                }}
+                                onPostError={(tempId: string) => {
+                                    setPosts(prev => prev.filter(p => p.id !== tempId));
+                                    // Optional: Toast error here
+                                }}
+                            />
+                        )}
                     </div>
 
                     {/* Posts Feed */}

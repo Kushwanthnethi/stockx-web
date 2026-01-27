@@ -8,7 +8,14 @@ import { Loader2, Image as ImageIcon, X, Smile, BarChart2, FileText, Gift } from
 import { Card, CardContent } from '@/components/ui/card';
 import { API_BASE_URL } from '@/lib/config';
 
-export function CreatePost({ onPostCreated }: { onPostCreated?: () => void }) {
+export interface CreatePostProps {
+    onPostCreated?: () => void;
+    onOptimisticAdd?: (post: any) => void;
+    onPostSuccess?: (tempId: string, realPost: any) => void;
+    onPostError?: (tempId: string) => void;
+}
+
+export function CreatePost({ onPostCreated, onOptimisticAdd, onPostSuccess, onPostError }: CreatePostProps) {
     const { user, isLoading } = useAuth();
     const [content, setContent] = useState('');
     const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -27,7 +34,34 @@ export function CreatePost({ onPostCreated }: { onPostCreated?: () => void }) {
     async function handlePost() {
         if (!content.trim() && !imageUrl) return;
 
+        // --- Optimistic UI Object ---
+        const tempId = `temp-${Date.now()}`;
+        const tempPost = {
+            id: tempId,
+            content,
+            imageUrl,
+            createdAt: new Date().toISOString(),
+            likes: 0,
+            comments: 0,
+            user: {
+                id: user?.id,
+                firstName: user?.firstName,
+                handle: user?.handle,
+                avatarUrl: user?.avatarUrl,
+            },
+            isOptimistic: true,
+        };
+
+        // 1. Optimistic Update
+        if (onOptimisticAdd) onOptimisticAdd(tempPost);
+
+        // 2. Clear Form immediately
+        const keptContent = content;
+        const keptImage = imageUrl;
+        setContent('');
+        setImageUrl(null);
         setIsPosting(true);
+
         try {
             const token = localStorage.getItem('accessToken');
             const res = await fetch(`${API_BASE_URL}/posts`, {
@@ -36,21 +70,23 @@ export function CreatePost({ onPostCreated }: { onPostCreated?: () => void }) {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({ content, imageUrl }),
+                body: JSON.stringify({ content: keptContent, imageUrl: keptImage }),
             });
 
             if (res.ok) {
-                setContent('');
-                setImageUrl(null);
-                if (onPostCreated) {
-                    onPostCreated();
-                }
+                const realPost = await res.json();
+                if (onPostSuccess) onPostSuccess(tempId, realPost);
+                if (onPostCreated) onPostCreated();
             } else {
-                const errorData = await res.json().catch(() => ({}));
-                console.error('Failed to post', res.status, errorData);
+                throw new Error('Failed to post');
             }
         } catch (error) {
             console.error('Error posting', error);
+            // Revert
+            if (onPostError) onPostError(tempId);
+            // Restore form
+            setContent(keptContent);
+            setImageUrl(keptImage);
         } finally {
             setIsPosting(false);
         }
