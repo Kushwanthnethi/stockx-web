@@ -245,6 +245,9 @@ export default function StockOfTheWeekPage() {
                             <Badge variant="outline" className="border-primary/30 text-primary bg-primary/5 uppercase tracking-widest text-[10px] font-bold py-1">
                                 Weekly Intelligence
                             </Badge>
+                            <Badge variant="secondary" className="bg-blue-500/10 text-blue-500 border border-blue-500/20 uppercase tracking-widest text-[10px] font-bold py-1">
+                                Target Hold: ~4 Weeks
+                            </Badge>
                             <span className="text-xs text-muted-foreground flex items-center gap-1">
                                 <Calendar className="w-3 h-3" />
                                 Updated Sundays 12:00 PM
@@ -405,7 +408,13 @@ export default function StockOfTheWeekPage() {
                                     </thead>
                                     <tbody className="divide-y divide-border/50">
                                         {archive.map((pick: any) => {
-                                            const pnl = pick.finalPrice ? ((pick.finalPrice - pick.priceAtSelection) / pick.priceAtSelection) * 100 : 0;
+                                            // Logic: If finalPrice is set, use it (Closed). Otherwise use current live price (Tracking).
+                                            const isClosed = !!pick.finalPrice;
+                                            const effectivePrice = isClosed ? pick.finalPrice : (pick.stock?.currentPrice || pick.priceAtSelection);
+                                            // Avoid division by zero
+                                            const entryPrice = pick.priceAtSelection || 1;
+                                            const pnl = ((effectivePrice - entryPrice) / entryPrice) * 100;
+
                                             return (
                                                 <tr key={pick.id} className="hover:bg-muted/20 transition-colors">
                                                     <td className="px-6 py-4 font-medium text-muted-foreground">
@@ -413,24 +422,24 @@ export default function StockOfTheWeekPage() {
                                                     </td>
                                                     <td className="px-6 py-4 font-bold text-foreground">
                                                         {pick.stockSymbol}
+                                                        {!isClosed && <span className="ml-2 text-[10px] text-muted-foreground font-normal">(Live)</span>}
                                                     </td>
                                                     <td className="px-6 py-4 text-right font-mono text-muted-foreground">
                                                         {formatINR(pick.priceAtSelection)}
                                                     </td>
                                                     <td className="px-6 py-4 text-right font-mono">
-                                                        {pick.finalPrice ? (
-                                                            <span className={pnl >= 0 ? "text-green-500" : "text-red-500"}>
+                                                        <div className="flex flex-col items-end">
+                                                            <span>{formatINR(effectivePrice)}</span>
+                                                            <span className={cn("text-xs font-bold", pnl >= 0 ? "text-green-500" : "text-red-500")}>
                                                                 {pnl > 0 ? "+" : ""}{pnl.toFixed(2)}%
                                                             </span>
-                                                        ) : (
-                                                            <span className="text-muted-foreground">-</span>
-                                                        )}
+                                                        </div>
                                                     </td>
                                                     <td className="px-6 py-4 text-center">
-                                                        {pick.finalPrice ? (
+                                                        {isClosed ? (
                                                             <Badge variant="outline">Closed</Badge>
                                                         ) : (
-                                                            <Badge className="bg-green-500/10 text-green-500 border-green-500/20">Active</Badge>
+                                                            <Badge className="bg-blue-500/10 text-blue-500 border-blue-500/20 hover:bg-blue-500/20">Tracking</Badge>
                                                         )}
                                                     </td>
                                                 </tr>
