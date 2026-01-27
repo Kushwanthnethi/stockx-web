@@ -60,26 +60,46 @@ import { API_BASE_URL } from "@/lib/config";
 
 // ... existing imports
 
+// ... existing imports
+import { useRef } from "react";
+import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
+
 export default function Home() {
     const { user } = useAuth();
-    const [posts, setPosts] = useState<any[]>([]); // Changed type to any[] for now as DB shape might differ slightly from mock
+    const [posts, setPosts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const loadMoreRef = useRef<HTMLDivElement>(null);
 
-    const fetchPosts = async () => {
+    const fetchPosts = async (pageNum: number = 1, isRefresh: boolean = false) => {
         try {
+            if (pageNum === 1) setLoading(true); // Only show main loader on first load/refresh
+
             const token = localStorage.getItem('accessToken');
             const headers: HeadersInit = {};
             if (token) {
                 headers['Authorization'] = `Bearer ${token}`;
             }
 
-            const res = await fetch(`${API_BASE_URL}/posts`, {
+            const res = await fetch(`${API_BASE_URL}/posts?page=${pageNum}&limit=10`, {
                 headers
             });
 
             if (res.ok) {
                 const data = await res.json();
-                setPosts(data);
+
+                if (data.length < 10) {
+                    setHasMore(false);
+                } else {
+                    setHasMore(true);
+                }
+
+                if (pageNum === 1 || isRefresh) {
+                    setPosts(data);
+                } else {
+                    setPosts(prev => [...prev, ...data]);
+                }
             }
         } catch (error) {
             console.error(error);
@@ -88,9 +108,29 @@ export default function Home() {
         }
     };
 
+    // Initial load
     useEffect(() => {
-        fetchPosts();
+        fetchPosts(1);
     }, []);
+
+    // Infinite Scroll Hook
+    useIntersectionObserver({
+        target: loadMoreRef,
+        onIntersect: () => {
+            if (hasMore && !loading) {
+                const nextPage = page + 1;
+                setPage(nextPage);
+                fetchPosts(nextPage);
+            }
+        },
+        enabled: hasMore && !loading
+    });
+
+    const handlePostCreated = () => {
+        // Reset feed on new post
+        setPage(1);
+        fetchPosts(1, true);
+    };
 
     return (
         <div className="min-h-screen bg-background text-foreground font-sans">
@@ -114,7 +154,7 @@ export default function Home() {
 
                     {/* Create Post Input (Desktop Only) */}
                     <div className="hidden md:block">
-                        {user && <CreatePost onPostCreated={fetchPosts} />}
+                        {user && <CreatePost onPostCreated={handlePostCreated} />}
                     </div>
 
                     {/* Posts Feed */}
@@ -150,6 +190,11 @@ export default function Home() {
                                 <p>Be the first to share your market insights!</p>
                             </div>
                         )}
+
+                        {/* Infinite Scroll Sensor & Loader */}
+                        <div ref={loadMoreRef} className="h-10 flex w-full items-center justify-center p-4">
+                            {hasMore && posts.length > 0 && <span className="text-muted-foreground text-sm animate-pulse">Loading more posts...</span>}
+                        </div>
                     </div>
 
 
