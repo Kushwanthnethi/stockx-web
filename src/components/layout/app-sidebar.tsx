@@ -15,14 +15,24 @@ export const SIDEBAR_ITEMS = [
     { label: "About", href: "/about", icon: User },
 ];
 
+import { useAuth } from "@/providers/auth-provider";
+
 export function AppSidebar() {
     const pathname = usePathname();
+    const { user } = useAuth();
 
     const isActive = (path: string) => pathname === path;
 
+    const filteredItems = SIDEBAR_ITEMS.filter(item => {
+        if (!user && (item.label === "Notifications" || item.label === "Bookmarks")) {
+            return false;
+        }
+        return true;
+    });
+
     return (
         <aside className="hidden lg:block lg:col-span-2 space-y-2 sticky top-20 self-start h-fit">
-            {SIDEBAR_ITEMS.map((item) => (
+            {filteredItems.map((item) => (
                 <Link key={item.href} href={item.href}>
                     <Button
                         variant="ghost"
