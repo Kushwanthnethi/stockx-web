@@ -21,7 +21,7 @@ export default function ExplorePage() {
     const [stocks, setStocks] = useState<MarketStock[]>([]);
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
-    const PAGE_SIZE = 20;
+    const PAGE_SIZE = 50;
     const { user } = useAuth();
     const [isMarketActive, setIsMarketActive] = useState(false);
 
