@@ -23,7 +23,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { MobileHeader } from "@/components/layout/mobile-header";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { FloatingPostButton } from "@/components/features/feed/floating-post-button";
-import { AppSidebar } from "@/components/layout/app-sidebar";
+import { MainLayout } from "@/components/layout/main-layout";
 
 export default function RootLayout({
     children,
@@ -46,12 +46,9 @@ export default function RootLayout({
                         <GuestAuthModal />
                         <SiteHeader />
 
-                        <div className="container flex items-start gap-8 px-4 py-6 max-w-7xl mx-auto min-h-[calc(100vh-3.5rem)]">
-                            <AppSidebar className="sticky top-20 w-56 shrink-0" />
-                            <main className="flex-1 min-w-0 w-full">
-                                {children}
-                            </main>
-                        </div>
+                        <MainLayout>
+                            {children}
+                        </MainLayout>
 
                         <FloatingPostButton />
                         <BottomNav />

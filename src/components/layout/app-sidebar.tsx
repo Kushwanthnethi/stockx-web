@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Home, TrendingUp, Bell, Bookmark, Megaphone, Gavel, User, Target } from "lucide-react";
