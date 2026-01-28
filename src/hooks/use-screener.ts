@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-const API_BASE_URL = 'http://localhost:3333/api'; // Or use env var if available
+import { API_BASE_URL } from '@/lib/config';
 
 export type ScreenerStock = {
     symbol: string;
