@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Sparkles, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { AppSidebar } from "@/components/layout/app-sidebar";
+
 import { useAuth } from "@/providers/auth-provider";
 import { DataTable } from "./data-table";
 import { columns, MarketStock } from "./columns";
@@ -82,12 +82,10 @@ export default function ExplorePage() {
                 <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-violet-500/5 rounded-full blur-[120px]" />
             </div>
 
-            <main className="relative z-10 container max-w-[1600px] mx-auto px-4 py-8 pt-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
-                {/* Left Sidebar */}
-                <AppSidebar />
+            <main className="relative z-10 w-full space-y-8">
 
                 {/* Main Content */}
-                <div className="lg:col-span-10 space-y-8">
+                <div className="space-y-8">
                     {/* Header Section */}
                     <motion.div
                         initial={{ opacity: 0, y: -20 }}

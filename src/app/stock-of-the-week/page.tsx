@@ -9,7 +9,7 @@ import { API_BASE_URL } from "@/lib/config";
 import { Loader2, TrendingUp, AlertTriangle, Target, DollarSign, Activity, Calendar, ArrowRight, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { AppSidebar } from "@/components/layout/app-sidebar";
+
 import { Button } from "@/components/ui/button";
 import { PremiumGuard } from "@/components/shared/premium-guard";
 
@@ -229,12 +229,9 @@ export default function StockOfTheWeekPage() {
     // Layout Wrapper
     return (
         <div className="container max-w-7xl mx-auto px-4 pt-20 pb-40 md:py-6">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                {/* Left Sidebar - Re-added to fix visibility issue */}
-                <AppSidebar />
-
+            <div className="space-y-10">
                 {/* Main Content Area */}
-                <main className="lg:col-span-10 space-y-10">
+                <main className="space-y-10">
                     <PremiumGuard>
 
                         {/* Page Header */}

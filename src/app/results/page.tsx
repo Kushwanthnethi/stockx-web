@@ -5,7 +5,7 @@ import React from 'react';
 import { ResultsCalendar } from '@/components/features/results/results-calendar';
 import { Megaphone, CalendarCheck } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { AppSidebar } from "@/components/layout/app-sidebar";
+
 
 
 import { PremiumGuard } from "@/components/shared/premium-guard";
@@ -14,12 +14,10 @@ export default function ResultsPage() {
     return (
         <div className="min-h-screen bg-background text-foreground font-sans">
 
-            <main className="container max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
-                {/* Left Sidebar */}
-                <AppSidebar />
+            <div className="container max-w-7xl mx-auto px-4 py-8">
 
                 {/* Main Content */}
-                <div className="lg:col-span-10 space-y-8">
+                <div className="w-full space-y-8">
                     <PremiumGuard>
                         {/* Hero Section */}
                         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-background border p-6 md:p-8">
@@ -79,7 +77,7 @@ export default function ResultsPage() {
                         </div>
                     </PremiumGuard>
                 </div>
-            </main>
+            </div>
         </div>
     );
 }

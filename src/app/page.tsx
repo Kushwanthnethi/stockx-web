@@ -13,7 +13,7 @@ import { FeedPost } from "@/components/features/feed/feed-post";
 import { useAuth } from "@/providers/auth-provider";
 import { UserNav } from "@/components/layout/user-nav";
 import { NewsWidget } from "@/components/features/news/news-widget";
-import { AppSidebar } from "@/components/layout/app-sidebar";
+
 
 import { ModeToggle } from "@/components/mode-toggle";
 import { TrendingWidget } from "@/components/features/stocks/trending-widget";
@@ -118,10 +118,7 @@ export default function Home() {
 
 
             {/* Main Content Layout */}
-            <main className="container max-w-6xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
-
-                {/* Left Sidebar (Nav) */}
-                <AppSidebar />
+            <main className="grid grid-cols-1 lg:grid-cols-10 gap-8">
 
                 {/* Center Feed */}
                 <div className="lg:col-span-7">

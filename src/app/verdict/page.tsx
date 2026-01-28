@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { VerdictCard, VerdictType } from '@/components/features/verdict/verdict-card';
 import { Sparkles, RefreshCw, Search, ArrowDownCircle } from 'lucide-react';
 
-import { AppSidebar } from "@/components/layout/app-sidebar";
+
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { API_BASE_URL } from "@/lib/config";
@@ -568,12 +568,10 @@ export default function VerdictPage() {
         <div className="min-h-screen bg-background text-foreground font-sans">
 
 
-            <main className="container max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
-                {/* Sidebar */}
-                <AppSidebar />
+            <div className="container max-w-7xl mx-auto px-4 py-8">
 
                 {/* Main Content */}
-                <div className="lg:col-span-10">
+                <div className="w-full">
                     <PremiumGuard>
                         <div className="flex flex-col gap-6">
 
@@ -669,7 +667,7 @@ export default function VerdictPage() {
                         </div>
                     </PremiumGuard>
                 </div>
-            </main>
+            </div>
         </div>
     );
 }

@@ -17,7 +17,7 @@ export const SIDEBAR_ITEMS = [
 
 import { useAuth } from "@/providers/auth-provider";
 
-export function AppSidebar() {
+export function AppSidebar({ className }: { className?: string }) {
     const pathname = usePathname();
     const { user } = useAuth();
 
@@ -31,7 +31,7 @@ export function AppSidebar() {
     });
 
     return (
-        <aside className="hidden lg:block lg:col-span-2 space-y-2 sticky top-20 self-start h-fit">
+        <aside className={cn("hidden lg:block space-y-2 sticky top-20 self-start h-fit py-2", className)}>
             {filteredItems.map((item) => (
                 <Link key={item.href} href={item.href}>
                     <Button

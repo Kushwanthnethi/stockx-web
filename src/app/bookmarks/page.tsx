@@ -7,7 +7,7 @@ import { FeedPost } from "@/components/features/feed/feed-post";
 import { Loader2, ArrowLeft, Bookmark, Folder, Plus } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { AppSidebar } from "@/components/layout/app-sidebar";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 
@@ -62,9 +62,7 @@ export default function BookmarksPage() {
             {/* Sticky Header */}
 
 
-            <main className="container max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
-                {/* Left Sidebar */}
-                <AppSidebar />
+            <main className="grid grid-cols-1 lg:grid-cols-10 gap-8">
 
                 {/* Main Content */}
                 <div className="lg:col-span-7 space-y-6">
