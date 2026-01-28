@@ -13,9 +13,9 @@ import {
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
-import { ChevronDown, SlidersHorizontal, Search, ChevronRight, ChevronLeft } from "lucide-react"
+import { ChevronDown, SlidersHorizontal, Search } from "lucide-react"
 import { useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button"
 import {
@@ -33,7 +33,6 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { cn } from "@/lib/utils";
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -76,25 +75,25 @@ export function DataTable<TData, TValue>({
         <div className="w-full space-y-4">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-2">
                 <div className="relative w-full sm:max-w-sm group">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-indigo-400 transition-colors" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                     <Input
                         placeholder="Search by symbol..."
                         value={(table.getColumn("symbol")?.getFilterValue() as string) ?? ""}
                         onChange={(event) =>
                             table.getColumn("symbol")?.setFilterValue(event.target.value)
                         }
-                        className="pl-10 bg-slate-900/50 border-slate-800 focus:border-indigo-500/50 focus:ring-indigo-500/20 rounded-xl backdrop-blur-sm transition-all text-white placeholder:text-slate-500"
+                        className="pl-10 bg-background border-input focus-visible:ring-ring shadow-sm"
                     />
                 </div>
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="ml-auto bg-slate-900/50 border-slate-800 text-slate-300 hover:bg-slate-800 hover:text-white rounded-xl backdrop-blur-sm">
+                        <Button variant="outline" className="ml-auto bg-background border-input hover:bg-accent hover:text-accent-foreground shadow-sm">
                             <SlidersHorizontal className="mr-2 h-4 w-4" />
                             Customize View
                             <ChevronDown className="ml-2 h-4 w-4" />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="max-h-[300px] overflow-y-auto bg-slate-900 border-slate-800 text-slate-300">
+                    <DropdownMenuContent align="end" className="max-h-[300px] overflow-y-auto bg-popover border-border text-popover-foreground">
                         {table
                             .getAllColumns()
                             .filter((column) => column.getCanHide())
@@ -102,7 +101,7 @@ export function DataTable<TData, TValue>({
                                 return (
                                     <DropdownMenuCheckboxItem
                                         key={column.id}
-                                        className="capitalize focus:bg-slate-800 focus:text-white"
+                                        className="capitalize focus:bg-accent focus:text-accent-foreground"
                                         checked={column.getIsVisible()}
                                         onCheckedChange={(value) =>
                                             column.toggleVisibility(!!value)
@@ -116,14 +115,14 @@ export function DataTable<TData, TValue>({
                 </DropdownMenu>
             </div>
 
-            <div className="rounded-2xl border border-slate-800/60 bg-slate-900/20 backdrop-blur-xl overflow-hidden shadow-2xl shadow-black/20">
+            <div className="rounded-xl border border-slate-300 dark:border-border bg-white dark:bg-card text-card-foreground shadow-md dark:shadow-none overflow-hidden">
                 <Table>
-                    <TableHeader className="bg-slate-900/80 sticky top-0 z-10 backdrop-blur-md">
+                    <TableHeader className="bg-slate-100 dark:bg-muted/50 sticky top-0 z-10 backdrop-blur-md">
                         {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id} className="border-b border-slate-800/60 hover:bg-transparent">
+                            <TableRow key={headerGroup.id} className="border-b border-slate-200 dark:border-border hover:bg-transparent">
                                 {headerGroup.headers.map((header) => {
                                     return (
-                                        <TableHead key={header.id} className="text-slate-400 font-medium h-12 uppercase text-xs tracking-wider">
+                                        <TableHead key={header.id} className="text-muted-foreground font-semibold h-12 uppercase text-xs tracking-wider">
                                             {header.isPlaceholder
                                                 ? null
                                                 : flexRender(
@@ -145,7 +144,7 @@ export function DataTable<TData, TValue>({
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.2, delay: index * 0.03 }} // Staggered fade in
                                     data-state={row.getIsSelected() && "selected"}
-                                    className="group cursor-pointer border-b border-slate-800/30 transition-all hover:bg-white/[0.03]"
+                                    className="group cursor-pointer border-b border-slate-100 dark:border-border transition-colors hover:bg-slate-50 dark:hover:bg-muted/50 odd:bg-slate-50/30 dark:odd:bg-transparent"
                                     onClick={() => {
                                         const symbol = (row.original as any).symbol;
                                         if (symbol) {
@@ -154,7 +153,7 @@ export function DataTable<TData, TValue>({
                                     }}
                                 >
                                     {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id} className="py-3 text-slate-300 group-hover:text-white transition-colors">
+                                        <TableCell key={cell.id} className="py-3 text-foreground">
                                             {flexRender(
                                                 cell.column.columnDef.cell,
                                                 cell.getContext()
@@ -167,7 +166,7 @@ export function DataTable<TData, TValue>({
                             <TableRow>
                                 <TableCell
                                     colSpan={columns.length}
-                                    className="h-24 text-center text-slate-500"
+                                    className="h-24 text-center text-muted-foreground"
                                 >
                                     No stocks found matching your criteria.
                                 </TableCell>

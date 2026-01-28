@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Moon, Sparkles, TrendingUp, User } from "lucide-react";
+import { Sparkles, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AppSidebar } from "@/components/layout/app-sidebar";
 import { useAuth } from "@/providers/auth-provider";
@@ -75,9 +75,9 @@ export default function ExplorePage() {
     }, []);
 
     return (
-        <div className="min-h-screen bg-[#0A0A0B] text-foreground font-sans selection:bg-indigo-500/30">
-            {/* Ambient Background Effects */}
-            <div className="fixed inset-0 z-0 pointer-events-none">
+        <div className="min-h-screen bg-slate-50 dark:bg-background text-foreground font-sans selection:bg-primary/30">
+            {/* Ambient Background Effects - Visible in dark mode only */}
+            <div className="fixed inset-0 z-0 pointer-events-none opacity-0 dark:opacity-100 transition-opacity duration-500">
                 <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-500/5 rounded-full blur-[120px]" />
                 <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-violet-500/5 rounded-full blur-[120px]" />
             </div>
@@ -97,15 +97,15 @@ export default function ExplorePage() {
                     >
                         <div className="space-y-2">
                             <div className="flex items-center gap-2">
-                                <span className="px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-semibold tracking-wider flex items-center gap-1.5 shadow-[0_0_10px_rgba(99,102,241,0.1)]">
+                                <span className="px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-semibold tracking-wider flex items-center gap-1.5 shadow-sm">
                                     <Sparkles size={12} />
                                     MARKET INTELLIGENCE
                                 </span>
                             </div>
-                            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400">
+                            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground">
                                 Market Screener
                             </h1>
-                            <p className="text-slate-400 text-lg max-w-2xl font-light leading-relaxed">
+                            <p className="text-muted-foreground text-lg max-w-2xl font-light leading-relaxed">
                                 Deep fundamental analysis of top Indian stocks powered by real-time metrics.
                             </p>
                         </div>
@@ -113,15 +113,15 @@ export default function ExplorePage() {
                         {/* Market Status Card */}
                         <div className="flex flex-col items-end gap-3">
                             <div className={cn(
-                                "px-4 py-2 rounded-xl backdrop-blur-md border flex items-center gap-3 transition-all duration-300 shadow-lg",
+                                "px-4 py-2 rounded-xl backdrop-blur-md border flex items-center gap-3 transition-all duration-300 shadow-sm",
                                 isMarketActive
-                                    ? "bg-emerald-500/5 border-emerald-500/20 shadow-emerald-500/5"
-                                    : "bg-slate-800/40 border-slate-700/50"
+                                    ? "bg-emerald-500/10 border-emerald-500/20"
+                                    : "bg-muted/50 border-border"
                             )}>
                                 <div className="relative">
                                     <div className={cn(
                                         "w-3 h-3 rounded-full",
-                                        isMarketActive ? "bg-emerald-500" : "bg-slate-500"
+                                        isMarketActive ? "bg-emerald-500" : "bg-muted-foreground"
                                     )} />
                                     {isMarketActive && (
                                         <div className="absolute inset-0 w-3 h-3 rounded-full bg-emerald-500 animate-ping opacity-75" />
@@ -130,13 +130,13 @@ export default function ExplorePage() {
                                 <div className="flex flex-col">
                                     <span className={cn(
                                         "text-[10px] font-bold tracking-widest uppercase",
-                                        isMarketActive ? "text-emerald-500" : "text-slate-500"
+                                        isMarketActive ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"
                                     )}>
                                         Market Status
                                     </span>
                                     <span className={cn(
                                         "text-sm font-semibold",
-                                        isMarketActive ? "text-emerald-400" : "text-slate-400"
+                                        isMarketActive ? "text-emerald-600 dark:text-emerald-400" : "text-muted-foreground"
                                     )}>
                                         {isMarketActive ? "LIVE & TRADING" : "CLOSED"}
                                     </span>
@@ -152,16 +152,16 @@ export default function ExplorePage() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: 0.1 }}
                         >
-                            <TabsList className="bg-slate-900/50 border border-slate-800/50 p-1 h-auto rounded-xl backdrop-blur-md inline-flex w-auto">
+                            <TabsList className="bg-muted border border-border p-1 h-auto rounded-xl inline-flex w-auto">
                                 <TabsTrigger
                                     value="market"
-                                    className="px-6 py-2.5 rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white text-slate-400 data-[state=active]:shadow-lg data-[state=active]:shadow-indigo-500/20 transition-all duration-300"
+                                    className="px-6 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm text-muted-foreground transition-all duration-300"
                                 >
                                     Stock Screener
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="investors"
-                                    className="px-6 py-2.5 rounded-lg data-[state=active]:bg-indigo-600 data-[state=active]:text-white text-slate-400 data-[state=active]:shadow-lg data-[state=active]:shadow-indigo-500/20 transition-all duration-300"
+                                    className="px-6 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm text-muted-foreground transition-all duration-300"
                                 >
                                     Investor Portfolios
                                 </TabsTrigger>
@@ -171,8 +171,8 @@ export default function ExplorePage() {
                         <TabsContent value="market" className="space-y-4 focus-visible:outline-none">
                             {loading ? (
                                 <div className="space-y-4">
-                                    <div className="h-12 w-[300px] bg-slate-800/50 rounded-lg animate-pulse" />
-                                    <div className="rounded-xl border border-slate-800/50 h-[600px] w-full bg-slate-900/30 animate-pulse backdrop-blur-xl" />
+                                    <div className="h-12 w-[300px] bg-muted rounded-lg animate-pulse" />
+                                    <div className="rounded-xl border border-border h-[600px] w-full bg-card animate-pulse" />
                                 </div>
                             ) : (
                                 <motion.div
@@ -184,8 +184,8 @@ export default function ExplorePage() {
 
                                     {/* Pagination Controls */}
                                     <div className="flex items-center justify-between py-6 px-1">
-                                        <div className="text-sm text-slate-500">
-                                            Showing page <span className="text-white font-medium">{page}</span> of market data
+                                        <div className="text-sm text-muted-foreground">
+                                            Showing page <span className="text-foreground font-medium">{page}</span> of market data
                                         </div>
                                         <div className="flex items-center space-x-2">
                                             <Button
@@ -193,7 +193,7 @@ export default function ExplorePage() {
                                                 size="sm"
                                                 onClick={() => setPage(p => Math.max(1, p - 1))}
                                                 disabled={page === 1}
-                                                className="bg-slate-900/50 border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white transition-all"
+                                                className="bg-background border-input hover:bg-accent hover:text-accent-foreground"
                                             >
                                                 Previous
                                             </Button>
@@ -202,7 +202,7 @@ export default function ExplorePage() {
                                                 size="sm"
                                                 onClick={() => setPage(p => p + 1)}
                                                 disabled={stocks.length < PAGE_SIZE}
-                                                className="bg-slate-900/50 border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white transition-all"
+                                                className="bg-background border-input hover:bg-accent hover:text-accent-foreground"
                                             >
                                                 Next
                                             </Button>
@@ -222,13 +222,13 @@ export default function ExplorePage() {
                                 {/* Sidebar: List of Investors */}
                                 <div className="space-y-6">
                                     <div className="space-y-1">
-                                        <h3 className="font-semibold text-xl text-white">Famous Investors</h3>
-                                        <p className="text-slate-400 text-sm">Select an investor to view their major holdings.</p>
+                                        <h3 className="font-semibold text-xl text-foreground">Famous Investors</h3>
+                                        <p className="text-muted-foreground text-sm">Select an investor to view their major holdings.</p>
                                     </div>
                                     <div className="space-y-3 pr-2 max-h-[800px] overflow-y-auto custom-scrollbar">
                                         {loadingInvestors ? (
                                             Array(5).fill(0).map((_, i) => (
-                                                <div key={i} className="h-24 bg-slate-900/50 border border-slate-800 rounded-xl animate-pulse" />
+                                                <div key={i} className="h-24 bg-muted border border-border rounded-xl animate-pulse" />
                                             ))
                                         ) : (
                                             investors.map((inv) => (
@@ -245,28 +245,28 @@ export default function ExplorePage() {
 
                                 {/* Main Content: Portfolio */}
                                 <div className="md:col-span-2">
-                                    <div className="bg-slate-900/30 border border-slate-800/50 backdrop-blur-xl rounded-2xl p-6 min-h-[600px]">
+                                    <div className="bg-card border border-border rounded-2xl p-6 min-h-[600px] shadow-sm">
                                         {selectedInvestor ? (
                                             <div className="space-y-6">
-                                                <div className="flex items-center justify-between border-b border-slate-800 pb-6">
+                                                <div className="flex items-center justify-between border-b border-border pb-6">
                                                     <div>
-                                                        <h3 className="font-bold text-2xl text-white flex items-center gap-2">
+                                                        <h3 className="font-bold text-2xl text-foreground flex items-center gap-2">
                                                             {selectedInvestor.name}
                                                         </h3>
-                                                        <p className="text-indigo-400 font-medium mt-1">
+                                                        <p className="text-primary font-medium mt-1">
                                                             Portfolio Analysis
                                                         </p>
                                                     </div>
                                                     <div className="text-right">
-                                                        <div className="text-sm text-slate-400">Total Holdings</div>
-                                                        <div className="text-xl font-bold text-white">{selectedInvestor.stocks?.length || 0}</div>
+                                                        <div className="text-sm text-muted-foreground">Total Holdings</div>
+                                                        <div className="text-xl font-bold text-foreground">{selectedInvestor.stocks?.length || 0}</div>
                                                     </div>
                                                 </div>
                                                 <PortfolioTable stocks={selectedInvestor.stocks || []} />
                                             </div>
                                         ) : (
-                                            <div className="h-full flex flex-col items-center justify-center text-slate-500 space-y-4">
-                                                <div className="w-16 h-16 rounded-full bg-slate-800/50 flex items-center justify-center">
+                                            <div className="h-full flex flex-col items-center justify-center text-muted-foreground space-y-4">
+                                                <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
                                                     <User size={32} className="opacity-50" />
                                                 </div>
                                                 <p className="text-lg">Select an investor to analyze their portfolio</p>

@@ -46,7 +46,7 @@ export const columns: ColumnDef<MarketStock>[] = [
             <Button
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                className="pl-0 hover:bg-transparent font-bold text-slate-400 hover:text-white"
+                className="pl-0 hover:bg-transparent font-bold text-muted-foreground hover:text-foreground"
             >
                 Symbol
                 <ArrowUpDown className="ml-2 h-3 w-3" />
@@ -54,15 +54,15 @@ export const columns: ColumnDef<MarketStock>[] = [
         ),
         cell: ({ row }) => (
             <div>
-                <div className="font-bold text-base text-white">{row.getValue("symbol")}</div>
-                <div className="text-xs text-slate-500 font-medium md:hidden">{row.original.companyName}</div>
+                <div className="font-bold text-base text-foreground">{row.getValue("symbol")}</div>
+                <div className="text-xs text-muted-foreground font-medium md:hidden">{row.original.companyName}</div>
             </div>
         ),
     },
     {
         accessorKey: "companyName",
         header: "Company",
-        cell: ({ row }) => <div className="text-slate-400 text-sm font-medium max-w-[200px] truncate" title={row.getValue("companyName")}>{row.getValue("companyName")}</div>,
+        cell: ({ row }) => <div className="text-foreground text-sm font-medium max-w-[200px] truncate" title={row.getValue("companyName")}>{row.getValue("companyName")}</div>,
     },
     {
         accessorKey: "currentPrice",
@@ -71,7 +71,7 @@ export const columns: ColumnDef<MarketStock>[] = [
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    className="hover:bg-transparent font-bold text-slate-400 hover:text-white pr-0"
+                    className="hover:bg-transparent font-bold text-muted-foreground hover:text-foreground pr-0"
                 >
                     Price
                     <ArrowUpDown className="ml-2 h-3 w-3" />
@@ -95,7 +95,7 @@ export const columns: ColumnDef<MarketStock>[] = [
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    className="hover:bg-transparent font-bold text-slate-400 hover:text-white pr-0"
+                    className="hover:bg-transparent font-bold text-muted-foreground hover:text-foreground pr-0"
                 >
                     Change %
                     <ArrowUpDown className="ml-2 h-3 w-3" />
@@ -108,7 +108,7 @@ export const columns: ColumnDef<MarketStock>[] = [
             return (
                 <div className={cn(
                     "text-right font-semibold flex items-center justify-end gap-1",
-                    isPositive ? "text-emerald-400" : "text-rose-400"
+                    isPositive ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"
                 )}>
                     {isPositive ? <ArrowUp size={12} /> : <ArrowDown size={12} />}
                     {Math.abs(val).toFixed(2)}%
@@ -123,7 +123,7 @@ export const columns: ColumnDef<MarketStock>[] = [
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    className="hover:bg-transparent font-bold text-slate-400 hover:text-white pr-0"
+                    className="hover:bg-transparent font-bold text-muted-foreground hover:text-foreground pr-0"
                 >
                     Market Cap
                     <ArrowUpDown className="ml-2 h-3 w-3" />
@@ -132,7 +132,7 @@ export const columns: ColumnDef<MarketStock>[] = [
         ),
         cell: ({ row }) => {
             const mc = parseFloat(row.getValue("marketCap")) || 0;
-            return <div className="text-right text-slate-300 font-mono text-sm">{formatLargeNumber(mc)}</div>
+            return <div className="text-right text-foreground font-mono text-sm">{formatLargeNumber(mc)}</div>
         },
     },
     {
@@ -142,7 +142,7 @@ export const columns: ColumnDef<MarketStock>[] = [
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    className="hover:bg-transparent font-bold text-slate-400 hover:text-white pr-0"
+                    className="hover:bg-transparent font-bold text-muted-foreground hover:text-foreground pr-0"
                 >
                     P/E
                     <ArrowUpDown className="ml-2 h-3 w-3" />
@@ -151,7 +151,7 @@ export const columns: ColumnDef<MarketStock>[] = [
         ),
         cell: ({ row }) => {
             const val = parseFloat(row.getValue("peRatio"));
-            return <div className="text-right text-slate-300 font-mono text-sm">{val ? val.toFixed(2) : '-'}</div>
+            return <div className="text-right text-foreground font-mono text-sm">{val ? val.toFixed(2) : '-'}</div>
         },
     },
     {
@@ -159,7 +159,7 @@ export const columns: ColumnDef<MarketStock>[] = [
         header: "Book Val",
         cell: ({ row }) => {
             const val = parseFloat(row.getValue("bookValue"));
-            return <div className="text-right text-slate-400 font-mono text-sm">{val ? val.toFixed(2) : '-'}</div>
+            return <div className="text-right text-foreground font-mono text-sm">{val ? val.toFixed(2) : '-'}</div>
         },
     },
     {
@@ -167,7 +167,7 @@ export const columns: ColumnDef<MarketStock>[] = [
         header: "Div Yld",
         cell: ({ row }) => {
             const val = parseFloat(row.getValue("dividendYield"));
-            return <div className="text-right text-slate-400 font-mono text-sm">{val ? formatPercent(val) : '-'}</div>
+            return <div className="text-right text-foreground font-mono text-sm">{val ? formatPercent(val) : '-'}</div>
         },
     },
     {
@@ -175,7 +175,7 @@ export const columns: ColumnDef<MarketStock>[] = [
         header: "ROE",
         cell: ({ row }) => {
             const val = parseFloat(row.getValue("returnOnEquity"));
-            return <div className={cn("text-right font-mono text-sm", val > 0.15 ? "text-emerald-400" : "text-slate-400")}>{val ? formatPercent(val) : '-'}</div>
+            return <div className={cn("text-right font-mono text-sm", val > 0.15 ? "text-emerald-600 dark:text-emerald-400" : "text-foreground")}>{val ? formatPercent(val) : '-'}</div>
         },
     },
     {
@@ -183,7 +183,7 @@ export const columns: ColumnDef<MarketStock>[] = [
         header: "Debt",
         cell: ({ row }) => {
             const val = parseFloat(row.getValue("totalDebt"));
-            return <div className="text-right text-slate-400 font-mono text-sm">{val ? formatLargeNumber(val) : '-'}</div>
+            return <div className="text-right text-foreground font-mono text-sm">{val ? formatLargeNumber(val) : '-'}</div>
         },
     },
 ]
