@@ -1,10 +1,10 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown } from "lucide-react"
+import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
-
 import { LiveStockTicker } from "@/components/features/stocks/live-stock-ticker";
+import { cn } from "@/lib/utils";
 
 // This type maps to the properties returned by the API
 export type MarketStock = {
@@ -21,82 +21,137 @@ export type MarketStock = {
     totalDebt: number
 }
 
+const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+        maximumFractionDigits: 2,
+    }).format(value);
+};
+
+const formatPercent = (value: number) => {
+    return (value * 100).toFixed(2) + '%';
+};
+
+const formatLargeNumber = (value: number) => {
+    if (value >= 1e7) return (value / 1e7).toFixed(2) + 'Cr';
+    if (value >= 1e5) return (value / 1e5).toFixed(2) + 'L';
+    return value.toString();
+};
+
 export const columns: ColumnDef<MarketStock>[] = [
     {
         accessorKey: "symbol",
-        // header: "Symbol",
         header: ({ column }) => (
             <Button
                 variant="ghost"
                 onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                className="pl-0 hover:bg-transparent font-bold"
+                className="pl-0 hover:bg-transparent font-bold text-slate-400 hover:text-white"
             >
                 Symbol
-                <ArrowUpDown className="ml-2 h-4 w-4" />
+                <ArrowUpDown className="ml-2 h-3 w-3" />
             </Button>
         ),
-        cell: ({ row }) => <div className="font-bold">{row.getValue("symbol")}</div>,
+        cell: ({ row }) => (
+            <div>
+                <div className="font-bold text-base text-white">{row.getValue("symbol")}</div>
+                <div className="text-xs text-slate-500 font-medium md:hidden">{row.original.companyName}</div>
+            </div>
+        ),
     },
     {
         accessorKey: "companyName",
         header: "Company",
-        cell: ({ row }) => <div className="text-slate-500 text-xs max-w-[200px] truncate" title={row.getValue("companyName")}>{row.getValue("companyName")}</div>,
+        cell: ({ row }) => <div className="text-slate-400 text-sm font-medium max-w-[200px] truncate" title={row.getValue("companyName")}>{row.getValue("companyName")}</div>,
     },
     {
         accessorKey: "currentPrice",
-        header: ({ column }) => {
-            return (
+        header: ({ column }) => (
+            <div className="text-right">
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    className="text-right w-full font-bold justify-end pr-0"
+                    className="hover:bg-transparent font-bold text-slate-400 hover:text-white pr-0"
                 >
                     Price
-                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                    <ArrowUpDown className="ml-2 h-3 w-3" />
                 </Button>
-            )
-        },
+            </div>
+        ),
         cell: ({ row }) => {
             const price = parseFloat(row.getValue("currentPrice")) || 0;
             const chgPercent = row.original.changePercent || 0;
-            // Custom simplified render if LiveTicker is too heavy for 700 rows, 
-            // but LiveTicker has useEffect which might be heavy. 
-            // For now, let's stick to LiveTicker for liveliness, but maybe optimize later if laggy.
-            return <LiveStockTicker symbol={row.original.symbol} initialPrice={price} initialChangePercent={chgPercent} />
+            return (
+                <div className="flex justify-end">
+                    <LiveStockTicker symbol={row.original.symbol} initialPrice={price} initialChangePercent={chgPercent} />
+                </div>
+            )
         },
+    },
+    {
+        accessorKey: "changePercent",
+        header: ({ column }) => (
+            <div className="text-right">
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="hover:bg-transparent font-bold text-slate-400 hover:text-white pr-0"
+                >
+                    Change %
+                    <ArrowUpDown className="ml-2 h-3 w-3" />
+                </Button>
+            </div>
+        ),
+        cell: ({ row }) => {
+            const val = row.original.changePercent;
+            const isPositive = val >= 0;
+            return (
+                <div className={cn(
+                    "text-right font-semibold flex items-center justify-end gap-1",
+                    isPositive ? "text-emerald-400" : "text-rose-400"
+                )}>
+                    {isPositive ? <ArrowUp size={12} /> : <ArrowDown size={12} />}
+                    {Math.abs(val).toFixed(2)}%
+                </div>
+            )
+        }
     },
     {
         accessorKey: "marketCap",
         header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                className="text-right w-full font-bold justify-end pr-0"
-            >
-                Market Cap
-                <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
+            <div className="text-right">
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="hover:bg-transparent font-bold text-slate-400 hover:text-white pr-0"
+                >
+                    Market Cap
+                    <ArrowUpDown className="ml-2 h-3 w-3" />
+                </Button>
+            </div>
         ),
         cell: ({ row }) => {
             const mc = parseFloat(row.getValue("marketCap")) || 0;
-            return <div className="text-right text-slate-500">{(mc / 1e7).toFixed(0)}Cr</div>
+            return <div className="text-right text-slate-300 font-mono text-sm">{formatLargeNumber(mc)}</div>
         },
     },
     {
         accessorKey: "peRatio",
         header: ({ column }) => (
-            <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                className="text-right w-full font-bold justify-end pr-0"
-            >
-                P/E
-                <ArrowUpDown className="ml-2 h-4 w-4" />
-            </Button>
+            <div className="text-right">
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    className="hover:bg-transparent font-bold text-slate-400 hover:text-white pr-0"
+                >
+                    P/E
+                    <ArrowUpDown className="ml-2 h-3 w-3" />
+                </Button>
+            </div>
         ),
         cell: ({ row }) => {
             const val = parseFloat(row.getValue("peRatio"));
-            return <div className="text-right">{val ? val.toFixed(2) : '-'}</div>
+            return <div className="text-right text-slate-300 font-mono text-sm">{val ? val.toFixed(2) : '-'}</div>
         },
     },
     {
@@ -104,7 +159,7 @@ export const columns: ColumnDef<MarketStock>[] = [
         header: "Book Val",
         cell: ({ row }) => {
             const val = parseFloat(row.getValue("bookValue"));
-            return <div className="text-right">{val ? val.toFixed(2) : '-'}</div>
+            return <div className="text-right text-slate-400 font-mono text-sm">{val ? val.toFixed(2) : '-'}</div>
         },
     },
     {
@@ -112,7 +167,7 @@ export const columns: ColumnDef<MarketStock>[] = [
         header: "Div Yld",
         cell: ({ row }) => {
             const val = parseFloat(row.getValue("dividendYield"));
-            return <div className="text-right">{val ? (val * 100).toFixed(2) + '%' : '-'}</div>
+            return <div className="text-right text-slate-400 font-mono text-sm">{val ? formatPercent(val) : '-'}</div>
         },
     },
     {
@@ -120,7 +175,7 @@ export const columns: ColumnDef<MarketStock>[] = [
         header: "ROE",
         cell: ({ row }) => {
             const val = parseFloat(row.getValue("returnOnEquity"));
-            return <div className="text-right">{val ? (val * 100).toFixed(2) + '%' : '-'}</div>
+            return <div className={cn("text-right font-mono text-sm", val > 0.15 ? "text-emerald-400" : "text-slate-400")}>{val ? formatPercent(val) : '-'}</div>
         },
     },
     {
@@ -128,7 +183,7 @@ export const columns: ColumnDef<MarketStock>[] = [
         header: "Debt",
         cell: ({ row }) => {
             const val = parseFloat(row.getValue("totalDebt"));
-            return <div className="text-right text-slate-500">{val ? (val / 1e7).toFixed(0) + 'Cr' : '-'}</div>
+            return <div className="text-right text-slate-400 font-mono text-sm">{val ? formatLargeNumber(val) : '-'}</div>
         },
     },
 ]
