@@ -27,8 +27,8 @@ export function ScreenerTable({ data, isLoading }: ScreenerTableProps) {
                     <Skeleton className="h-12 w-full" />
                 </div>
                 <div className="space-y-2">
-                    {Array.from({ length: 10 }).map((_, i) => (
-                        <Skeleton key={i} className="h-12 w-full" />
+                    {Array.from({ length: 15 }).map((_, i) => (
+                        <Skeleton key={i} className="h-14 w-full" />
                     ))}
                 </div>
             </div>
@@ -37,58 +37,89 @@ export function ScreenerTable({ data, isLoading }: ScreenerTableProps) {
 
     if (!data || data.length === 0) {
         return (
-            <div className="text-center py-10 text-muted-foreground">
-                No stocks found for this category.
+            <div className="text-center py-20 bg-muted/20 rounded-lg border border-dashed">
+                <p className="text-muted-foreground text-lg">No stocks match these criteria currently.</p>
+                <p className="text-sm text-muted-foreground mt-2">Try adjusting filters or checking back later.</p>
             </div>
         )
     }
 
+    const formatCurrency = (val: number | undefined) => {
+        if (val === undefined || val === null) return '-';
+        return `₹${val.toFixed(2)}`;
+    }
+
+    const formatPercent = (val: number | undefined) => {
+        if (val === undefined || val === null) return '-';
+        return `${(val * 100).toFixed(2)}%`;
+    }
+
+    const formatCr = (val: number | undefined) => {
+        if (val === undefined || val === null) return '-';
+        return `₹${(val / 10000000).toFixed(0)}Cr`;
+    }
+
     return (
-        <div className="rounded-md border">
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>Symbol</TableHead>
-                        <TableHead>Company</TableHead>
-                        <TableHead className="text-right">Price</TableHead>
-                        <TableHead className="text-right">Change</TableHead>
-                        <TableHead className="text-right">% Change</TableHead>
-                        <TableHead className="text-right">Volume</TableHead>
-                        <TableHead className="text-right hidden md:table-cell">Market Cap</TableHead>
-                        <TableHead className="text-right hidden lg:table-cell">PE Ratio</TableHead>
-                        <TableHead className="text-right hidden xl:table-cell">52W High</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {data.map((stock) => {
-                        const isPositive = stock.change >= 0;
-                        return (
-                            <TableRow key={stock.symbol}>
-                                <TableCell className="font-medium">{stock.symbol}</TableCell>
-                                <TableCell className="max-w-[200px] truncate" title={stock.companyName}>
-                                    {stock.companyName}
-                                </TableCell>
-                                <TableCell className="text-right">₹{stock.price?.toFixed(2)}</TableCell>
-                                <TableCell className={cn("text-right", isPositive ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400")}>
-                                    {stock.change > 0 ? "+" : ""}{stock.change?.toFixed(2)}
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    <Badge variant={isPositive ? "default" : "destructive"} className={cn("ml-auto w-fit flex items-center gap-1", isPositive ? "bg-green-100 text-green-700 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400" : "bg-red-100 text-red-700 hover:bg-red-100 dark:bg-red-900/30 dark:text-red-400")}>
-                                        {isPositive ? <ArrowUpIcon className="h-3 w-3" /> : <ArrowDownIcon className="h-3 w-3" />}
-                                        {Math.abs(stock.changePercent).toFixed(2)}%
-                                    </Badge>
-                                </TableCell>
-                                <TableCell className="text-right">{(stock.volume / 100000).toFixed(2)}L</TableCell>
-                                <TableCell className="text-right hidden md:table-cell">
-                                    {stock.marketCap ? `₹${(stock.marketCap / 10000000).toFixed(2)}Cr` : '-'}
-                                </TableCell>
-                                <TableCell className="text-right hidden lg:table-cell">{stock.peRatio?.toFixed(2) || '-'}</TableCell>
-                                <TableCell className="text-right hidden xl:table-cell">₹{stock.fiftyTwoWeekHigh?.toFixed(2) || '-'}</TableCell>
-                            </TableRow>
-                        )
-                    })}
-                </TableBody>
-            </Table>
+        <div className="rounded-xl border shadow-sm overflow-hidden bg-card">
+            <div className="overflow-x-auto">
+                <Table>
+                    <TableHeader className="bg-muted/50">
+                        <TableRow>
+                            <TableHead className="w-[180px]">Company</TableHead>
+                            <TableHead className="text-right">Price</TableHead>
+                            <TableHead className="text-right whitespace-nowrap">Change %</TableHead>
+                            <TableHead className="text-right whitespace-nowrap">Market Cap</TableHead>
+                            <TableHead className="text-right">P/E</TableHead>
+                            <TableHead className="text-right whitespace-nowrap">Sales Growth</TableHead>
+                            <TableHead className="text-right whitespace-nowrap">Profit Growth</TableHead>
+                            <TableHead className="text-right">ROE</TableHead>
+                            <TableHead className="text-right">ROCE</TableHead>
+                            <TableHead className="text-right">Debt</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {data.map((stock) => {
+                            const isPositive = stock.change >= 0;
+                            return (
+                                <TableRow key={stock.symbol} className="hover:bg-muted/30 transition-colors">
+                                    <TableCell>
+                                        <div className="flex flex-col">
+                                            <span className="font-bold text-foreground">{stock.symbol}</span>
+                                            <span className="text-xs text-muted-foreground truncate max-w-[150px]" title={stock.companyName}>
+                                                {stock.companyName}
+                                            </span>
+                                            {stock.sector && <span className="text-[10px] text-primary/80 mt-0.5">{stock.sector}</span>}
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className="text-right font-medium">{formatCurrency(stock.price)}</TableCell>
+                                    <TableCell className="text-right">
+                                        <Badge variant={isPositive ? "default" : "destructive"}
+                                            className={cn("ml-auto w-fit flex items-center gap-1 font-bold",
+                                                isPositive ? "bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/40 dark:text-green-300"
+                                                    : "bg-red-100 text-red-700 hover:bg-red-200 dark:bg-red-900/40 dark:text-red-300")}>
+                                            {isPositive ? <ArrowUpIcon className="h-3 w-3" /> : <ArrowDownIcon className="h-3 w-3" />}
+                                            {Math.abs(stock.changePercent).toFixed(2)}%
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell className="text-right font-mono text-sm">{formatCr(stock.marketCap)}</TableCell>
+                                    <TableCell className="text-right font-mono text-sm">{stock.peRatio?.toFixed(1) || '-'}</TableCell>
+
+                                    <TableCell className={cn("text-right font-mono text-sm", (stock.revenueGrowth || 0) > 0 ? "text-green-600 dark:text-green-400" : "")}>
+                                        {formatPercent(stock.revenueGrowth)}
+                                    </TableCell>
+                                    <TableCell className={cn("text-right font-mono text-sm", (stock.earningsGrowth || 0) > 0 ? "text-green-600 dark:text-green-400" : "")}>
+                                        {formatPercent(stock.earningsGrowth)}
+                                    </TableCell>
+
+                                    <TableCell className="text-right font-mono text-sm">{formatPercent(stock.roe)}</TableCell>
+                                    <TableCell className="text-right font-mono text-sm">{formatPercent(stock.roce)}</TableCell>
+                                    <TableCell className="text-right font-mono text-sm text-muted-foreground">{formatCr(stock.totalDebt)}</TableCell>
+                                </TableRow>
+                            )
+                        })}
+                    </TableBody>
+                </Table>
+            </div>
         </div>
     )
 }
