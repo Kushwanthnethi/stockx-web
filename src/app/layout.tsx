@@ -24,39 +24,32 @@ import { MobileHeader } from "@/components/layout/mobile-header";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { FloatingPostButton } from "@/components/features/feed/floating-post-button";
 
-import QueryProvider from "@/providers/query-provider";
-
 export default function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-
-    // ...
-
     return (
         <html lang="en" suppressHydrationWarning>
             <body
                 className={cn(inter.className, "min-h-screen bg-background font-sans antialiased")}
                 suppressHydrationWarning
             >
-                <QueryProvider>
-                    <ThemeProvider
-                        attribute="class"
-                        defaultTheme="system"
-                        enableSystem
-                        disableTransitionOnChange
-                    >
-                        <AuthProvider>
-                            <GuestAuthModal />
-                            <SiteHeader />
+                <ThemeProvider
+                    attribute="class"
+                    defaultTheme="system"
+                    enableSystem
+                    disableTransitionOnChange
+                >
+                    <AuthProvider>
+                        <GuestAuthModal />
+                        <SiteHeader />
 
-                            {children}
-                            <FloatingPostButton />
-                            <BottomNav />
-                        </AuthProvider>
-                    </ThemeProvider>
-                </QueryProvider>
+                        {children}
+                        <FloatingPostButton />
+                        <BottomNav />
+                    </AuthProvider>
+                </ThemeProvider>
             </body>
         </html>
     );
