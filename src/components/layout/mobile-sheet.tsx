@@ -26,6 +26,7 @@ const MOBILE_DRAWER_ITEMS = [
 export function MobileSheet({ trigger, className }: { trigger?: React.ReactNode, className?: string }) {
     const [open, setOpen] = React.useState(false);
     const pathname = usePathname();
+    const { user } = useAuth();
 
     const isActive = (path: string) => pathname === path;
 
@@ -94,7 +95,7 @@ export function MobileSheet({ trigger, className }: { trigger?: React.ReactNode,
                                 </div>
 
                                 <div className="space-y-2">
-                                    const {user} = useAuth();
+
 
                                     {MOBILE_DRAWER_ITEMS.filter(item => {
                                         // Hide Notifications and Bookmarks if no user
