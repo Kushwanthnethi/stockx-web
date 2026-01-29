@@ -31,7 +31,14 @@ function AuthButtons() {
     );
 }
 
+import { usePathname } from "next/navigation";
+
 export function SiteHeader() {
+    const pathname = usePathname();
+    const isAuthPage = pathname === "/login" || pathname === "/signup";
+
+    if (isAuthPage) return null;
+
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-sm supports-[backdrop-filter]:bg-background/60">
             <div className="container flex h-14 items-center justify-between px-4 max-w-7xl mx-auto">
