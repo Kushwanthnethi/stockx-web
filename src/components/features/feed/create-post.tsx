@@ -138,6 +138,10 @@ export function CreatePost({ onPostCreated, onOptimisticAdd, onPostSuccess, onPo
         }
     };
 
+    const handleFeatureNotImplemented = (feature: string) => {
+        alert(`${feature} feature coming soon!`);
+    };
+
     const isExpanded = isFocused || content.length > 0 || imageUrl;
 
     return (
@@ -238,6 +242,7 @@ export function CreatePost({ onPostCreated, onOptimisticAdd, onPostSuccess, onPo
                                 size="sm"
                                 className="h-9 w-9 p-0 rounded-full text-green-500 hover:text-green-600 hover:bg-green-500/10 transition-colors hidden sm:flex"
                                 title="Add GIF"
+                                onClick={() => handleFeatureNotImplemented("GIFs")}
                             >
                                 <Gift size={20} />
                             </Button>
@@ -247,6 +252,7 @@ export function CreatePost({ onPostCreated, onOptimisticAdd, onPostSuccess, onPo
                                 size="sm"
                                 className="h-9 w-9 p-0 rounded-full text-purple-500 hover:text-purple-600 hover:bg-purple-500/10 transition-colors hidden sm:flex"
                                 title="Add Chart"
+                                onClick={() => handleFeatureNotImplemented("Charts")}
                             >
                                 <BarChart2 size={20} />
                             </Button>
