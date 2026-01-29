@@ -11,7 +11,7 @@ export const SIDEBAR_ITEMS = [
     { label: "StockX Screener", href: "/explore", icon: TrendingUp },
     { label: "Stock of the Week", href: "/stock-of-the-week", icon: Target, isNew: true },
     { label: "Result Corner", href: "/results", icon: Megaphone },
-    { label: "Verdict", href: "/verdict", icon: Gavel },
+
     { label: "Notifications", href: "/notifications", icon: Bell },
     { label: "Bookmarks", href: "/bookmarks", icon: Bookmark },
     { label: "About", href: "/about", icon: User },
@@ -43,7 +43,7 @@ export function AppSidebar({ className }: { className?: string }) {
                             isActive(item.href) ? "bg-accent text-accent-foreground font-semibold" : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                         )}
                     >
-                        <item.icon size={18} className={cn("shrink-0", item.label === "Verdict" && "shrink-0")} />
+                        <item.icon size={18} className="shrink-0" />
                         <span className="truncate">{item.label}</span>
                         {item.isNew && (
                             <span className="ml-auto text-[10px] font-bold bg-primary/20 text-primary px-1.5 py-0.5 rounded-sm shrink-0">NEW</span>
