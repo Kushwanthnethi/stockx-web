@@ -115,7 +115,7 @@ export default function VerdictPage() {
             <div className="absolute top-1/2 right-0 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[180px] translate-x-1/2 opacity-40 dark:opacity-20 pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-emerald-500/5 rounded-full blur-[140px] -translate-x-1/2 translate-y-1/2 opacity-30 pointer-events-none" />
 
-            <div className="max-w-[1400px] relative z-10 py-8 px-6 sm:px-10 space-y-8 animate-in fade-in duration-1000">
+            <div className="max-w-[1400px] relative z-10 py-8 px-2 sm:px-10 space-y-8 animate-in fade-in duration-1000">
                 {/* Header Section */}
                 <div className="space-y-6">
                     <div className="space-y-3">

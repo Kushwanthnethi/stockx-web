@@ -76,7 +76,7 @@ export function VerdictCard({ stock, isThrottled }: VerdictCardProps) {
     const parsed = parseRationale(displayRationale);
 
     return (
-        <Card className="overflow-hidden border-border/40 bg-card/40 backdrop-blur-2xl transition-all hover:border-primary/40 hover:shadow-xl group flex flex-col relative min-h-[440px] border-t-4 border-t-transparent">
+        <Card className="overflow-hidden border-border/40 bg-card/40 backdrop-blur-2xl transition-all hover:border-primary/40 hover:shadow-xl group flex flex-col relative min-h-[440px] border-t-4 border-t-transparent w-full">
             {/* Top Identity Section */}
             <div className="p-5 pb-3 flex items-start justify-between">
                 <div className="flex flex-col gap-1">

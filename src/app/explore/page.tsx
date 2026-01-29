@@ -153,13 +153,13 @@ export default function ExplorePage() {
                             <TabsList className="bg-muted border border-border p-1 h-auto rounded-xl inline-flex w-auto">
                                 <TabsTrigger
                                     value="market"
-                                    className="px-6 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm text-muted-foreground transition-all duration-300"
+                                    className="px-3 md:px-6 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm text-muted-foreground transition-all duration-300"
                                 >
                                     Stock Screener
                                 </TabsTrigger>
                                 <TabsTrigger
                                     value="investors"
-                                    className="px-6 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm text-muted-foreground transition-all duration-300"
+                                    className="px-3 md:px-6 py-2.5 rounded-lg data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm text-muted-foreground transition-all duration-300"
                                 >
                                     Investor Portfolios
                                 </TabsTrigger>

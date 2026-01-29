@@ -228,7 +228,7 @@ export default function StockOfTheWeekPage() {
 
     // Layout Wrapper
     return (
-        <div className="container max-w-7xl mx-auto px-4 pt-20 pb-40 md:py-6">
+        <div className="container max-w-7xl mx-auto px-2 md:px-6 pt-20 pb-40 md:py-6">
             <div className="space-y-10">
                 {/* Main Content Area */}
                 <main className="space-y-10">

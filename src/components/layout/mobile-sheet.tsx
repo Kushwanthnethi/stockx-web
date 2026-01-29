@@ -9,6 +9,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SIDEBAR_ITEMS } from "./app-sidebar";
 import { TrendingUp, Megaphone, Gavel, Bell, Bookmark, User, FileText, Target } from "lucide-react";
+import { useAuth } from "@/providers/auth-provider";
 
 // Custom items for Mobile Drawer (Profile Menu) as per user request
 // Order: StockX Screener, Result Corner, Verdict, Notifications, Bookmarks (Saved), About
@@ -93,7 +94,15 @@ export function MobileSheet({ trigger, className }: { trigger?: React.ReactNode,
                                 </div>
 
                                 <div className="space-y-2">
-                                    {MOBILE_DRAWER_ITEMS.map((item) => (
+                                    const {user} = useAuth();
+
+                                    {MOBILE_DRAWER_ITEMS.filter(item => {
+                                        // Hide Notifications and Bookmarks if no user
+                                        if (!user && (item.href === '/notifications' || item.href === '/bookmarks')) {
+                                            return false;
+                                        }
+                                        return true;
+                                    }).map((item) => (
                                         <Link key={item.href} href={item.href} onClick={() => setOpen(false)}>
                                             <Button
                                                 variant="ghost"
