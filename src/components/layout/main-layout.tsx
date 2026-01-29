@@ -17,7 +17,10 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
     return (
         <div
             className={cn(
-                "flex items-start gap-8 py-8 mx-auto min-h-[calc(100vh-3.5rem)] container",
+                "flex items-start mx-auto min-h-[calc(100vh-3.5rem)]",
+                // Only act as a container with padding for non-auth pages
+                !isAuthPage && "container py-8 gap-8",
+
                 // Home stays focused (max-w-7xl/1280px), others get full container width (max-w-2xl/1400px defined in tailwind config)
                 // We let the 'container' class handle padding (2rem) for a professional consistent alignment
                 isHomePage ? "max-w-7xl" : ""
