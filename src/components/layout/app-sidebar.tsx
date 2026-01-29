@@ -11,6 +11,7 @@ export const SIDEBAR_ITEMS = [
     { label: "StockX Screener", href: "/explore", icon: TrendingUp },
     { label: "Stock of the Week", href: "/stock-of-the-week", icon: Target, isNew: true },
     { label: "Result Corner", href: "/results", icon: Megaphone },
+    { label: "Verdict", href: "/verdict", icon: Gavel },
 
     { label: "Notifications", href: "/notifications", icon: Bell },
     { label: "Bookmarks", href: "/bookmarks", icon: Bookmark },
