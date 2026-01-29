@@ -181,8 +181,8 @@ export function CreatePost({ onPostCreated, onOptimisticAdd, onPostSuccess, onPo
                                 onFocus={() => setIsFocused(true)}
                                 onBlur={() => !content && !imageUrl && setIsFocused(false)}
                                 placeholder="Share your market insights, analysis, or questions..."
-                                className="w-full bg-transparent border-none focus:ring-0 p-0 text-foreground placeholder:text-muted-foreground/50 text-base md:text-lg resize-none min-h-[60px] max-h-[400px] leading-relaxed font-medium"
-                                style={{ overflow: "hidden" }}
+                                className="w-full bg-transparent border-none focus:ring-0 focus:outline-none focus:bg-transparent p-0 text-foreground placeholder:text-muted-foreground/50 text-base md:text-lg resize-none min-h-[60px] max-h-[400px] leading-relaxed font-medium"
+                                style={{ overflow: "hidden", backgroundColor: "transparent" }}
                             />
                         </div>
 
