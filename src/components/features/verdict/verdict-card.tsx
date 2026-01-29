@@ -88,10 +88,10 @@ export function VerdictCard({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            className="group relative cursor-pointer"
+            className="group relative cursor-pointer h-full"
         >
             <div className={cn(
-                "relative z-10 flex flex-col gap-4 overflow-hidden rounded-xl border bg-card p-6 shadow-sm transition-all duration-300 hover:shadow-md hover:border-primary/20",
+                "relative z-10 flex flex-col gap-4 overflow-hidden rounded-xl border bg-card p-6 shadow-sm transition-all duration-300 hover:shadow-md hover:border-primary/20 h-full",
                 style.border
             )}>
                 {/* Header: Stock Info & Verdict Badge */}
@@ -123,7 +123,7 @@ export function VerdictCard({
                 </div>
 
                 {/* The Catalyst */}
-                <div className="space-y-2">
+                <div className="space-y-2 flex-1">
                     <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-widest">
                         <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
                         Triggers: {catalyst}
