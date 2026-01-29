@@ -736,7 +736,7 @@ const MID_CAP_VERDICTS = [
         headline: "Quality checks out, growth checks pending.",
         rationale: "Price war from 1mg/Tata is stabilizing. Volume growth is key. Premium valuation limits upside for now.",
         date: "Jan 24, 2026"
-    }
+    },
     {
         id: 131,
         symbol: "KAJARIACER",
