@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Loader2, Image as ImageIcon, X, Smile, BarChart2, FileText, Gift, Send } from "lucide-react";
 import { API_BASE_URL } from "@/lib/config";
+import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -139,7 +140,9 @@ export function CreatePost({ onPostCreated, onOptimisticAdd, onPostSuccess, onPo
     };
 
     const handleFeatureNotImplemented = (feature: string) => {
-        alert(`${feature} feature coming soon!`);
+        toast.info(`${feature} feature coming soon!`, {
+            description: "We are working hard to bring this to you."
+        });
     };
 
     const isExpanded = isFocused || content.length > 0 || imageUrl;
