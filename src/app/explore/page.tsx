@@ -34,7 +34,7 @@ export default function ExplorePage() {
         setIsMarketActive(isMarketOpen());
     }, []);
 
-    const fetchMarket = async () => {
+    const fetchMarket = React.useCallback(async () => {
         setLoading(true);
         try {
             const res = await fetch(`${API_BASE_URL}/stocks/market?page=${page}&limit=${PAGE_SIZE}`);
@@ -47,13 +47,20 @@ export default function ExplorePage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [page]);
 
-    const handleSearch = async (query: string) => {
+    const handleSearch = React.useCallback(async (query: string) => {
         setSearchQuery(query);
-        setPage(1); // Reset page on search
+        // Note: setting page to 1 will trigger fetchMarket via effect if we aren't careful,
+        // but here we want to handle the search logic explicitly.
+        // If we set page(1) and page is already 1, no effect. If page changes, effect runs.
+
+        if (query !== searchQuery) {
+            setPage(1);
+        }
 
         if (!query.trim()) {
+            // If clearing search, just fetch market (which honors the page reset above)
             fetchMarket();
             return;
         }
@@ -70,14 +77,15 @@ export default function ExplorePage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [fetchMarket, searchQuery]);
 
     useEffect(() => {
         if (!searchQuery) {
             fetchMarket();
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [page]); // Only re-fetch on page change if not searching
+        // fetchMarket is now stable, but depends on [page].
+        // If page changes, fetchMarket changes, effect runs. Correct.
+    }, [fetchMarket, searchQuery]);
 
     // Fetch Investors
     useEffect(() => {
