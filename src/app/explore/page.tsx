@@ -28,28 +28,56 @@ export default function ExplorePage() {
     const [selectedInvestor, setSelectedInvestor] = useState<any>(null);
     const [loadingInvestors, setLoadingInvestors] = useState(false);
 
+    const [searchQuery, setSearchQuery] = useState("");
+
     useEffect(() => {
         setIsMarketActive(isMarketOpen());
     }, []);
 
-    useEffect(() => {
-        const fetchMarket = async () => {
-            setLoading(true);
-            try {
-                const res = await fetch(`${API_BASE_URL}/stocks/market?page=${page}&limit=${PAGE_SIZE}`);
-                if (res.ok) {
-                    const data = await res.json();
-                    setStocks(data);
-                }
-            } catch (error) {
-                console.error("Failed to fetch market data", error);
-            } finally {
-                setLoading(false);
+    const fetchMarket = async () => {
+        setLoading(true);
+        try {
+            const res = await fetch(`${API_BASE_URL}/stocks/market?page=${page}&limit=${PAGE_SIZE}`);
+            if (res.ok) {
+                const data = await res.json();
+                setStocks(data);
             }
-        };
+        } catch (error) {
+            console.error("Failed to fetch market data", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        fetchMarket();
-    }, [page]);
+    const handleSearch = async (query: string) => {
+        setSearchQuery(query);
+        setPage(1); // Reset page on search
+
+        if (!query.trim()) {
+            fetchMarket();
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const res = await fetch(`${API_BASE_URL}/stocks/search?q=${encodeURIComponent(query)}`);
+            if (res.ok) {
+                const data = await res.json();
+                setStocks(data);
+            }
+        } catch (error) {
+            console.error("Failed to search stocks", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (!searchQuery) {
+            fetchMarket();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [page]); // Only re-fetch on page change if not searching
 
     // Fetch Investors
     useEffect(() => {
@@ -178,7 +206,7 @@ export default function ExplorePage() {
                                     animate={{ opacity: 1, scale: 1 }}
                                     transition={{ duration: 0.4 }}
                                 >
-                                    <DataTable columns={columns} data={stocks} />
+                                    <DataTable columns={columns} data={stocks} onSearch={handleSearch} />
 
                                     {/* Pagination Controls */}
                                     <div className="flex items-center justify-between py-6 px-1">

@@ -37,18 +37,34 @@ import {
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
+    onSearch?: (term: string) => void
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
+    onSearch,
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({
-        // Default show all
-    })
+    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
+
+    // Search State
+    const [searchTerm, setSearchTerm] = React.useState("")
+
+    // Debounce Search
+    React.useEffect(() => {
+        const timer = setTimeout(() => {
+            if (onSearch) {
+                onSearch(searchTerm)
+            } else {
+                table.getColumn("symbol")?.setFilterValue(searchTerm)
+            }
+        }, 500)
+
+        return () => clearTimeout(timer)
+    }, [searchTerm, onSearch])
 
     const table = useReactTable({
         data,
@@ -77,11 +93,9 @@ export function DataTable<TData, TValue>({
                 <div className="relative w-full sm:max-w-sm group">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                     <Input
-                        placeholder="Search by symbol..."
-                        value={(table.getColumn("symbol")?.getFilterValue() as string) ?? ""}
-                        onChange={(event) =>
-                            table.getColumn("symbol")?.setFilterValue(event.target.value)
-                        }
+                        placeholder="Search by symbol or name..."
+                        value={searchTerm}
+                        onChange={(event) => setSearchTerm(event.target.value)}
                         className="pl-10 bg-background border-input focus-visible:ring-ring shadow-sm"
                     />
                 </div>
