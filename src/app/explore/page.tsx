@@ -11,6 +11,7 @@ import { columns, MarketStock } from "./columns";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { InvestorCard } from "@/components/features/investors/investor-card";
 import { PortfolioTable } from "@/components/features/investors/portfolio-table";
+import { TableSkeleton } from "@/components/ui/table-skeleton";
 import { isMarketOpen } from "@/lib/market-time";
 import { API_BASE_URL } from "@/lib/config";
 import { cn } from "@/lib/utils";
@@ -209,17 +210,11 @@ export default function ExplorePage() {
                                 transition={{ duration: 0.4 }}
                                 className="relative"
                             >
-                                {loading && (
-                                    <div className="absolute inset-0 z-10 bg-background/80 backdrop-blur-[1px] flex flex-col gap-4 p-4">
-                                        {/* Header Skeleton */}
-                                        <div className="h-10 w-full bg-muted/50 rounded-lg animate-pulse mb-4" />
-                                        {/* Row Skeletons */}
-                                        {Array(10).fill(0).map((_, i) => (
-                                            <div key={i} className="h-16 w-full bg-muted/40 rounded-lg animate-pulse" />
-                                        ))}
-                                    </div>
+                                {loading ? (
+                                    <TableSkeleton />
+                                ) : (
+                                    <DataTable columns={columns} data={stocks} onSearch={handleSearch} />
                                 )}
-                                <DataTable columns={columns} data={stocks} onSearch={handleSearch} />
 
                                 {/* Pagination Controls */}
                                 <div className="flex items-center justify-between py-6 px-1">
