@@ -16,6 +16,7 @@ import {
 import { ChevronDown, SlidersHorizontal, Search } from "lucide-react"
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { TableSkeleton } from "@/components/ui/table-skeleton";
 
 import { Button } from "@/components/ui/button"
 import {
@@ -38,13 +39,16 @@ interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
     onSearch?: (term: string) => void
+    loading?: boolean
 }
 
 export function DataTable<TData, TValue>({
     columns,
     data,
     onSearch,
+    loading = false,
 }: DataTableProps<TData, TValue>) {
+    // ... (keep state hooks same) ...
     const [sorting, setSorting] = React.useState<SortingState>([])
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -53,7 +57,6 @@ export function DataTable<TData, TValue>({
     // Search State
     const [searchTerm, setSearchTerm] = React.useState("")
 
-    // Debounce Search
     const isMounted = React.useRef(false);
 
     React.useEffect(() => {
@@ -136,66 +139,70 @@ export function DataTable<TData, TValue>({
                 </DropdownMenu>
             </div>
 
-            <div className="rounded-xl border border-slate-300 dark:border-border bg-white dark:bg-card text-card-foreground shadow-md dark:shadow-none overflow-x-auto">
-                <Table>
-                    <TableHeader className="bg-slate-100 dark:bg-muted/50 sticky top-0 z-10 backdrop-blur-md">
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <TableRow key={headerGroup.id} className="border-b border-slate-200 dark:border-border hover:bg-transparent">
-                                {headerGroup.headers.map((header) => {
-                                    return (
-                                        <TableHead key={header.id} className="text-muted-foreground font-semibold h-12 uppercase text-xs tracking-wider">
-                                            {header.isPlaceholder
-                                                ? null
-                                                : flexRender(
-                                                    header.column.columnDef.header,
-                                                    header.getContext()
+            {loading ? (
+                <TableSkeleton />
+            ) : (
+                <div className="rounded-xl border border-slate-300 dark:border-border bg-white dark:bg-card text-card-foreground shadow-md dark:shadow-none overflow-x-auto">
+                    <Table>
+                        <TableHeader className="bg-slate-100 dark:bg-muted/50 sticky top-0 z-10 backdrop-blur-md">
+                            {table.getHeaderGroups().map((headerGroup) => (
+                                <TableRow key={headerGroup.id} className="border-b border-slate-200 dark:border-border hover:bg-transparent">
+                                    {headerGroup.headers.map((header) => {
+                                        return (
+                                            <TableHead key={header.id} className="text-muted-foreground font-semibold h-12 uppercase text-xs tracking-wider">
+                                                {header.isPlaceholder
+                                                    ? null
+                                                    : flexRender(
+                                                        header.column.columnDef.header,
+                                                        header.getContext()
+                                                    )}
+                                            </TableHead>
+                                        )
+                                    })}
+                                </TableRow>
+                            ))}
+                        </TableHeader>
+                        <TableBody>
+                            {table.getRowModel().rows?.length ? (
+                                table.getRowModel().rows.map((row, index) => (
+                                    <motion.tr
+                                        key={row.id}
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.2, delay: index * 0.03 }} // Staggered fade in
+                                        data-state={row.getIsSelected() && "selected"}
+                                        className="group cursor-pointer border-b border-slate-100 dark:border-border transition-colors hover:bg-slate-50 dark:hover:bg-muted/50 odd:bg-slate-50/30 dark:odd:bg-transparent"
+                                        onClick={() => {
+                                            const symbol = (row.original as any).symbol;
+                                            if (symbol) {
+                                                router.push(`/stock/${encodeURIComponent(symbol)}`);
+                                            }
+                                        }}
+                                    >
+                                        {row.getVisibleCells().map((cell) => (
+                                            <TableCell key={cell.id} className="py-3 text-foreground">
+                                                {flexRender(
+                                                    cell.column.columnDef.cell,
+                                                    cell.getContext()
                                                 )}
-                                        </TableHead>
-                                    )
-                                })}
-                            </TableRow>
-                        ))}
-                    </TableHeader>
-                    <TableBody>
-                        {table.getRowModel().rows?.length ? (
-                            table.getRowModel().rows.map((row, index) => (
-                                <motion.tr
-                                    key={row.id}
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ duration: 0.2, delay: index * 0.03 }} // Staggered fade in
-                                    data-state={row.getIsSelected() && "selected"}
-                                    className="group cursor-pointer border-b border-slate-100 dark:border-border transition-colors hover:bg-slate-50 dark:hover:bg-muted/50 odd:bg-slate-50/30 dark:odd:bg-transparent"
-                                    onClick={() => {
-                                        const symbol = (row.original as any).symbol;
-                                        if (symbol) {
-                                            router.push(`/stock/${encodeURIComponent(symbol)}`);
-                                        }
-                                    }}
-                                >
-                                    {row.getVisibleCells().map((cell) => (
-                                        <TableCell key={cell.id} className="py-3 text-foreground">
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext()
-                                            )}
-                                        </TableCell>
-                                    ))}
-                                </motion.tr>
-                            ))
-                        ) : (
-                            <TableRow>
-                                <TableCell
-                                    colSpan={columns.length}
-                                    className="h-24 text-center text-muted-foreground"
-                                >
-                                    No stocks found matching your criteria.
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
-            </div>
+                                            </TableCell>
+                                        ))}
+                                    </motion.tr>
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell
+                                        colSpan={columns.length}
+                                        className="h-24 text-center text-muted-foreground"
+                                    >
+                                        No stocks found matching your criteria.
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                </div>
+            )}
         </div>
     )
 }

@@ -210,11 +210,7 @@ export default function ExplorePage() {
                                 transition={{ duration: 0.4 }}
                                 className="relative"
                             >
-                                {loading ? (
-                                    <TableSkeleton />
-                                ) : (
-                                    <DataTable columns={columns} data={stocks} onSearch={handleSearch} />
-                                )}
+                                <DataTable columns={columns} data={stocks} onSearch={handleSearch} loading={loading} />
 
                                 {/* Pagination Controls */}
                                 <div className="flex items-center justify-between py-6 px-1">
