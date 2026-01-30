@@ -97,7 +97,16 @@ export function StockChart({ symbol }: StockChartProps) {
                                 width={50}
                             />
                             <Tooltip
-                                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                                contentStyle={{
+                                    borderRadius: '8px',
+                                    border: '1px solid hsl(var(--border))',
+                                    backgroundColor: 'hsl(var(--background))',
+                                    color: 'hsl(var(--foreground))',
+                                    fill: 'hsl(var(--foreground))',
+                                    boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                                }}
+                                itemStyle={{ color: 'hsl(var(--foreground))' }}
+                                labelStyle={{ color: 'hsl(var(--muted-foreground))' }}
                                 labelFormatter={(label) => format(new Date(label), 'PPP p')}
                                 formatter={(value: any) => [`₹${(Number(value) || 0).toFixed(2)}`, 'Price']}
                             />
