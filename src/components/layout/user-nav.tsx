@@ -14,6 +14,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/providers/auth-provider';
 import Link from 'next/link';
 import { LogOut, User, LayoutDashboard, Settings } from 'lucide-react';
+import { DeveloperBadge } from '@/components/shared/developer-badge';
 
 export function UserNav() {
     const { user, logout } = useAuth();
@@ -33,9 +34,12 @@ export function UserNav() {
             <DropdownMenuContent className="w-56" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">
-                            {user.firstName ? `${user.firstName} ${user.lastName || ''}` : user.handle}
-                        </p>
+                        <div className="flex items-center gap-1">
+                            <p className="text-sm font-medium leading-none">
+                                {user.firstName ? `${user.firstName} ${user.lastName || ''}` : user.handle}
+                            </p>
+                            <DeveloperBadge user={user} className="ml-1" />
+                        </div>
                         <p className="text-xs leading-none text-muted-foreground">
                             {user.email}
                         </p>

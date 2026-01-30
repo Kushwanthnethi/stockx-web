@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { StockBadge } from "@/components/shared/stock-badge";
+import { DeveloperBadge } from "@/components/shared/developer-badge";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -462,6 +463,7 @@ export function FeedPost({ post }: { post: any }) {
                                         <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.818-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.437 2.25c-.415-.165-.866-.25-1.336-.25-2.11 0-3.818 1.79-3.818 4 0 .495.083.965.238 1.4-1.272.65-2.147 2.02-2.147 3.6 0 1.457.748 2.795 1.867 3.61-.593 1.374-.153 2.973 1.054 3.738C5.232 20.35 6.136 20.5 7 20.5c.983 0 1.93-.19 2.802-.516.48.064.974.14 1.488.166.38.643.904 1.15 1.517 1.44.825.388 1.745.388 2.57 0 .613-.29 1.14-.796 1.517-1.44 2.198-.113 4.093-1.638 4.608-3.805 1.12-.815 1.868-2.153 1.868-3.61zM12 16.5c-3.038 0-5.5-2.462-5.5-5.5s2.462-5.5 5.5-5.5 5.5 2.462 5.5 5.5-2.462 5.5-5.5 5.5z" /></svg>
                                     </span>
                                 )}
+                                <DeveloperBadge user={displayPost.user} />
                             </div>
 
                             <div className="flex items-center gap-1 text-sm text-muted-foreground min-w-0">
@@ -633,9 +635,12 @@ export function FeedPost({ post }: { post: any }) {
                                             </Link>
                                             <div className="bg-muted/50 p-3 rounded-2xl rounded-tl-none flex-1">
                                                 <div className="flex items-center justify-between mb-1">
-                                                    <Link href={`/u/${comment.user?.handle}`} className="font-semibold text-sm hover:underline">
-                                                        {comment.user?.name || comment.user?.firstName}
-                                                    </Link>
+                                                    <div className="flex items-center">
+                                                        <Link href={`/u/${comment.user?.handle}`} className="font-semibold text-sm hover:underline">
+                                                            {comment.user?.name || comment.user?.firstName}
+                                                        </Link>
+                                                        <DeveloperBadge user={comment.user} className="ml-1" />
+                                                    </div>
                                                     <span className="text-xs text-muted-foreground">{new Date(comment.createdAt).toLocaleDateString()}</span>
                                                 </div>
                                                 <p className="text-sm text-foreground">{comment.content}</p>
