@@ -203,47 +203,47 @@ export default function ExplorePage() {
                         </motion.div>
 
                         <TabsContent value="market" className="space-y-4 focus-visible:outline-none">
-                            {loading ? (
-                                <div className="space-y-4">
-                                    <div className="h-12 w-[300px] bg-muted rounded-lg animate-pulse" />
-                                    <div className="rounded-xl border border-border h-[600px] w-full bg-card animate-pulse" />
-                                </div>
-                            ) : (
-                                <motion.div
-                                    initial={{ opacity: 0, scale: 0.99 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    transition={{ duration: 0.4 }}
-                                >
-                                    <DataTable columns={columns} data={stocks} onSearch={handleSearch} />
-
-                                    {/* Pagination Controls */}
-                                    <div className="flex items-center justify-between py-6 px-1">
-                                        <div className="text-sm text-muted-foreground">
-                                            Showing page <span className="text-foreground font-medium">{page}</span> of market data
-                                        </div>
-                                        <div className="flex items-center space-x-2">
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={() => setPage(p => Math.max(1, p - 1))}
-                                                disabled={page === 1}
-                                                className="bg-background border-input hover:bg-accent hover:text-accent-foreground"
-                                            >
-                                                Previous
-                                            </Button>
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={() => setPage(p => p + 1)}
-                                                disabled={stocks.length < PAGE_SIZE}
-                                                className="bg-background border-input hover:bg-accent hover:text-accent-foreground"
-                                            >
-                                                Next
-                                            </Button>
-                                        </div>
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.99 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ duration: 0.4 }}
+                                className="relative"
+                            >
+                                {loading && (
+                                    <div className="absolute inset-0 z-10 bg-background/50 backdrop-blur-[1px] flex items-center justify-center rounded-xl">
+                                        <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
                                     </div>
-                                </motion.div>
-                            )}
+                                )}
+                                <DataTable columns={columns} data={stocks} onSearch={handleSearch} />
+
+                                {/* Pagination Controls */}
+                                <div className="flex items-center justify-between py-6 px-1">
+                                    <div className="text-sm text-muted-foreground">
+                                        Showing page <span className="text-foreground font-medium">{page}</span> of market data
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => setPage(p => Math.max(1, p - 1))}
+                                            disabled={page === 1}
+                                            className="bg-background border-input hover:bg-accent hover:text-accent-foreground"
+                                        >
+                                            Previous
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => setPage(p => p + 1)}
+                                            disabled={stocks.length < PAGE_SIZE}
+                                            className="bg-background border-input hover:bg-accent hover:text-accent-foreground"
+                                        >
+                                            Next
+                                        </Button>
+                                    </div>
+                                </div>
+                            </motion.div>
+
                         </TabsContent>
 
                         <TabsContent value="investors" className="focus-visible:outline-none">

@@ -54,7 +54,14 @@ export function DataTable<TData, TValue>({
     const [searchTerm, setSearchTerm] = React.useState("")
 
     // Debounce Search
+    const isMounted = React.useRef(false);
+
     React.useEffect(() => {
+        if (!isMounted.current) {
+            isMounted.current = true;
+            return;
+        }
+
         const timer = setTimeout(() => {
             if (onSearch) {
                 onSearch(searchTerm)
