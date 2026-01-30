@@ -210,8 +210,13 @@ export default function ExplorePage() {
                                 className="relative"
                             >
                                 {loading && (
-                                    <div className="absolute inset-0 z-10 bg-background/50 backdrop-blur-[1px] flex items-center justify-center rounded-xl">
-                                        <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                                    <div className="absolute inset-0 z-10 bg-background/80 backdrop-blur-[1px] flex flex-col gap-4 p-4">
+                                        {/* Header Skeleton */}
+                                        <div className="h-10 w-full bg-muted/50 rounded-lg animate-pulse mb-4" />
+                                        {/* Row Skeletons */}
+                                        {Array(10).fill(0).map((_, i) => (
+                                            <div key={i} className="h-16 w-full bg-muted/40 rounded-lg animate-pulse" />
+                                        ))}
                                     </div>
                                 )}
                                 <DataTable columns={columns} data={stocks} onSearch={handleSearch} />
