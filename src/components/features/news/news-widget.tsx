@@ -69,14 +69,14 @@ export function NewsWidget() {
                             href={item.link}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="block group"
+                            className="block group py-1 md:py-2 first:pt-0 border-b border-border/50 last:border-0"
                         >
-                            <h4 className="text-sm font-medium text-foreground group-hover:text-primary line-clamp-2 leading-snug mb-1">
+                            <h4 className="text-xs md:text-sm font-medium text-foreground group-hover:text-primary line-clamp-2 leading-snug mb-1">
                                 {item.title}
                             </h4>
-                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <div className="flex items-center gap-1.5 md:gap-2 text-[10px] md:text-xs text-muted-foreground">
                                 <span className="font-semibold">{item.publisher}</span>
-                                <span>•</span>
+                                <span className="opacity-50">•</span>
                                 <span>
                                     {(() => {
                                         if (!item.providerPublishTime) return '';

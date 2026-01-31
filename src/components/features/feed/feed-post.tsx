@@ -445,28 +445,28 @@ export function FeedPost({ post }: { post: any }) {
                     </DropdownMenu>
                 </div>
 
-                <CardHeader className="flex flex-row items-start space-y-0 pb-3 pt-5 gap-3 pr-12">
+                <CardHeader className="flex flex-row items-start space-y-0 pb-2 md:pb-3 pt-4 md:pt-5 gap-2 md:gap-3 pr-10 md:pr-12">
                     {/* Avatar */}
-                    <Link href={`/u/${displayPost.user?.handle}`} className="h-10 w-10 rounded-full bg-muted overflow-hidden flex-shrink-0 hover:opacity-80 transition-opacity">
+                    <Link href={`/u/${displayPost.user?.handle}`} className="h-9 w-9 md:h-10 md:w-10 rounded-full bg-muted overflow-hidden flex-shrink-0 hover:opacity-80 transition-opacity">
                         <img src={displayPost.user?.avatarUrl || "https://github.com/shadcn.png"} alt={displayPost.user?.handle} className="h-full w-full object-cover" />
                     </Link>
 
                     {/* Header Info */}
                     <div className="flex-1 min-w-0">
-                        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                            <div className="flex items-center gap-1">
-                                <Link href={`/u/${displayPost.user?.handle}`} className="font-semibold text-foreground truncate hover:underline">
+                        <div className="flex flex-wrap items-center gap-x-1.5 md:gap-x-2 gap-y-0.5">
+                            <div className="flex items-center gap-0.5 md:gap-1">
+                                <Link href={`/u/${displayPost.user?.handle}`} className="font-semibold text-sm md:text-base text-foreground truncate hover:underline">
                                     {displayPost.user?.name || displayPost.user?.firstName}
                                 </Link>
                                 {displayPost.user?.verified && (
                                     <span className="text-blue-500" title="Verified">
-                                        <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.818-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.437 2.25c-.415-.165-.866-.25-1.336-.25-2.11 0-3.818 1.79-3.818 4 0 .495.083.965.238 1.4-1.272.65-2.147 2.02-2.147 3.6 0 1.457.748 2.795 1.867 3.61-.593 1.374-.153 2.973 1.054 3.738C5.232 20.35 6.136 20.5 7 20.5c.983 0 1.93-.19 2.802-.516.48.064.974.14 1.488.166.38.643.904 1.15 1.517 1.44.825.388 1.745.388 2.57 0 .613-.29 1.14-.796 1.517-1.44 2.198-.113 4.093-1.638 4.608-3.805 1.12-.815 1.868-2.153 1.868-3.61zM12 16.5c-3.038 0-5.5-2.462-5.5-5.5s2.462-5.5 5.5-5.5 5.5 2.462 5.5 5.5-2.462 5.5-5.5 5.5z" /></svg>
+                                        <svg className="w-3.5 h-3.5 md:w-4 md:h-4 fill-current" viewBox="0 0 24 24"><path d="M22.5 12.5c0-1.58-.875-2.95-2.148-3.6.154-.435.238-.905.238-1.4 0-2.21-1.71-3.998-3.818-3.998-.47 0-.92.084-1.336.25C14.818 2.415 13.51 1.5 12 1.5s-2.816.917-3.437 2.25c-.415-.165-.866-.25-1.336-.25-2.11 0-3.818 1.79-3.818 4 0 .495.083.965.238 1.4-1.272.65-2.147 2.02-2.147 3.6 0 1.457.748 2.795 1.867 3.61-.593 1.374-.153 2.973 1.054 3.738C5.232 20.35 6.136 20.5 7 20.5c.983 0 1.93-.19 2.802-.516.48.064.974.14 1.488.166.38.643.904 1.15 1.517 1.44.825.388 1.745.388 2.57 0 .613-.29 1.14-.796 1.517-1.44 2.198-.113 4.093-1.638 4.608-3.805 1.12-.815 1.868-2.153 1.868-3.61zM12 16.5c-3.038 0-5.5-2.462-5.5-5.5s2.462-5.5 5.5-5.5 5.5 2.462 5.5 5.5-2.462 5.5-5.5 5.5z" /></svg>
                                     </span>
                                 )}
                                 <DeveloperBadge user={displayPost.user} />
                             </div>
 
-                            <div className="flex items-center gap-1 text-sm text-muted-foreground min-w-0">
+                            <div className="flex items-center gap-1 text-[11px] md:text-sm text-muted-foreground min-w-0">
                                 <Link href={`/u/${displayPost.user?.handle}`} className="hover:underline truncate">@{displayPost.user?.handle}</Link>
                                 <span className="flex-shrink-0">·</span>
                                 <span className="whitespace-nowrap flex-shrink-0">
@@ -510,7 +510,7 @@ export function FeedPost({ post }: { post: any }) {
                     </div>
                 </CardHeader>
 
-                <CardContent className="pb-3 text-[15px] md:text-base text-foreground whitespace-pre-line leading-normal md:leading-relaxed">
+                <CardContent className="pb-2 md:pb-3 text-sm md:text-base text-foreground whitespace-pre-line leading-snug md:leading-relaxed">
                     {isEditing ? (
                         <div className="space-y-3">
                             <textarea
@@ -574,11 +574,11 @@ export function FeedPost({ post }: { post: any }) {
                         <Button
                             variant="ghost"
                             size="sm"
-                            className={cn("gap-2 group", isLiked ? "text-red-500" : "hover:text-red-500")}
+                            className={cn("gap-1.5 md:gap-2 group", isLiked ? "text-red-500" : "hover:text-red-500")}
                             onClick={handleLike}
                         >
-                            <Heart size={18} className={cn("group-hover:stroke-red-500", isLiked && "fill-current stroke-none")} />
-                            <span>{likes}</span>
+                            <Heart size={16} className={cn("md:w-[18px] md:h-[18px] group-hover:stroke-red-500", isLiked && "fill-current stroke-none")} />
+                            <span className="text-xs md:text-sm">{likes}</span>
                         </Button>
 
                         <DropdownMenu>

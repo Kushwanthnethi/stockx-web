@@ -132,27 +132,24 @@ export function IndicesTicker() {
                 ))}
             </div>
 
-            {/* Mobile View: Static Grid (Fit 2 items) */}
-            <div className="md:hidden px-1 mb-2">
-                <h4 className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-2">Indian Stock Market Analysis</h4>
-            </div>
+            {/* Mobile View: High Density Grid */}
             <div className="md:hidden grid grid-cols-2 gap-2 px-1">
                 {indices.map((index) => (
-                    <div key={index.symbol} className="bg-card border-l-4 border-l-primary rounded-lg p-3 flex flex-col justify-between shadow-sm">
+                    <div key={index.symbol} className="bg-card border-l-[3px] border-l-primary rounded-lg p-2.5 flex flex-col justify-between shadow-sm border border-border/50">
                         <div className="flex flex-col mb-1">
-                            <span className="font-bold text-sm tracking-tight truncate">{index.symbol}</span>
-                            <div className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Index</div>
+                            <span className="font-bold text-xs tracking-tight truncate leading-none mb-0.5">{index.symbol}</span>
+                            <div className="text-[9px] text-muted-foreground font-semibold uppercase tracking-wider opacity-80">Index</div>
                         </div>
                         <div className="text-right">
-                            <div className="text-lg font-bold tabular-nums tracking-tight">
+                            <div className="text-base font-bold tabular-nums tracking-tighter leading-none">
                                 {index.price.toLocaleString(undefined, { maximumFractionDigits: 0, minimumFractionDigits: 0 })}
                             </div>
                             <div className={cn(
-                                "text-[10px] font-bold flex items-center justify-end gap-0.5 tabular-nums mt-0.5",
-                                index.change >= 0 ? "text-green-500" : "text-red-500"
+                                "text-[9px] font-bold flex items-center justify-end gap-0.5 tabular-nums mt-0.5 leading-none",
+                                index.change >= 0 ? "text-green-600" : "text-red-600"
                             )}>
-                                {index.change >= 0 ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
-                                {Math.abs(index.change).toFixed(2)} ({index.changePercent.toFixed(2)}%)
+                                {index.change >= 0 ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
+                                {index.changePercent.toFixed(2)}%
                             </div>
                         </div>
                     </div>

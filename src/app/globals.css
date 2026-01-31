@@ -83,10 +83,49 @@
 
 @layer base {
     * {
-        @apply border-border;
+        @apply border-border px-0 md:px-inherit;
     }
 
     body {
-        @apply bg-background text-foreground;
+        @apply bg-background text-foreground antialiased;
+        font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    }
+
+    /* Mobile Typography Scaling */
+    @media (max-width: 768px) {
+        html {
+            font-size: 14px;
+            /* Slightly smaller base for mobile */
+        }
+
+        h1 {
+            @apply text-2xl font-extrabold tracking-tight;
+        }
+
+        h2 {
+            @apply text-xl font-bold tracking-tight;
+        }
+
+        h3 {
+            @apply text-lg font-bold;
+        }
+
+        .container {
+            @apply px-4;
+        }
+    }
+}
+
+@layer utilities {
+    .pb-safe {
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .text-balance {
+        text-wrap: balance;
+    }
+
+    .glass {
+        @apply bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60;
     }
 }
