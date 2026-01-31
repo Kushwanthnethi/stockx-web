@@ -12,17 +12,7 @@ import { getFeedPosts, type Post } from "@/mocks/handlers";
 import { FeedPost } from "@/components/features/feed/feed-post";
 import { useAuth } from "@/providers/auth-provider";
 import { UserNav } from "@/components/layout/user-nav";
-import { NewsWidget } from "@/components/features/news/news-widget";
-
-
-import { ModeToggle } from "@/components/mode-toggle";
-import { TrendingWidget } from "@/components/features/stocks/trending-widget";
-import { IndicesTicker } from "@/components/features/stocks/indices-ticker";
-import { WatchlistWidget } from "@/components/features/stocks/watchlist-widget";
-import { CreatePost } from "@/components/features/feed/create-post";
-import { API_BASE_URL } from "@/lib/config";
-import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
-import { AnimatePresence } from "framer-motion";
+import { ProfileWidget } from "@/components/features/profile/profile-widget";
 
 function FeedSidebar() {
     return (
@@ -33,9 +23,12 @@ function FeedSidebar() {
             {/* Trending Box */}
             <TrendingWidget />
 
-            {/* News Widget & Footer (Sticky) */}
+            {/* News Widget - Now Static */}
+            <NewsWidget />
+
+            {/* Profile Widget & Footer (Sticky) */}
             <div className="sticky top-[5.5rem] space-y-6 z-10">
-                <NewsWidget />
+                <ProfileWidget />
 
                 {/* Footer / Legal */}
                 <div className="text-xs text-muted-foreground px-2 space-y-2">
