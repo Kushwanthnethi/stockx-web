@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { PasswordInput } from "@/components/ui/password-input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Loader2 } from "lucide-react"
@@ -84,10 +85,9 @@ export function SignupForm({ className }: React.HTMLAttributes<HTMLDivElement>) 
                     </div>
                     <div className="grid gap-2">
                         <Label htmlFor="password">Password</Label>
-                        <Input
+                        <PasswordInput
                             id="password"
                             placeholder="••••••••"
-                            type="password"
                             autoCapitalize="none"
                             autoComplete="new-password"
                             disabled={isLoading}

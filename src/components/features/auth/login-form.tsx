@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils"
 import { API_BASE_URL } from "@/lib/config"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { PasswordInput } from "@/components/ui/password-input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Loader2 } from "lucide-react"
@@ -74,10 +75,9 @@ export function LoginForm({ className }: React.HTMLAttributes<HTMLDivElement>) {
                             <Label htmlFor="password">Password</Label>
                             <a href="#" className="text-sm font-medium text-primary hover:text-primary/90 hover:underline">Forgot?</a>
                         </div>
-                        <Input
+                        <PasswordInput
                             id="password"
                             placeholder="••••••••"
-                            type="password"
                             autoCapitalize="none"
                             autoComplete="current-password"
                             disabled={isLoading}
