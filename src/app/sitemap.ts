@@ -3,7 +3,7 @@ import { MetadataRoute } from 'next'
 export const revalidate = 3600 // Revalidate every hour
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const baseUrl = 'https://stocksx.info'
+    const baseUrl = 'https://www.stocksx.info'
 
     // Static routes
     const routes = [

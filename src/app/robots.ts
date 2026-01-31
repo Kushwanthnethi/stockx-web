@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
             allow: '/',
             disallow: '/private/',
         },
-        sitemap: 'https://stocksx.info/sitemap.xml',
+        sitemap: 'https://www.stocksx.info/sitemap.xml',
     }
 }
