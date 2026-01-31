@@ -33,19 +33,21 @@ function FeedSidebar() {
             {/* Trending Box */}
             <TrendingWidget />
 
-            {/* News Widget */}
-            <NewsWidget />
+            {/* News Widget & Footer (Sticky) */}
+            <div className="sticky top-20 space-y-6">
+                <NewsWidget />
 
-            {/* Footer / Legal */}
-            <div className="text-xs text-muted-foreground px-2 space-y-2">
-                <div className="flex gap-2 flex-wrap">
-                    <Link href="/legal/terms" className="hover:underline hover:text-foreground transition-colors">Terms of Service</Link>
-                    <span>·</span>
-                    <Link href="/legal/privacy" className="hover:underline hover:text-foreground transition-colors">Privacy Policy</Link>
-                    <span>·</span>
-                    <Link href="/legal/cookies" className="hover:underline hover:text-foreground transition-colors">Cookies</Link>
+                {/* Footer / Legal */}
+                <div className="text-xs text-muted-foreground px-2 space-y-2">
+                    <div className="flex gap-2 flex-wrap">
+                        <Link href="/legal/terms" className="hover:underline hover:text-foreground transition-colors">Terms of Service</Link>
+                        <span>·</span>
+                        <Link href="/legal/privacy" className="hover:underline hover:text-foreground transition-colors">Privacy Policy</Link>
+                        <span>·</span>
+                        <Link href="/legal/cookies" className="hover:underline hover:text-foreground transition-colors">Cookies</Link>
+                    </div>
+                    <p>© 2026 StockX Inc.</p>
                 </div>
-                <p>© 2026 StockX Inc.</p>
             </div>
         </div>
     );
