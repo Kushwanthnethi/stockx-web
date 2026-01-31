@@ -26,7 +26,7 @@ import { AnimatePresence } from "framer-motion";
 
 function FeedSidebar() {
     return (
-        <div className="hidden lg:block w-80 space-y-6">
+        <div className="hidden lg:block w-80 space-y-6 h-full">
             {/* Watchlist Widget */}
             <WatchlistWidget />
 
@@ -34,7 +34,7 @@ function FeedSidebar() {
             <TrendingWidget />
 
             {/* News Widget & Footer (Sticky) */}
-            <div className="sticky top-20 space-y-6">
+            <div className="sticky top-[5.5rem] space-y-6 z-10">
                 <NewsWidget />
 
                 {/* Footer / Legal */}
@@ -205,7 +205,7 @@ export default function Home() {
                 </div>
 
                 {/* Right Sidebar */}
-                <div className="lg:col-span-3">
+                <div className="lg:col-span-3 h-full">
                     <FeedSidebar />
                 </div>
 
