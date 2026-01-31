@@ -12,7 +12,17 @@ import { getFeedPosts, type Post } from "@/mocks/handlers";
 import { FeedPost } from "@/components/features/feed/feed-post";
 import { useAuth } from "@/providers/auth-provider";
 import { UserNav } from "@/components/layout/user-nav";
+import { NewsWidget } from "@/components/features/news/news-widget";
 import { ProfileWidget } from "@/components/features/profile/profile-widget";
+
+import { ModeToggle } from "@/components/mode-toggle";
+import { TrendingWidget } from "@/components/features/stocks/trending-widget";
+import { IndicesTicker } from "@/components/features/stocks/indices-ticker";
+import { WatchlistWidget } from "@/components/features/stocks/watchlist-widget";
+import { CreatePost } from "@/components/features/feed/create-post";
+import { API_BASE_URL } from "@/lib/config";
+import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
+import { AnimatePresence } from "framer-motion";
 
 function FeedSidebar() {
     return (
