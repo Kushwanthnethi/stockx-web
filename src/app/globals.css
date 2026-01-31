@@ -83,7 +83,7 @@
 
 @layer base {
     * {
-        @apply border-border px-0 md:px-inherit;
+        @apply border-border;
     }
 
     body {
