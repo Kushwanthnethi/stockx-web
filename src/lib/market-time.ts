@@ -26,6 +26,11 @@ const NSE_HOLIDAYS_2026: Record<string, string> = {
     '2026-12-25': 'Christmas'
 };
 
+// Special Trading Sessions (Sundays/Holidays where market is open)
+const SPECIAL_TRADING_SESSIONS: Record<string, string> = {
+    '2026-02-01': 'Union Budget Special Session'
+};
+
 export function getHolidayReason(): string | null {
     const timeZone = 'Asia/Kolkata';
     const now = new Date();
@@ -39,6 +44,19 @@ export function getHolidayReason(): string | null {
     return NSE_HOLIDAYS_2026[dateString] || null;
 }
 
+export function getSpecialSessionReason(): string | null {
+    const timeZone = 'Asia/Kolkata';
+    const now = new Date();
+    const zonedDate = toZonedTime(now, timeZone);
+
+    const year = zonedDate.getFullYear();
+    const month = String(zonedDate.getMonth() + 1).padStart(2, '0');
+    const date = String(zonedDate.getDate()).padStart(2, '0');
+    const dateString = `${year}-${month}-${date}`;
+
+    return SPECIAL_TRADING_SESSIONS[dateString] || null;
+}
+
 export function getMarketSession(): MarketSession {
     const timeZone = 'Asia/Kolkata';
     const now = new Date();
@@ -48,8 +66,11 @@ export function getMarketSession(): MarketSession {
     if (getHolidayReason()) return MarketSession.CLOSED;
 
     const day = zonedDate.getDay();
+    const isSpecialSession = !!getSpecialSessionReason();
+
     // 0 = Sunday, 6 = Saturday
-    if (day === 0 || day === 6) return MarketSession.CLOSED;
+    // Bypass weekend check if it's a special session
+    if (!isSpecialSession && (day === 0 || day === 6)) return MarketSession.CLOSED;
 
     const hours = zonedDate.getHours();
     const minutes = zonedDate.getMinutes();
@@ -80,23 +101,25 @@ export function isMarketOpen(): boolean {
 }
 
 export function getMarketStatusText(): string {
-    const reason = getHolidayReason();
-    if (reason) return `Closed - ${reason}`;
+    const holidayReason = getHolidayReason();
+    if (holidayReason) return `Closed - ${holidayReason}`;
 
     const session = getMarketSession();
+    const specialReason = getSpecialSessionReason();
+
     switch (session) {
         case MarketSession.PRE_OPEN:
-            return "Pre-Opening Session";
+            return specialReason ? `${specialReason} (Pre-Open)` : "Pre-Opening Session";
         case MarketSession.OPEN:
-            return "Live Market";
+            return specialReason ? `${specialReason} (Live)` : "Live Market";
         case MarketSession.POST_CLOSE:
-            return "Post-Closing Session";
+            return specialReason ? `${specialReason} (Post-Close)` : "Post-Closing Session";
         default:
             const timeZone = 'Asia/Kolkata';
             const now = new Date();
             const zonedDate = toZonedTime(now, timeZone);
             const day = zonedDate.getDay();
-            if (day === 0 || day === 6) return "Market Closed - Weekend";
+            if (!specialReason && (day === 0 || day === 6)) return "Market Closed - Weekend";
             return "Market Closed";
     }
 }
