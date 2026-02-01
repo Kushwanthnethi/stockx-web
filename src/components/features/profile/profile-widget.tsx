@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { User, LogIn, UserPlus } from "lucide-react"
+import { VerifiedBadge } from "@/components/shared/verified-badge"
 
 export function ProfileWidget() {
     const { user, isLoading } = useAuth()
@@ -71,8 +72,9 @@ export function ProfileWidget() {
                         </Avatar>
                     </div>
                     <div className="space-y-0.5">
-                        <h3 className="font-bold text-foreground leading-tight group-hover:text-primary transition-colors">
+                        <h3 className="font-bold text-foreground leading-tight group-hover:text-primary transition-colors flex items-center gap-1">
                             {user.firstName} {user.lastName}
+                            {(user.isVerified || user.verified) && <VerifiedBadge />}
                         </h3>
                         <p className="text-sm text-muted-foreground font-medium">@{user.handle}</p>
                     </div>

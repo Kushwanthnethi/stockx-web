@@ -12,6 +12,8 @@ interface User {
     handle: string;
     avatarUrl?: string;
     role?: string;
+    isVerified?: boolean;
+    verified?: boolean; // Legacy/Alias support
 }
 
 interface AuthContextType {

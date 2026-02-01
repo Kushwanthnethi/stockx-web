@@ -15,6 +15,7 @@ import { useAuth } from '@/providers/auth-provider';
 import Link from 'next/link';
 import { LogOut, User, LayoutDashboard, Settings } from 'lucide-react';
 import { DeveloperBadge } from '@/components/shared/developer-badge';
+import { VerifiedBadge } from '@/components/shared/verified-badge';
 
 export function UserNav() {
     const { user, logout } = useAuth();
@@ -38,6 +39,7 @@ export function UserNav() {
                             <p className="text-sm font-medium leading-none">
                                 {user.firstName ? `${user.firstName} ${user.lastName || ''}` : user.handle}
                             </p>
+                            {(user.isVerified || user.verified) && <VerifiedBadge className="ml-1" />}
                             <DeveloperBadge user={user} className="ml-1" />
                         </div>
                         <p className="text-xs leading-none text-muted-foreground">

@@ -7,6 +7,7 @@ import { Calendar, MapPin, Link as LinkIcon, Users, Edit } from "lucide-react";
 import { useAuth } from "@/providers/auth-provider";
 import { EditProfileModal } from "./edit-profile-modal";
 import { DeveloperBadge } from "@/components/shared/developer-badge";
+import { VerifiedBadge } from "@/components/shared/verified-badge";
 import { UserListModal } from "./user-list-modal";
 import { cn } from "@/lib/utils";
 
@@ -86,6 +87,7 @@ export function ProfileHeader({
                         <div>
                             <div className="flex items-center gap-2">
                                 <h1 className="text-3xl font-bold tracking-tight">{profile.firstName} {profile.lastName}</h1>
+                                {(profile.isVerified || profile.verified) && <VerifiedBadge />}
                                 <DeveloperBadge user={profile} iconSize={24} />
                             </div>
                             <p className="text-muted-foreground font-medium">@{profile.handle}</p>
