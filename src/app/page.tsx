@@ -171,7 +171,8 @@ export default function Home() {
                                     name: post.user?.firstName || post.user?.handle || 'Anonymous',
                                     handle: post.user?.handle || 'anon',
                                     avatarUrl: post.user?.avatarUrl,
-                                    verified: false
+                                    isVerified: post.user?.isVerified,
+                                    verified: post.user?.verified
                                 };
 
                                 return (
