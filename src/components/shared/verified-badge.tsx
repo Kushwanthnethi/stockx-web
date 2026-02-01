@@ -14,7 +14,7 @@ export function VerifiedBadge({ className }: { className?: string }) {
                         className={cn("text-blue-500 inline-flex items-center justify-center align-middle cursor-help", className)}
                         initial={{ scale: 0.8, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
-                        whileHover={{ scale: 1.2 }}
+                        whileHover={{ scale: 1.5 }}
                         transition={{ type: "spring", stiffness: 400, damping: 10 }}
                     >
                         <svg className="w-3.5 h-3.5 md:w-4 md:h-4 fill-current" viewBox="0 0 24 24">
@@ -23,7 +23,7 @@ export function VerifiedBadge({ className }: { className?: string }) {
                     </motion.span>
                 </TooltipTrigger>
                 <TooltipContent>
-                    <p>Verified User</p>
+                    <p>Developer</p>
                 </TooltipContent>
             </Tooltip>
         </TooltipProvider>
