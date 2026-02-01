@@ -401,6 +401,7 @@ export default function StockOfTheWeekPage() {
                                                 <th className="px-6 py-4">Week</th>
                                                 <th className="px-6 py-4">Stock</th>
                                                 <th className="px-6 py-4 text-right">Entry</th>
+                                                <th className="px-6 py-4 text-right">Max High</th>
                                                 <th className="px-6 py-4 text-right">Result</th>
                                                 <th className="px-6 py-4 text-center">Status</th>
                                             </tr>
@@ -425,6 +426,14 @@ export default function StockOfTheWeekPage() {
                                                         </td>
                                                         <td className="px-6 py-4 text-right font-mono text-muted-foreground">
                                                             {formatINR(pick.priceAtSelection)}
+                                                        </td>
+                                                        <td className="px-6 py-4 text-right font-mono">
+                                                            <div className="flex flex-col items-end">
+                                                                <span className="text-foreground font-bold">{formatINR(pick.maxHigh || effectivePrice)}</span>
+                                                                <span className="text-[10px] text-green-500 font-bold">
+                                                                    +{(((pick.maxHigh || effectivePrice) - entryPrice) / entryPrice * 100).toFixed(2)}%
+                                                                </span>
+                                                            </div>
                                                         </td>
                                                         <td className="px-6 py-4 text-right font-mono">
                                                             <div className="flex flex-col items-end">
