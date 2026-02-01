@@ -9,6 +9,7 @@ import { API_BASE_URL } from "@/lib/config";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { VerifiedBadge } from "@/components/shared/verified-badge";
 
 export interface CreatePostProps {
     onPostCreated?: () => void;
@@ -61,6 +62,8 @@ export function CreatePost({ onPostCreated, onOptimisticAdd, onPostSuccess, onPo
                 firstName: user?.firstName,
                 handle: user?.handle,
                 avatarUrl: user?.avatarUrl,
+                isVerified: user?.isVerified,
+                verified: user?.verified,
             },
             isOptimistic: true,
         };
@@ -166,8 +169,9 @@ export function CreatePost({ onPostCreated, onOptimisticAdd, onPostSuccess, onPo
                         <div className="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/30" />
                         <div className="w-3 h-3 rounded-full bg-green-500/20 border border-green-500/30" />
                     </div>
-                    <span className="text-xs font-semibold text-muted-foreground ml-2 uppercase tracking-wider">
+                    <span className="text-xs font-semibold text-muted-foreground ml-2 uppercase tracking-wider flex items-center gap-1">
                         New Post
+                        {(user.isVerified || user.verified) && <VerifiedBadge />}
                     </span>
                     <div className="flex-1" />
                     {isPosting && <span className="text-xs text-primary animate-pulse">Posting...</span>}
