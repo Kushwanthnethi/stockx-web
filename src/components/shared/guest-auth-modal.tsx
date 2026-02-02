@@ -97,7 +97,7 @@ export function GuestAuthModal() {
 
     return (
         <Dialog open={open} onOpenChange={handleOpenChange}>
-            <DialogContent className="sm:max-w-[420px] p-0 overflow-hidden border-0 shadow-2xl bg-background/95 backdrop-blur-xl">
+            <DialogContent className="w-[90%] max-w-[420px] rounded-2xl p-0 overflow-hidden border-0 shadow-2xl bg-background/95 backdrop-blur-xl">
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 pointer-events-none" />
 
                 <div className="p-8 relative z-10">
