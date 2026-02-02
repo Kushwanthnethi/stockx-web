@@ -20,6 +20,7 @@ import { useAuth } from "@/providers/auth-provider";
 import { Users, UserPlus } from "lucide-react";
 import { API_BASE_URL } from "@/lib/config";
 import { formatDistanceToNow } from "date-fns";
+import { usePostInteraction, useUserInteraction } from "@/lib/store/interaction-store";
 
 const formatContent = (content: string) => {
     if (!content) return null;
@@ -62,14 +63,32 @@ export function FeedPost({ post }: { post: any }) {
     const isReshare = !!post.originalPost;
     const displayPost = isReshare ? post.originalPost : post;
 
-    const [likes, setLikes] = React.useState(post.likeCount || 0);
-    const [isLiked, setIsLiked] = React.useState(post.likedByMe || false);
-    const [isBookmarked, setIsBookmarked] = React.useState(post.bookmarkedByMe || false);
-    const [commentsCount, setCommentsCount] = React.useState(post._count?.comments || post.comments?.length || 0);
-    const [reshareCount, setReshareCount] = React.useState(post.reshareCount || 0);
-    const [isFollowing, setIsFollowing] = React.useState(displayPost.isFollowingAuthor || false);
-    const [followLoading, setFollowLoading] = React.useState(false);
+    // --- Global Store Hooks ---
+    // User Interaction (Follow/Block)
+    const { isFollowing, isBlocked, toggleFollow, toggleBlock } = useUserInteraction(
+        displayPost.user?.id || "unknown",
+        { isFollowing: displayPost.isFollowingAuthor }
+    );
 
+    // Post Interaction (Like/Bookmark/Reshare)
+    const {
+        isLiked,
+        likeCount,
+        isBookmarked,
+        reshareCount,
+        toggleLike,
+        toggleBookmark,
+        toggleReshare
+    } = usePostInteraction(post.id, {
+        isLiked: post.likedByMe,
+        likeCount: post.likeCount,
+        isBookmarked: post.bookmarkedByMe,
+        reshareCount: post.reshareCount
+    });
+
+    const [commentsCount, setCommentsCount] = React.useState(post._count?.comments || post.comments?.length || 0);
+
+    // UI Local State
     const [showComments, setShowComments] = React.useState(false);
     const [comments, setComments] = React.useState<any[]>([]);
     const [newComment, setNewComment] = React.useState("");
@@ -79,27 +98,8 @@ export function FeedPost({ post }: { post: any }) {
     // Edit/Delete State
     const [isEditing, setIsEditing] = React.useState(false);
     const [editContent, setEditContent] = React.useState(post.content);
-    const [hasReported, setHasReported] = React.useState(false); // Client-side temp hide
-    const [isDeleted, setIsDeleted] = React.useState(false); // Client-side temp hide
-
-    // if (isDeleted) return null; // MOVED TO RENDER
-
-    // Update local state if prop changes (e.g. from a parent refresh)
-    // Update local state if prop changes (e.g. from a parent refresh)
-    React.useEffect(() => {
-        setLikes(post.likeCount || 0);
-        setIsLiked(post.likedByMe || false);
-        setCommentsCount(post._count?.comments || post.comments?.length || 0);
-        setReshareCount(post.reshareCount || 0);
-
-        // Handle reshares correctly: check the displayed user's follow status
-
-        // If it's a reshare, we need isFollowingAuthor from the original post (which we need to ensure backend sends)
-        // Fallback: If backend sends isFollowingAuthor on root, we use it for root. 
-        // Logic: specific prop for displayPost?
-        // For now, let's assume displayPost has the prop if backend is updated.
-        setIsFollowing(displayPost.isFollowingAuthor || false);
-    }, [post.likeCount, post.likedByMe, post._count, post.comments, post.reshareCount, post.isFollowingAuthor, post.originalPost]);
+    const [isDeleted, setIsDeleted] = React.useState(false);
+    const [hasReported, setHasReported] = React.useState(false);
 
     // Haptic Helper
     const vibrate = () => {
@@ -108,93 +108,48 @@ export function FeedPost({ post }: { post: any }) {
         }
     };
 
+    // --- Handlers (Proxies to Store) ---
+
+    // Follow Handler
     const handleFollow = async () => {
         vibrate();
-        if (!currentUser) {
-            setShowLoginModal(true);
-            return;
-        }
-
-        const token = localStorage.getItem('accessToken');
-        if (!token || !displayPost.user) return;
-
-        setFollowLoading(true);
-        // Optimistic update
-        const prevIsFollowing = isFollowing;
-        setIsFollowing(!isFollowing);
-
-        try {
-            const endpoint = isFollowing ? 'unfollow' : 'follow';
-            const res = await fetch(`${API_BASE_URL}/users/${displayPost.user.id}/${endpoint}`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            if (!res.ok) throw new Error('Failed to toggle follow');
-        } catch (e) {
-            setIsFollowing(prevIsFollowing);
-            console.error(e);
-        } finally {
-            setFollowLoading(false);
+        if (!currentUser) return setShowLoginModal(true);
+        if (displayPost.user?.id) {
+            await toggleFollow();
         }
     };
 
+    // Like Handler
     const handleLike = async () => {
         vibrate();
-        const token = localStorage.getItem('accessToken');
-        if (!token) {
-            setShowLoginModal(true);
-            return;
-        }
-
-        // Optimistic update
-        const prevLikes = likes;
-        const prevIsLiked = isLiked;
-
-        setIsLiked(!isLiked);
-        setLikes(isLiked ? likes - 1 : likes + 1);
-
-        try {
-            const res = await fetch(`${API_BASE_URL}/posts/${post.id}/like`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            if (!res.ok) throw new Error('Failed to like/unlike');
-        } catch (e) {
-            // Revert on error
-            setIsLiked(prevIsLiked);
-            setLikes(prevLikes);
-            console.error(e);
-        }
+        if (!currentUser) return setShowLoginModal(true);
+        await toggleLike();
     };
 
+    // Bookmark Handler
+    const handleBookmark = async () => {
+        vibrate();
+        if (!currentUser) return setShowLoginModal(true);
+        await toggleBookmark();
+    };
+
+    // Reshare Handler
     const handleReshare = async () => {
-        const token = localStorage.getItem('accessToken');
-        if (!token) {
-            setShowLoginModal(true);
-            return;
-        }
+        vibrate();
+        if (!currentUser) return setShowLoginModal(true);
+        await toggleReshare();
+    };
 
-        // Optimistic update
-        setReshareCount(reshareCount + 1);
-
-        try {
-            const res = await fetch(`${API_BASE_URL}/posts/${post.id}/reshare`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            if (!res.ok) throw new Error('Failed to reshare');
-        } catch (e) {
-            setReshareCount(reshareCount); // Revert
-            console.error(e);
+    // Block Handler
+    const handleBlock = async () => {
+        if (!currentUser) return setShowLoginModal(true);
+        if (confirm(`Block @${displayPost.user?.handle}?`)) {
+            await toggleBlock();
+            setIsDeleted(true); // Hide locally
         }
     };
 
+    // Social & Other Handlers (Kept Local)
     const handleSocialShare = (platform: string) => {
         const postUrl = `${window.location.origin}/post/${post.id}`;
         const text = `Check out this post on StockX: ${post.content?.substring(0, 50)}...`;
@@ -230,7 +185,6 @@ export function FeedPost({ post }: { post: any }) {
 
         if (url) {
             window.open(url, '_blank', 'width=600,height=400');
-            // Track backend share
             const token = localStorage.getItem('accessToken');
             if (token) {
                 fetch(`${API_BASE_URL}/posts/${post.id}/share`, {
@@ -240,30 +194,6 @@ export function FeedPost({ post }: { post: any }) {
             }
         }
     }
-    const handleBookmark = async () => {
-        vibrate();
-        const token = localStorage.getItem('accessToken');
-        if (!token) {
-            setShowLoginModal(true);
-            return;
-        }
-
-        // Optimistic update
-        const prevIsBookmarked = isBookmarked;
-        setIsBookmarked(!isBookmarked);
-
-        try {
-            const res = await fetch(`${API_BASE_URL}/posts/${post.id}/bookmark`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            if (!res.ok) throw new Error('Failed to bookmark');
-        } catch (e) {
-            setIsBookmarked(prevIsBookmarked); // Revert
-        }
-    };
 
     const toggleComments = async () => {
         if (!showComments) {
@@ -290,12 +220,8 @@ export function FeedPost({ post }: { post: any }) {
     const submitComment = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!newComment.trim()) return;
-
         const token = localStorage.getItem('accessToken');
-        if (!token) {
-            setShowLoginModal(true);
-            return;
-        }
+        if (!token) return setShowLoginModal(true);
 
         try {
             const res = await fetch(`${API_BASE_URL}/posts/${post.id}/comments`, {
@@ -318,21 +244,17 @@ export function FeedPost({ post }: { post: any }) {
         }
     };
 
-    // --- Action Handlers ---
-
     const handleDelete = async () => {
         if (!confirm("Are you sure you want to delete this post?")) return;
         const token = localStorage.getItem('accessToken');
         if (!token) return;
 
         try {
-            const res = await fetch(`${API_BASE_URL}/posts/${post.id}`, {
+            await fetch(`${API_BASE_URL}/posts/${post.id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-            if (res.ok) {
-                setIsDeleted(true);
-            }
+            setIsDeleted(true);
         } catch (e) {
             console.error("Failed to delete post", e);
         }
@@ -353,7 +275,7 @@ export function FeedPost({ post }: { post: any }) {
             });
             if (res.ok) {
                 setIsEditing(false);
-                post.content = editContent; // Mutate prop or reload? Mutating for instant feedback
+                post.content = editContent; // Optimistic update of prop object for display
             }
         } catch (e) {
             console.error("Failed to update post", e);
@@ -362,48 +284,22 @@ export function FeedPost({ post }: { post: any }) {
 
     const handleReport = async () => {
         const token = localStorage.getItem('accessToken');
-        if (!token) {
-            setShowLoginModal(true);
-            return;
-        }
-        if (!confirm("Report this post? It will be hidden from your feed.")) return;
+        if (!token) return setShowLoginModal(true);
 
-        try {
-            await fetch(`${API_BASE_URL}/posts/${post.id}/report`, {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            setIsDeleted(true); // Hide it immediately
-            setHasReported(true);
-        } catch (e) {
-            console.error("Failed to report", e);
+        if (confirm("Report this post?")) {
+            try {
+                await fetch(`${API_BASE_URL}/posts/${post.id}/report`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                setIsDeleted(true);
+                setHasReported(true);
+            } catch (e) { console.error(e); }
         }
     };
 
-    const handleBlock = async () => {
-        const token = localStorage.getItem('accessToken');
-        if (!token) {
-            setShowLoginModal(true);
-            return;
-        }
-        if (!confirm(`Block @${displayPost.user?.handle}? You will no longer see their posts.`)) return;
-
-        try {
-            await fetch(`${API_BASE_URL}/users/${displayPost.user?.id}/block`, {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            setIsDeleted(true); // Hide this post immediately
-            alert(`Blocked @${displayPost.user?.handle}`);
-            window.location.reload(); // Reload to filter out all their posts? Or just hide this one
-        } catch (e) {
-            console.error("Failed to block", e);
-        }
-    };
-
-
-
-    if (isDeleted) return null;
+    // If global block state says blocked, hide the post
+    if (isDeleted || (isBlocked && currentUser?.id !== displayPost.user?.id)) return null;
 
     return (
         <motion.div
@@ -483,14 +379,9 @@ export function FeedPost({ post }: { post: any }) {
                                         size="sm"
                                         className="h-5 px-2 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-full border border-blue-200"
                                         onClick={handleFollow}
-                                        disabled={followLoading}
                                     >
-                                        {followLoading ? "..." : (
-                                            <>
-                                                <UserPlus size={12} className="mr-1" />
-                                                Follow
-                                            </>
-                                        )}
+                                        <UserPlus size={12} className="mr-1" />
+                                        Follow
                                     </Button>
                                 </div>
                             )}
@@ -577,7 +468,7 @@ export function FeedPost({ post }: { post: any }) {
                             onClick={handleLike}
                         >
                             <Heart size={16} className={cn("md:w-[18px] md:h-[18px] group-hover:stroke-red-500", isLiked && "fill-current stroke-none")} />
-                            <span className="text-xs md:text-sm">{likes}</span>
+                            <span className="text-xs md:text-sm">{likeCount}</span>
                         </Button>
 
                         <DropdownMenu>
