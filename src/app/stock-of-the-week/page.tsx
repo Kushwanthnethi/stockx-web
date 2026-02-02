@@ -394,68 +394,124 @@ export default function StockOfTheWeekPage() {
                             </div>
 
                             {archive.length > 0 ? (
-                                <div className="rounded-xl border border-border/50 overflow-hidden bg-card/50">
-                                    <table className="w-full text-sm text-left">
-                                        <thead className="bg-muted/30 border-b border-border/50 text-xs uppercase text-muted-foreground font-semibold tracking-wider">
-                                            <tr>
-                                                <th className="px-6 py-4">Week</th>
-                                                <th className="px-6 py-4">Stock</th>
-                                                <th className="px-6 py-4 text-right">Entry</th>
-                                                <th className="px-6 py-4 text-right">Max High</th>
-                                                <th className="px-6 py-4 text-right">Result</th>
-                                                <th className="px-6 py-4 text-center">Status</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-border/50">
-                                            {archive.map((pick: any) => {
-                                                // Logic: If finalPrice is set, use it (Closed). Otherwise use current live price (Tracking).
-                                                const isClosed = !!pick.finalPrice;
-                                                const effectivePrice = isClosed ? pick.finalPrice : (pick.stock?.currentPrice || pick.priceAtSelection);
-                                                // Avoid division by zero
-                                                const entryPrice = pick.priceAtSelection || 1;
-                                                const pnl = ((effectivePrice - entryPrice) / entryPrice) * 100;
+                                <>
+                                    {/* Desktop View: Table */}
+                                    <div className="hidden md:block rounded-xl border border-border/50 overflow-hidden bg-card/50">
+                                        <table className="w-full text-sm text-left">
+                                            <thead className="bg-muted/30 border-b border-border/50 text-xs uppercase text-muted-foreground font-semibold tracking-wider">
+                                                <tr>
+                                                    <th className="px-6 py-4">Week</th>
+                                                    <th className="px-6 py-4">Stock</th>
+                                                    <th className="px-6 py-4 text-right">Entry</th>
+                                                    <th className="px-6 py-4 text-right">Max High</th>
+                                                    <th className="px-6 py-4 text-right">Result</th>
+                                                    <th className="px-6 py-4 text-center">Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-border/50">
+                                                {archive.map((pick: any) => {
+                                                    const isClosed = !!pick.finalPrice;
+                                                    const effectivePrice = isClosed ? pick.finalPrice : (pick.stock?.currentPrice || pick.priceAtSelection);
+                                                    const entryPrice = pick.priceAtSelection || 1;
+                                                    const pnl = ((effectivePrice - entryPrice) / entryPrice) * 100;
 
-                                                return (
-                                                    <tr key={pick.id} className="hover:bg-muted/20 transition-colors">
-                                                        <td className="px-6 py-4 font-medium text-muted-foreground">
-                                                            {new Date(pick.weekStartDate).toLocaleDateString()}
-                                                        </td>
-                                                        <td className="px-6 py-4 font-bold text-foreground">
-                                                            {pick.stockSymbol}
-                                                            {!isClosed && <span className="ml-2 text-[10px] text-muted-foreground font-normal">(Live)</span>}
-                                                        </td>
-                                                        <td className="px-6 py-4 text-right font-mono text-muted-foreground">
-                                                            {formatINR(pick.priceAtSelection)}
-                                                        </td>
-                                                        <td className="px-6 py-4 text-right font-mono">
-                                                            <div className="flex flex-col items-end">
-                                                                <span className="text-foreground font-bold">{formatINR(pick.maxHigh || effectivePrice)}</span>
-                                                                <span className="text-[10px] text-green-500 font-bold">
-                                                                    +{(((pick.maxHigh || effectivePrice) - entryPrice) / entryPrice * 100).toFixed(2)}%
-                                                                </span>
+                                                    return (
+                                                        <tr key={pick.id} className="hover:bg-muted/20 transition-colors">
+                                                            <td className="px-6 py-4 font-medium text-muted-foreground">
+                                                                {new Date(pick.weekStartDate).toLocaleDateString()}
+                                                            </td>
+                                                            <td className="px-6 py-4 font-bold text-foreground">
+                                                                {pick.stockSymbol}
+                                                                {!isClosed && <span className="ml-2 text-[10px] text-muted-foreground font-normal">(Live)</span>}
+                                                            </td>
+                                                            <td className="px-6 py-4 text-right font-mono text-muted-foreground">
+                                                                {formatINR(pick.priceAtSelection)}
+                                                            </td>
+                                                            <td className="px-6 py-4 text-right font-mono">
+                                                                <div className="flex flex-col items-end">
+                                                                    <span className="text-foreground font-bold">{formatINR(pick.maxHigh || effectivePrice)}</span>
+                                                                    <span className="text-[10px] text-green-500 font-bold">
+                                                                        +{(((pick.maxHigh || effectivePrice) - entryPrice) / entryPrice * 100).toFixed(2)}%
+                                                                    </span>
+                                                                </div>
+                                                            </td>
+                                                            <td className="px-6 py-4 text-right font-mono">
+                                                                <div className="flex flex-col items-end">
+                                                                    <span>{formatINR(effectivePrice)}</span>
+                                                                    <span className={cn("text-xs font-bold", pnl >= 0 ? "text-green-500" : "text-red-500")}>
+                                                                        {pnl > 0 ? "+" : ""}{pnl.toFixed(2)}%
+                                                                    </span>
+                                                                </div>
+                                                            </td>
+                                                            <td className="px-6 py-4 text-center">
+                                                                {isClosed ? (
+                                                                    <Badge variant="outline">Closed</Badge>
+                                                                ) : (
+                                                                    <Badge className="bg-blue-500/10 text-blue-500 border-blue-500/20 hover:bg-blue-500/20">Tracking</Badge>
+                                                                )}
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                })}
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    {/* Mobile View: Cards */}
+                                    <div className="md:hidden space-y-4">
+                                        {archive.map((pick: any) => {
+                                            const isClosed = !!pick.finalPrice;
+                                            const effectivePrice = isClosed ? pick.finalPrice : (pick.stock?.currentPrice || pick.priceAtSelection);
+                                            const entryPrice = pick.priceAtSelection || 1;
+                                            const pnl = ((effectivePrice - entryPrice) / entryPrice) * 100;
+
+                                            return (
+                                                <div key={pick.id} className="bg-card border border-border/50 rounded-xl p-4 shadow-sm">
+                                                    <div className="flex justify-between items-start mb-3">
+                                                        <div>
+                                                            <div className="text-xs text-muted-foreground font-medium mb-1">
+                                                                {new Date(pick.weekStartDate).toLocaleDateString()}
                                                             </div>
-                                                        </td>
-                                                        <td className="px-6 py-4 text-right font-mono">
-                                                            <div className="flex flex-col items-end">
-                                                                <span>{formatINR(effectivePrice)}</span>
-                                                                <span className={cn("text-xs font-bold", pnl >= 0 ? "text-green-500" : "text-red-500")}>
-                                                                    {pnl > 0 ? "+" : ""}{pnl.toFixed(2)}%
-                                                                </span>
+                                                            <div className="text-lg font-bold text-foreground flex items-center gap-2">
+                                                                {pick.stockSymbol}
+                                                                {!isClosed && <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-medium">Live</span>}
                                                             </div>
-                                                        </td>
-                                                        <td className="px-6 py-4 text-center">
-                                                            {isClosed ? (
-                                                                <Badge variant="outline">Closed</Badge>
-                                                            ) : (
-                                                                <Badge className="bg-blue-500/10 text-blue-500 border-blue-500/20 hover:bg-blue-500/20">Tracking</Badge>
-                                                            )}
-                                                        </td>
-                                                    </tr>
-                                                );
-                                            })}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                                        </div>
+                                                        {isClosed ? (
+                                                            <Badge variant="outline" className="text-[10px]">Closed</Badge>
+                                                        ) : (
+                                                            <Badge className="bg-blue-500/10 text-blue-500 border-blue-500/20 text-[10px]">Tracking</Badge>
+                                                        )}
+                                                    </div>
+
+                                                    <div className="grid grid-cols-2 gap-4 py-3 border-t border-border/40">
+                                                        <div>
+                                                            <div className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider mb-1">Entry</div>
+                                                            <div className="font-mono text-sm font-medium">{formatINR(pick.priceAtSelection)}</div>
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <div className="text-[10px] uppercase text-muted-foreground font-bold tracking-wider mb-1">Result</div>
+                                                            <div className="font-mono text-sm font-bold text-foreground">{formatINR(effectivePrice)}</div>
+                                                            <div className={cn("text-xs font-bold", pnl >= 0 ? "text-green-500" : "text-red-500")}>
+                                                                {pnl > 0 ? "+" : ""}{pnl.toFixed(2)}%
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="flex justify-between items-center pt-3 border-t border-border/40 bg-muted/10 -mx-4 -mb-4 px-4 py-3 mt-1 rounded-b-xl">
+                                                        <span className="text-xs font-medium text-muted-foreground">Max Potential</span>
+                                                        <div className="text-right">
+                                                            <span className="font-mono text-sm font-bold block">{formatINR(pick.maxHigh || effectivePrice)}</span>
+                                                            <span className="text-[10px] text-green-500 font-bold">
+                                                                +{(((pick.maxHigh || effectivePrice) - entryPrice) / entryPrice * 100).toFixed(2)}%
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </>
                             ) : (
                                 <div className="text-center py-10 border border-dashed rounded-xl border-border/50 text-muted-foreground text-sm">
                                     Archive will populate after the next cycle.
