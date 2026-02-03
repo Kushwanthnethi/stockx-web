@@ -52,7 +52,6 @@ export default function RootLayout({
                             {children}
                         </MainLayout>
 
-                        <FloatingPostButton />
                         <BottomNav />
                         <Toaster theme="system" richColors closeButton position="top-center" />
                     </AuthProvider>
