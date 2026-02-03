@@ -84,8 +84,10 @@ export default function ResultAnalysisPage() {
     };
 
     const renderReportDate = () => {
-        // Fallback to today if date is missing (safety), but ideally use data.latestQuarter.date
-        const dateStr = data.latestQuarter?.date || data.date || new Date().toISOString();
+        const dateStr = data.latestQuarter?.reportDate || data.reportDate;
+
+        if (!dateStr) return null;
+
         const date = new Date(dateStr);
 
         if (isToday(date)) return "REPORTED TODAY";
