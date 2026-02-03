@@ -10,9 +10,7 @@ export const metadata: Metadata = {
     metadataBase: new URL("https://www.stocksx.info"),
     title: "StocksX – Indian Stock Market Analysis & Insights",
     description: "Where Indian investors share insights, not tips.",
-    icons: {
-        icon: "/favicon.png",
-    },
+
     alternates: {
         canonical: "/",
     },
