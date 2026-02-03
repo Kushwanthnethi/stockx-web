@@ -18,28 +18,28 @@ export default function ResultsPage() {
 
                 {/* Main Content */}
                 <div className="w-full space-y-8">
-                    <PremiumGuard>
-                        {/* Hero Section */}
-                        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-background border p-6 md:p-8">
-                            <div className="relative z-10">
-                                <Badge className="mb-4 bg-primary/20 text-primary hover:bg-primary/30 border-none px-3 py-1 text-[10px] uppercase tracking-wider font-bold">
-                                    Live Updates
-                                </Badge>
-                                <h1 className="text-3xl font-bold tracking-tight mb-2 flex items-center gap-3">
-                                    <Megaphone className="w-8 h-8 text-primary" />
-                                    Result Corner
-                                </h1>
-                                <p className="text-muted-foreground max-w-2xl text-lg">
-                                    Track financial result announcements from top NSE & BSE companies. Stay ahead of market movements with real-time updates.
-                                </p>
-                            </div>
-
-                            {/* Decorative Icon */}
-                            <div className="absolute right-0 bottom-0 opacity-5 transform translate-x-10 translate-y-10">
-                                <CalendarCheck className="w-64 h-64" />
-                            </div>
+                    {/* Hero Section - Visible to all for SEO */}
+                    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-background border p-6 md:p-8">
+                        <div className="relative z-10">
+                            <Badge className="mb-4 bg-primary/20 text-primary hover:bg-primary/30 border-none px-3 py-1 text-[10px] uppercase tracking-wider font-bold">
+                                Live Updates
+                            </Badge>
+                            <h1 className="text-3xl font-bold tracking-tight mb-2 flex items-center gap-3">
+                                <Megaphone className="w-8 h-8 text-primary" />
+                                Result Corner
+                            </h1>
+                            <p className="text-muted-foreground max-w-2xl text-lg">
+                                Track financial result announcements from top NSE & BSE companies. Stay ahead of market movements with real-time updates.
+                            </p>
                         </div>
 
+                        {/* Decorative Icon */}
+                        <div className="absolute right-0 bottom-0 opacity-5 transform translate-x-10 translate-y-10">
+                            <CalendarCheck className="w-64 h-64" />
+                        </div>
+                    </div>
+
+                    <PremiumGuard>
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                             {/* Calendar Feed */}
                             <div className="lg:col-span-8 space-y-6">

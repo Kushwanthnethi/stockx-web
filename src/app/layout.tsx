@@ -27,6 +27,7 @@ import { MobileHeader } from "@/components/layout/mobile-header";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { FloatingPostButton } from "@/components/features/feed/floating-post-button";
 import { MainLayout } from "@/components/layout/main-layout";
+import { JsonLd } from "@/components/seo/json-ld";
 
 export default function RootLayout({
     children,
@@ -39,6 +40,7 @@ export default function RootLayout({
                 className={cn(inter.className, "min-h-screen bg-background font-sans antialiased")}
                 suppressHydrationWarning
             >
+                <JsonLd />
                 <ThemeProvider
                     attribute="class"
                     defaultTheme="system"
