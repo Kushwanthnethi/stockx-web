@@ -14,8 +14,9 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { TrendingUp, Lock } from "lucide-react";
+import { TrendingUp, Lock, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { DialogClose } from "@/components/ui/dialog";
 
 export function GuestAuthModal() {
     const { user, isLoading, showLoginModal, setShowLoginModal } = useAuth();
@@ -97,7 +98,13 @@ export function GuestAuthModal() {
 
     return (
         <Dialog open={open} onOpenChange={handleOpenChange}>
-            <DialogContent className="w-[90%] max-w-[420px] rounded-2xl p-0 overflow-hidden border-0 shadow-2xl bg-background/95 backdrop-blur-xl">
+            <DialogContent className="w-[95%] max-w-[550px] rounded-2xl p-0 overflow-hidden border-0 shadow-2xl bg-background/95 backdrop-blur-xl [&>button]:hidden">
+                <div className="absolute right-3 top-3 z-[60]">
+                    <DialogClose className="rounded-full p-2.5 bg-background shadow-sm hover:bg-accent transition-colors ring-1 ring-border/50 text-muted-foreground hover:text-foreground">
+                        <X className="h-5 w-5" />
+                        <span className="sr-only">Close</span>
+                    </DialogClose>
+                </div>
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 pointer-events-none" />
 
                 <div className="p-8 relative z-10">
