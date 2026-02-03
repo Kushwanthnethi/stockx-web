@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { MessageSquare, Heart, Share2, TrendingUp, TrendingDown, Repeat2, MoreHorizontal, Link as LinkIcon, Facebook, Linkedin, Twitter, Bookmark } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -372,19 +372,29 @@ export function FeedPost({ post }: { post: any }) {
                             </div>
 
                             {/* Follow Button */}
-                            {currentUser && displayPost.user && currentUser.handle !== displayPost.user.handle && !isFollowing && (
-                                <div className="">
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="h-5 px-2 text-xs font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-full border border-blue-200"
-                                        onClick={handleFollow}
+                            <AnimatePresence>
+                                {currentUser && displayPost.user && currentUser.handle !== displayPost.user.handle && !isFollowing && (
+                                    <motion.div
+                                        initial={{ opacity: 0, width: 0 }}
+                                        animate={{ opacity: 1, width: "auto" }}
+                                        exit={{ opacity: 0, width: 0, scale: 0.8 }}
+                                        transition={{ duration: 0.3, type: "spring", bounce: 0, stiffness: 300, damping: 20 }}
+                                        className="overflow-hidden ml-1"
                                     >
-                                        <UserPlus size={12} className="mr-1" />
-                                        Follow
-                                    </Button>
-                                </div>
-                            )}
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="h-7 px-3 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-full shadow-sm hover:shadow active:scale-95 transition-all"
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                handleFollow();
+                                            }}
+                                        >
+                                            Follow
+                                        </Button>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                         </div>
 
                         {/* Sentiment Badge */}
@@ -451,31 +461,45 @@ export function FeedPost({ post }: { post: any }) {
                             <span>{commentsCount}</span>
                         </Button>
 
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className="gap-2 group hover:text-green-500"
+                        <motion.button
+                            whileTap={{ scale: 0.8 }}
+                            className="gap-2 group hover:text-green-500 flex items-center px-2 py-1 rounded-full transition-colors hover:bg-green-500/5 text-muted-foreground"
                             onClick={handleReshare}
                         >
-                            <Repeat2 size={18} className="group-hover:stroke-green-500" />
-                            <span>{reshareCount}</span>
-                        </Button>
+                            <motion.div
+                                animate={isReshare ? { rotate: 180, scale: 1.1 } : { rotate: 0, scale: 1 }}
+                                transition={{ type: "spring", stiffness: 200, damping: 10 }}
+                            >
+                                <Repeat2 size={18} className={cn("transition-colors", isReshare ? "text-green-500 stroke-[2.5px]" : "group-hover:stroke-green-500")} />
+                            </motion.div>
+                            <span className={cn("text-sm transition-colors", isReshare && "text-green-500 font-medium")}>{reshareCount}</span>
+                        </motion.button>
 
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className={cn("gap-1.5 md:gap-2 group", isLiked ? "text-red-500" : "hover:text-red-500")}
+
+                        <motion.button
+                            whileTap={{ scale: 0.8 }}
+                            className={cn("flex items-center gap-1.5 md:gap-2 group transition-colors rounded-full px-2 py-1", isLiked ? "text-red-500 bg-red-500/10" : "text-muted-foreground hover:text-red-500 hover:bg-red-500/5")}
                             onClick={handleLike}
                         >
-                            <Heart size={16} className={cn("md:w-[18px] md:h-[18px] group-hover:stroke-red-500", isLiked && "fill-current stroke-none")} />
-                            <span className="text-xs md:text-sm">{likeCount}</span>
-                        </Button>
+                            <div className="relative">
+                                <Heart size={16} className={cn("md:w-[18px] md:h-[18px] transition-all", isLiked && "fill-current stroke-none scale-110")} />
+                                {isLiked && (
+                                    <motion.div
+                                        initial={{ scale: 0, opacity: 1 }}
+                                        animate={{ scale: 2, opacity: 0 }}
+                                        transition={{ duration: 0.5 }}
+                                        className="absolute inset-0 bg-red-500 rounded-full -z-10"
+                                    />
+                                )}
+                            </div>
+                            <span className="text-xs md:text-sm font-medium">{likeCount}</span>
+                        </motion.button>
 
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="sm" className="gap-2 hover:text-blue-500">
+                                <motion.button whileTap={{ scale: 0.9 }} className="flex items-center gap-2 text-muted-foreground hover:text-blue-500 px-2 py-1 rounded-full hover:bg-blue-500/5 transition-colors">
                                     <Share2 size={18} />
-                                </Button>
+                                </motion.button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-48 bg-popover text-popover-foreground">
                                 <DropdownMenuItem onClick={() => handleSocialShare('copy')} className="cursor-pointer">
@@ -501,14 +525,13 @@ export function FeedPost({ post }: { post: any }) {
                             </DropdownMenuContent>
                         </DropdownMenu>
 
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            className={cn("gap-2 group", isBookmarked ? "text-primary" : "hover:text-primary")}
+                        <motion.button
+                            whileTap={{ scale: 0.8 }}
+                            className={cn("flex items-center gap-2 group transition-colors rounded-full px-2 py-1", isBookmarked ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-primary hover:bg-primary/5")}
                             onClick={handleBookmark}
                         >
-                            <Bookmark size={18} className={cn("group-hover:stroke-primary", isBookmarked && "fill-current stroke-none")} />
-                        </Button>
+                            <Bookmark size={18} className={cn("transition-all", isBookmarked && "fill-current stroke-none scale-110")} />
+                        </motion.button>
                     </div>
 
                     {/* Comments Section */}

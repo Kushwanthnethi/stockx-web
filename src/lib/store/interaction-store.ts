@@ -1,3 +1,4 @@
+import React from 'react';
 import { create } from 'zustand';
 import { API_BASE_URL } from '@/lib/config';
 
@@ -248,39 +249,52 @@ export const useInteractionStore = create<InteractionStore>((set, get) => ({
 export const usePostInteraction = (postId: string, initialProps: Partial<PostState>) => {
     const store = useInteractionStore();
 
-    // Auto-init only if missing
-    if (!store.posts[postId]) {
-        store.initPost(postId, initialProps);
-    }
+    // Init state effect - prevents "Cannot update while rendering"
+    React.useEffect(() => {
+        if (!store.posts[postId]) {
+            store.initPost(postId, initialProps);
+        }
+    }, [postId, initialProps, store]);
 
-    // Subscribe to specific post
     const postState = useInteractionStore(state => state.posts[postId]);
 
-    // Fallback if not ready (shouldn't happen due to sync init above, but safe)
+    // Derived state with fallback
+    const isLiked = postState?.isLiked ?? initialProps.isLiked ?? false;
+    const likeCount = postState?.likeCount ?? initialProps.likeCount ?? 0;
+    const isBookmarked = postState?.isBookmarked ?? initialProps.isBookmarked ?? false;
+    const reshareCount = postState?.reshareCount ?? initialProps.reshareCount ?? 0;
+
     return {
-        isLiked: postState?.isLiked ?? initialProps.isLiked ?? false,
-        likeCount: postState?.likeCount ?? initialProps.likeCount ?? 0,
-        isBookmarked: postState?.isBookmarked ?? initialProps.isBookmarked ?? false,
-        reshareCount: postState?.reshareCount ?? initialProps.reshareCount ?? 0,
-        toggleLike: () => store.toggleLike(postId, postState?.isLiked ?? !!initialProps.isLiked, postState?.likeCount ?? initialProps.likeCount ?? 0),
-        toggleBookmark: () => store.toggleBookmark(postId, postState?.isBookmarked ?? !!initialProps.isBookmarked),
-        toggleReshare: () => store.toggleReshare(postId, postState?.reshareCount ?? initialProps.reshareCount ?? 0),
+        isLiked,
+        likeCount,
+        isBookmarked,
+        reshareCount,
+        toggleLike: () => store.toggleLike(postId, isLiked, likeCount),
+        toggleBookmark: () => store.toggleBookmark(postId, isBookmarked),
+        toggleReshare: () => store.toggleReshare(postId, reshareCount),
     };
 };
 
 export const useUserInteraction = (userId: string, initialProps: Partial<UserState>) => {
     const store = useInteractionStore();
 
-    if (!store.users[userId]) {
-        store.initUser(userId, initialProps);
-    }
+    // Init state effect
+    React.useEffect(() => {
+        if (!store.users[userId]) {
+            store.initUser(userId, initialProps);
+        }
+    }, [userId, initialProps, store]);
 
     const userState = useInteractionStore(state => state.users[userId]);
 
+    // Derived state with fallback
+    const isFollowing = userState?.isFollowing ?? initialProps.isFollowing ?? false;
+    const isBlocked = userState?.isBlocked ?? initialProps.isBlocked ?? false;
+
     return {
-        isFollowing: userState?.isFollowing ?? initialProps.isFollowing ?? false,
-        isBlocked: userState?.isBlocked ?? initialProps.isBlocked ?? false,
-        toggleFollow: () => store.toggleFollow(userId, userState?.isFollowing ?? !!initialProps.isFollowing),
+        isFollowing,
+        isBlocked,
+        toggleFollow: () => store.toggleFollow(userId, isFollowing),
         toggleBlock: () => store.toggleBlock(userId),
     };
 };

@@ -20,10 +20,7 @@ import { AuthProvider } from "@/providers/auth-provider";
 import { GuestAuthModal } from "@/components/shared/guest-auth-modal";
 import { SiteHeader } from "@/components/layout/site-header";
 
-// ... (imports)
-
 import { ThemeProvider } from "@/components/theme-provider";
-import { MobileHeader } from "@/components/layout/mobile-header";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { FloatingPostButton } from "@/components/features/feed/floating-post-button";
 import { MainLayout } from "@/components/layout/main-layout";

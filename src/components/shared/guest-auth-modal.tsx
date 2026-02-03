@@ -134,8 +134,9 @@ export function GuestAuthModal() {
                         </TabsList>
 
                         <AnimatePresence mode="wait">
-                            <TabsContent value="login" className="space-y-4 focus-visible:outline-none">
+                            <TabsContent value="login" key="login-tab" className="space-y-4 focus-visible:outline-none">
                                 <motion.div
+                                    key="login-content"
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -10 }}
@@ -178,8 +179,9 @@ export function GuestAuthModal() {
                                 </motion.div>
                             </TabsContent>
 
-                            <TabsContent value="register" className="space-y-4 focus-visible:outline-none">
+                            <TabsContent value="register" key="register-tab" className="space-y-4 focus-visible:outline-none">
                                 <motion.div
+                                    key="register-content"
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, y: -10 }}
