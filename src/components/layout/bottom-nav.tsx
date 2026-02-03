@@ -19,6 +19,9 @@ export function BottomNav() {
 
     const isActive = (path: string) => pathname === path;
 
+    // Hide on auth pages
+    if (pathname === "/login" || pathname === "/signup") return null;
+
     const navItems = [
         { label: "Home", href: "/", icon: Home },
         { label: "Markets", href: "/trending", icon: BarChart2 },
