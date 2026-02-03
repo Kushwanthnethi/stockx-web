@@ -10,7 +10,7 @@ import { ArrowLeft, TrendingUp, TrendingDown, Target, CheckCircle, XCircle, Aler
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend } from "recharts";
-import { formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow, isToday, isYesterday, format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { API_BASE_URL } from "@/lib/config";
 
@@ -83,6 +83,16 @@ export default function ResultAnalysisPage() {
         );
     };
 
+    const renderReportDate = () => {
+        // Fallback to today if date is missing (safety), but ideally use data.latestQuarter.date
+        const dateStr = data.latestQuarter?.date || data.date || new Date().toISOString();
+        const date = new Date(dateStr);
+
+        if (isToday(date)) return "REPORTED TODAY";
+        if (isYesterday(date)) return "REPORTED YESTERDAY";
+        return `REPORTED ${format(date, 'MMM dd, yyyy').toUpperCase()}`;
+    };
+
     const currentQtr = data.quarterly?.quarters?.[0];
     const growth = data.quarterly?.comparisons?.growth;
 
@@ -122,7 +132,7 @@ export default function ResultAnalysisPage() {
                                     <Badge variant="outline" className={`text-sm px-3 py-1 font-medium tracking-wide ${verdictBg} ${verdictColor} border-none`}>
                                         {data.latestQuarter?.period} RESULTS
                                     </Badge>
-                                    <span className="text-xs font-mono text-muted-foreground">REPORTED TODAY</span>
+                                    <span className="text-xs font-mono text-muted-foreground">{renderReportDate()}</span>
                                 </div>
                                 <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-2 leading-tight">
                                     {data.companyName}
