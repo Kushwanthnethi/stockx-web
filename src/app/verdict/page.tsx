@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { API_BASE_URL } from "@/lib/config";
 import { VerdictCriteria } from "@/components/features/stocks/verdict-criteria";
+import { PremiumGuard } from "@/components/shared/premium-guard";
 
 export default function VerdictPage() {
     const [verdicts, setVerdicts] = useState<any[]>([]);
@@ -147,46 +148,48 @@ export default function VerdictPage() {
                     <VerdictCriteria />
                 </div>
 
-                {/* Content Grid - 3 columns as per image */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {visibleVerdicts.map((item) => (
-                        <VerdictCard key={item.symbol} stock={item} isThrottled={aiStatus?.activeKeys === 0} />
-                    ))}
-                </div>
+                <PremiumGuard>
+                    {/* Content Grid - 3 columns as per image */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {visibleVerdicts.map((item) => (
+                            <VerdictCard key={item.symbol} stock={item} isThrottled={aiStatus?.activeKeys === 0} />
+                        ))}
+                    </div>
+
+                    {/* Load More Button */}
+                    {visibleCount < verdicts.length && (
+                        <div className="flex justify-center pt-8 pb-12">
+                            <Button
+                                onClick={loadMore}
+                                variant="outline"
+                                className="h-16 px-16 rounded-full border-primary/30 bg-primary/5 hover:bg-primary/10 transition-all font-black uppercase tracking-[0.2em] text-xs shadow-2xl hover:shadow-primary/10 active:scale-95 group"
+                            >
+                                <span className="flex items-center gap-3">
+                                    Load More Intelligence
+                                    <TrendingUp size={16} className="group-hover:translate-y-[-2px] group-hover:translate-x-[2px] transition-transform" />
+                                </span>
+                            </Button>
+                        </div>
+                    )}
+
+                    {verdicts.length === 0 && !loading && (
+                        <div className="flex flex-col items-center justify-center py-32 text-center space-y-8">
+                            <div className="h-32 w-32 rounded-full bg-primary/5 flex items-center justify-center border border-primary/10 shadow-2xl shadow-primary/20">
+                                <Landmark className="text-primary opacity-50" size={60} />
+                            </div>
+                            <div className="space-y-3">
+                                <h3 className="font-black text-4xl italic tracking-tighter uppercase text-foreground">Dataset Vacuum</h3>
+                                <p className="text-muted-foreground font-bold max-w-md mx-auto opacity-80 text-lg leading-relaxed">
+                                    No market intelligence found in the local cluster. Command the first synchronization cycle now.
+                                </p>
+                            </div>
+                            <Button onClick={handleRefresh} className="rounded-2xl px-12 h-16 font-black uppercase tracking-[0.2em] text-xs shadow-xl shadow-primary/20 bg-primary text-primary-foreground hover:scale-105 transition-transform">
+                                Initialize Command
+                            </Button>
+                        </div>
+                    )}
+                </PremiumGuard>
             </div>
-
-            {/* Load More Button */}
-            {visibleCount < verdicts.length && (
-                <div className="flex justify-center pt-8 pb-12">
-                    <Button
-                        onClick={loadMore}
-                        variant="outline"
-                        className="h-16 px-16 rounded-full border-primary/30 bg-primary/5 hover:bg-primary/10 transition-all font-black uppercase tracking-[0.2em] text-xs shadow-2xl hover:shadow-primary/10 active:scale-95 group"
-                    >
-                        <span className="flex items-center gap-3">
-                            Load More Intelligence
-                            <TrendingUp size={16} className="group-hover:translate-y-[-2px] group-hover:translate-x-[2px] transition-transform" />
-                        </span>
-                    </Button>
-                </div>
-            )}
-
-            {verdicts.length === 0 && !loading && (
-                <div className="flex flex-col items-center justify-center py-32 text-center space-y-8">
-                    <div className="h-32 w-32 rounded-full bg-primary/5 flex items-center justify-center border border-primary/10 shadow-2xl shadow-primary/20">
-                        <Landmark className="text-primary opacity-50" size={60} />
-                    </div>
-                    <div className="space-y-3">
-                        <h3 className="font-black text-4xl italic tracking-tighter uppercase text-foreground">Dataset Vacuum</h3>
-                        <p className="text-muted-foreground font-bold max-w-md mx-auto opacity-80 text-lg leading-relaxed">
-                            No market intelligence found in the local cluster. Command the first synchronization cycle now.
-                        </p>
-                    </div>
-                    <Button onClick={handleRefresh} className="rounded-2xl px-12 h-16 font-black uppercase tracking-[0.2em] text-xs shadow-xl shadow-primary/20 bg-primary text-primary-foreground hover:scale-105 transition-transform">
-                        Initialize Command
-                    </Button>
-                </div>
-            )}
         </div>
     );
 }
