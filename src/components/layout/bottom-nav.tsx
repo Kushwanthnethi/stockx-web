@@ -24,9 +24,9 @@ export function BottomNav() {
 
     const navItems = [
         { label: "Home", href: "/", icon: Home },
-        { label: "Verdict", href: "/verdict", icon: Gavel },
-        { label: "Create", href: "#create", icon: PlusCircle, special: true }, // href is dummy now
         { label: "Stock of Week", href: "/stock-of-the-week", icon: Target },
+        { label: "Create", href: "#create", icon: PlusCircle, special: true }, // href is dummy now
+        { label: "Verdict", href: "/verdict", icon: Gavel },
         { label: "Results", href: "/results", icon: Megaphone },
     ];
 
