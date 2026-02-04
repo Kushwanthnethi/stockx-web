@@ -7,7 +7,7 @@ import { Toaster } from "sonner";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-    metadataBase: new URL("https://www.stocksx.info"),
+    metadataBase: new URL("https://stocksx.info"),
     title: "StocksX – Indian Stock Market Analysis & Insights",
     description: "Where Indian investors share insights, not tips.",
 
