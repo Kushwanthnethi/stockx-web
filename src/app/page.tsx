@@ -74,14 +74,14 @@ export default function Home() {
                 headers['Authorization'] = `Bearer ${token}`;
             }
 
-            const res = await fetch(`${API_BASE_URL}/posts?page=${pageNum}&limit=10`, {
+            const res = await fetch(`${API_BASE_URL}/posts?page=${pageNum}&limit=20`, {
                 headers
             });
 
             if (res.ok) {
                 const data = await res.json();
 
-                if (data.length < 10) {
+                if (data.length < 20) {
                     setHasMore(false);
                 } else {
                     setHasMore(true);
@@ -192,8 +192,15 @@ export default function Home() {
                     </AnimatePresence>
 
                     {/* Infinite Scroll Sensor & Loader */}
-                    <div ref={loadMoreRef} className="h-10 flex w-full items-center justify-center p-4">
-                        {hasMore && posts.length > 0 && <span className="text-muted-foreground text-sm animate-pulse">Loading more posts...</span>}
+                    <div ref={loadMoreRef} className="flex flex-col items-center justify-center p-8 space-y-3">
+                        {hasMore && posts.length > 0 && (
+                            <>
+                                <div className="h-4 w-4 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+                                <span className="text-muted-foreground text-xs font-medium tracking-wide animate-pulse">
+                                    ANALYZING MARKET DATA...
+                                </span>
+                            </>
+                        )}
                     </div>
 
                     {/* End of Feed Disclaimer */}
