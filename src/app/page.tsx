@@ -74,14 +74,14 @@ export default function Home() {
                 headers['Authorization'] = `Bearer ${token}`;
             }
 
-            const res = await fetch(`${API_BASE_URL}/posts?page=${pageNum}&limit=20`, {
+            const res = await fetch(`${API_BASE_URL}/posts?page=${pageNum}&limit=10`, {
                 headers
             });
 
             if (res.ok) {
                 const data = await res.json();
 
-                if (data.length < 20) {
+                if (data.length < 10) {
                     setHasMore(false);
                 } else {
                     setHasMore(true);
