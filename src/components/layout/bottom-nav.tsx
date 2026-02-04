@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Search, Newspaper, TrendingUp, BarChart2, PlusCircle } from "lucide-react"; // Added BarChart2 for Markets
+import { Home, PlusCircle, Gavel, Target, Megaphone } from "lucide-react"; // Updated icons for new layout
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
@@ -24,10 +24,10 @@ export function BottomNav() {
 
     const navItems = [
         { label: "Home", href: "/", icon: Home },
-        { label: "Markets", href: "/trending", icon: BarChart2 },
+        { label: "Verdict", href: "/verdict", icon: Gavel },
         { label: "Create", href: "#create", icon: PlusCircle, special: true }, // href is dummy now
-        { label: "News", href: "/news", icon: Newspaper },
-        { label: "Search", href: "/explore", icon: Search },
+        { label: "Stock of Week", href: "/stock-of-the-week", icon: Target },
+        { label: "Results", href: "/results", icon: Megaphone },
     ];
 
     const handleCreateClick = (e: React.MouseEvent) => {

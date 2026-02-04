@@ -12,12 +12,11 @@ import { TrendingUp, Megaphone, Gavel, Bell, Bookmark, User, FileText, Target } 
 import { useAuth } from "@/providers/auth-provider";
 
 // Custom items for Mobile Drawer (Profile Menu) as per user request
-// Order: StockX Screener, Result Corner, Verdict, Notifications, Bookmarks (Saved), About
+// Order: StockX Screener, Markets, News, Notifications, Bookmarks (Saved), About
 const MOBILE_DRAWER_ITEMS = [
     { label: "StockX Screener", href: "/explore", icon: TrendingUp },
-    { label: "Stock of the Week", href: "/stock-of-the-week", icon: Target, isNew: true },
-    { label: "Result Corner", href: "/results", icon: Megaphone },
-    { label: "Verdict", href: "/verdict", icon: Gavel },
+    { label: "Markets", href: "/trending", icon: TrendingUp },
+    { label: "News", href: "/news", icon: FileText },
     { label: "Notifications", href: "/notifications", icon: Bell },
     { label: "Bookmarks", href: "/bookmarks", icon: Bookmark },
     { label: "About", href: "/about", icon: User },
@@ -114,7 +113,7 @@ export function MobileSheet({ trigger, className }: { trigger?: React.ReactNode,
                                             >
                                                 <item.icon size={18} className="shrink-0" />
                                                 <span>{item.label}</span>
-                                                {item.isNew && (
+                                                {(item as any).isNew && (
                                                     <span className="ml-auto text-[10px] font-bold bg-primary/20 text-primary px-1.5 py-0.5 rounded-sm shrink-0">NEW</span>
                                                 )}
                                             </Button>
