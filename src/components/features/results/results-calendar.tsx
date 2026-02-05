@@ -20,13 +20,18 @@ interface EarningEvent {
     profit?: number;
     eps?: number;
     revenueGrowth?: number;
-    pdfUrl?: string; // New field
+    pdfUrl?: string;
+    isNifty50?: boolean;
+    isMidcap100?: boolean;
+    resultStatus?: 'UPCOMING' | 'DECLARED';
 }
 
 export function ResultsCalendar() {
     const [events, setEvents] = useState<EarningEvent[]>([]);
     const [loading, setLoading] = useState(true);
-    const [filter, setFilter] = useState('');
+    const [searchQuery, setSearchQuery] = useState('');
+    const [activeTab, setActiveTab] = useState<'upcoming' | 'declared'>('upcoming');
+    const [indexFilter, setIndexFilter] = useState<'ALL' | 'NIFTY50' | 'MIDCAP'>('ALL');
 
     useEffect(() => {
         const fetchCalendar = async () => {
@@ -46,39 +51,55 @@ export function ResultsCalendar() {
         fetchCalendar();
     }, []);
 
-    const filteredEvents = events.filter(e =>
-        e.companyName.toLowerCase().includes(filter.toLowerCase()) ||
-        e.symbol.toLowerCase().includes(filter.toLowerCase())
-    );
+    // Filter Logic
+    const filteredEvents = events.filter(e => {
+        // Search
+        const matchesSearch = e.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            e.symbol.toLowerCase().includes(searchQuery.toLowerCase());
 
-    // Grouping Logic
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+        // Tab (Status)
+        // If status is not explicitly set by backend yet (during transition), derive it from date
+        const status = e.resultStatus || (new Date(e.date) < new Date() ? 'DECLARED' : 'UPCOMING');
+        const matchesTab = status.toLowerCase() === activeTab;
 
-    const groups: Record<string, EarningEvent[]> = {
-        "Recent": [], // Moved to top logic (though object key order doesn't matter, array below does)
-        "Today": [],
-        "Tomorrow": [],
-        "This Week": [],
-        "Upcoming": [],
-    };
+        // Index Filter
+        let matchesIndex = true;
+        if (indexFilter === 'NIFTY50') matchesIndex = !!e.isNifty50;
+        if (indexFilter === 'MIDCAP') matchesIndex = !!e.isMidcap100;
 
-    filteredEvents.forEach(e => {
-        const d = new Date(e.date);
-        d.setHours(0, 0, 0, 0);
-
-        const diffTime = d.getTime() - today.getTime();
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-        if (diffDays === 0) groups["Today"].push(e);
-        else if (diffDays === 1) groups["Tomorrow"].push(e);
-        else if (diffDays > 1 && diffDays <= 7) groups["This Week"].push(e);
-        else if (diffDays > 7) groups["Upcoming"].push(e);
-        else groups["Recent"].push(e);
+        return matchesSearch && matchesTab && matchesIndex;
     });
 
-    // Reordered categories: Recent (Reported) First
-    const categories = ["Recent", "Today", "Tomorrow", "This Week", "Upcoming"];
+    // Grouping for UPCOMING: Today, Tomorrow, Later
+    // Grouping for DECLARED: Yesterday, Earlier
+    const groupedEvents: Record<string, EarningEvent[]> = {};
+
+    if (activeTab === 'upcoming') {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        filteredEvents.forEach(e => {
+            const d = new Date(e.date);
+            d.setHours(0, 0, 0, 0);
+            const diffDays = Math.ceil((d.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+
+            let key = "Upcoming";
+            if (diffDays <= 0) key = "Today"; // Handle slight time diffs
+            else if (diffDays === 1) key = "Tomorrow";
+            else if (diffDays <= 7) key = "This Week";
+
+            if (!groupedEvents[key]) groupedEvents[key] = [];
+            groupedEvents[key].push(e);
+        });
+    } else {
+        // For declared, just show flat list or group by date? 
+        // Let's group by "Latest" for now
+        groupedEvents["Latest Results"] = filteredEvents;
+    }
+
+    const categories = activeTab === 'upcoming'
+        ? ["Today", "Tomorrow", "This Week", "Upcoming"]
+        : ["Latest Results"];
 
     if (loading) {
         return (
@@ -90,101 +111,116 @@ export function ResultsCalendar() {
         );
     }
 
-    if (events.length === 0) {
-        return (
-            <div className="text-center py-20 text-muted-foreground border border-dashed rounded-xl bg-muted/10">
-                <Calendar className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p>No upcoming earnings scheduled for major stocks right now.</p>
-            </div>
-        );
-    }
-
     return (
-        <div className="space-y-8">
-            {/* Search Filter - Sleek input */}
-            <div className="relative group">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
-                <Input
-                    placeholder="Search company or symbol..."
-                    className="pl-10 h-10 bg-background/50 border-muted-foreground/20 focus:border-primary/50 transition-all rounded-lg"
-                    value={filter}
-                    onChange={(e) => setFilter(e.target.value)}
-                />
+        <div className="space-y-6">
+            {/* Controls Header */}
+            <div className="flex flex-col md:flex-row gap-4 justify-between items-start md:items-center">
+                {/* Tabs */}
+                <div className="flex p-1 bg-muted/30 rounded-lg border">
+                    <button
+                        onClick={() => setActiveTab('upcoming')}
+                        className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${activeTab === 'upcoming' ? 'bg-background shadow-sm text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+                    >
+                        Upcoming
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('declared')}
+                        className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${activeTab === 'declared' ? 'bg-background shadow-sm text-primary' : 'text-muted-foreground hover:text-foreground'}`}
+                    >
+                        Declared
+                    </button>
+                </div>
+
+                {/* Index Filters */}
+                <div className="flex gap-2">
+                    <Badge
+                        variant={indexFilter === 'ALL' ? 'default' : 'outline'}
+                        className="cursor-pointer"
+                        onClick={() => setIndexFilter('ALL')}
+                    >
+                        All
+                    </Badge>
+                    <Badge
+                        variant={indexFilter === 'NIFTY50' ? 'default' : 'outline'}
+                        className="cursor-pointer"
+                        onClick={() => setIndexFilter('NIFTY50')}
+                    >
+                        Nifty 50
+                    </Badge>
+                    <Badge
+                        variant={indexFilter === 'MIDCAP' ? 'default' : 'outline'}
+                        className="cursor-pointer"
+                        onClick={() => setIndexFilter('MIDCAP')}
+                    >
+                        Midcap 100
+                    </Badge>
+                </div>
+
+                {/* Search */}
+                <div className="relative w-full md:w-64">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+                    <Input
+                        placeholder="Search..."
+                        className="pl-9 h-9 bg-background/50 text-sm"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                </div>
             </div>
 
-            {categories.map(category => {
-                const categoryEvents = groups[category];
-                if (categoryEvents.length === 0) return null;
+            {filteredEvents.length === 0 ? (
+                <div className="text-center py-16 text-muted-foreground border border-dashed rounded-xl bg-muted/5">
+                    <Calendar className="w-10 h-10 mx-auto mb-3 opacity-30" />
+                    <p>No results found for this filter.</p>
+                </div>
+            ) : (
+                <div className="space-y-8">
+                    {categories.map(category => {
+                        const categoryEvents = groupedEvents[category] || [];
+                        if (categoryEvents.length === 0) return null;
 
-                return (
-                    <div key={category} className="space-y-4 animate-in fade-in-50 slide-in-from-bottom-2 duration-500">
-                        <div className="flex items-center gap-3">
-                            <div className="h-6 w-1 bg-gradient-to-b from-primary to-transparent rounded-full"></div>
-                            <h2 className="text-lg font-bold tracking-tight text-foreground/90">{category}</h2>
-                            <Badge variant="secondary" className="text-[10px] h-5 px-1.5 font-mono">{categoryEvents.length}</Badge>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {categoryEvents.map((stock) => {
-                                const isReported = category === 'Recent';
-                                // CHANGED: Always route to internal analysis page for reported results
-                                const linkTarget = `/results/${stock.symbol.includes('.NS') ? stock.symbol.replace('.NS', '') : stock.symbol}`;
-                                const isExternal = false; // Internal App Navigation
-
-                                return (
-                                    <Card key={stock.symbol} className="overflow-hidden border-muted-foreground/10 hover:border-primary/30 hover:shadow-md transition-all duration-300 group bg-card/50 backdrop-blur-sm">
-                                        <Link href={linkTarget}>
-                                            <CardContent className="p-0">
-                                                <div className="flex flex-col h-full">
-                                                    {/* Card Header Part */}
-                                                    <div className="p-4 flex items-start justify-between">
-                                                        <div className="flex items-center gap-3 overflow-hidden">
-                                                            <div className="h-10 w-10 flex-shrink-0 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold text-xs ring-1 ring-primary/20">
-                                                                {stock.symbol.substring(0, 2)}
-                                                            </div>
-                                                            <div className="min-w-0">
-                                                                <div className="font-semibold text-sm truncate group-hover:text-primary transition-colors pr-2">
-                                                                    {stock.companyName}
-                                                                </div>
-                                                                <div className="text-[10px] text-muted-foreground flex items-center gap-1.5 font-mono mt-0.5">
-                                                                    <span className="truncate">{stock.symbol}</span>
-                                                                    <span className="w-0.5 h-0.5 bg-muted-foreground rounded-full"></span>
-                                                                    <span>{new Date(stock.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
-                                                                </div>
+                        return (
+                            <div key={category} className="space-y-3 animate-in fade-in-50">
+                                <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider pl-1">{category}</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+                                    {categoryEvents.map(stock => (
+                                        <Card key={stock.symbol} className="overflow-hidden border-muted-foreground/10 hover:border-primary/30 transition-all hover:shadow-md bg-card/40 backdrop-blur-sm">
+                                            <Link href={`/results/${stock.symbol.replace('.NS', '').replace('.BO', '')}`}>
+                                                <CardContent className="p-4 flex items-center justify-between">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="h-10 w-10 rounded-lg bg-primary/5 border border-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+                                                            {stock.symbol.substring(0, 2)}
+                                                        </div>
+                                                        <div>
+                                                            <div className="font-semibold text-sm">{stock.companyName}</div>
+                                                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                                                <span className="font-mono">{stock.symbol}</span>
+                                                                {stock.isNifty50 && <Badge variant="secondary" className="px-1 h-4 text-[9px]">NIFTY 50</Badge>}
+                                                                {stock.isMidcap100 && <Badge variant="secondary" className="px-1 h-4 text-[9px]">MIDCAP</Badge>}
                                                             </div>
                                                         </div>
+                                                    </div>
 
-                                                        {/* Result Out Badge */}
-                                                        {isReported ? (
-                                                            <Badge variant="outline" className="flex-shrink-0 text-[10px] bg-green-500/10 text-green-600 border-green-200/50 shadow-sm gap-1">
+                                                    <div className="text-right">
+                                                        <div className="text-xs font-medium bg-muted/50 px-2 py-1 rounded inline-block">
+                                                            {new Date(stock.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                                                        </div>
+                                                        {activeTab === 'declared' && (
+                                                            <div className="text-[10px] text-green-500 mt-1 flex items-center justify-end gap-1 font-medium">
                                                                 Analysis <ArrowUpRight className="w-3 h-3" />
-                                                            </Badge>
-                                                        ) : (
-                                                            <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                                <ArrowUpRight className="w-4 h-4 text-muted-foreground" />
                                                             </div>
                                                         )}
                                                     </div>
-
-                                                    {/* Card Actions / Footer */}
-                                                    <div className="mt-auto border-t border-border/50 p-2 px-4 bg-muted/20 flex items-center justify-between">
-                                                        <div className="text-[10px] text-muted-foreground font-medium">
-                                                            {category === 'Recent' ? 'Q3 FY25 Reported' : 'Upcoming Q3'}
-                                                        </div>
-                                                        <div className="flex items-center gap-2" onClick={(e) => e.preventDefault()}>
-                                                            <WatchButton symbol={stock.symbol} className="h-7 text-xs" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </CardContent>
-                                        </Link>
-                                    </Card>
-                                );
-                            })}
-                        </div>
-                    </div>
-                );
-            })}
+                                                </CardContent>
+                                            </Link>
+                                        </Card>
+                                    ))}
+                                </div>
+                            </div>
+                        )
+                    })}
+                </div>
+            )}
         </div>
     );
 }
