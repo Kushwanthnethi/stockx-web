@@ -196,41 +196,51 @@ export default function StockDetailsPage() {
 
 
                             {/* RESULTS TAB */}
+                            {/* RESULTS TAB */}
                             <TabsContent value="results" className="space-y-8">
-                                {/* Quarterly Results Table */}
-                                <FinancialTable
-                                    title="Quarterly Results"
-                                    years={["Dec 2022", "Mar 2023", "Jun 2023", "Sep 2023", "Dec 2023"]}
-                                    rows={[
-                                        { label: "Sales", values: [197714, 201231, 190163, 203033, 214054], bold: true },
-                                        { label: "Expenses", values: [194094, 189692, 180169, 194558, 204815] },
-                                        { label: "Operating Profit", values: [3620, 11539, 9994, 8475, 9239], bold: true },
-                                        { label: "OPM %", values: ["2%", "6%", "5%", "4%", "4%"] },
-                                        { label: "Other Income", values: [270, 612, 117, 288, 206] },
-                                        { label: "Interest", values: [0, 0, 0, 0, 0] },
-                                        { label: "Depreciation", values: [0, 0, 0, 0, 0] },
-                                        { label: "Profit before tax", values: [3891, 12151, 10111, 8763, 9445], bold: true },
-                                        { label: "Net Profit", values: [7306, 13189, 9634, 8032, 9434], bold: true }
-                                    ]}
-                                />
+                                {data.financials && data.financials.length > 0 ? (() => {
+                                    // Process Dynamic Data
+                                    const sortedFinancials = [...data.financials]
+                                        .filter((f: any) => f.resultType === 'QUARTERLY')
+                                        .sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-                                {/* Balance Sheet Table */}
-                                <FinancialTable
-                                    title="Balance Sheet"
-                                    years={["Mar 2019", "Mar 2020", "Mar 2021", "Mar 2022", "Mar 2023"]}
-                                    rows={[
-                                        { label: "Equity Capital", values: [100, 100, 100, 6325, 6325] },
-                                        { label: "Reserves", values: [710, 902, 6784, 5012, 39908] },
-                                        { label: "Borrowings", values: [269401, 253414, 4, 1, 0] },
-                                        { label: "Other Liabilities", values: [3157039, 3245419, 3822637, 4242719, 4532258] },
-                                        { label: "Total Liabilities", values: [3427249, 3499834, 3829524, 4254058, 4578491], bold: true },
-                                        { label: "Fixed Assets", values: [25194, 28216, 17723, 17770, 20473] },
-                                        { label: "CWIP", values: [710, 734, 148, 199, 331] },
-                                        { label: "Investments", values: [2900287, 2976100, 3517445, 3926211, 4243008] },
-                                        { label: "Other Assets", values: [501059, 494784, 294208, 309878, 314678] },
-                                        { label: "Total Assets", values: [3427249, 3499834, 3829524, 4254058, 4578491], bold: true }
-                                    ]}
-                                />
+                                    // Limit to last 5 quarters if too many
+                                    const recentFinancials = sortedFinancials.slice(-5);
+
+                                    const periods = recentFinancials.map((f: any) => f.period);
+
+                                    const quarterlyRows = [
+                                        { label: "Revenue", values: recentFinancials.map((f: any) => f.revenue), bold: false },
+                                        { label: "Net Profit", values: recentFinancials.map((f: any) => f.netProfit), bold: true },
+                                        { label: "EPS", values: recentFinancials.map((f: any) => f.eps), bold: false },
+                                    ];
+
+                                    const balanceSheetRows = [
+                                        { label: "Reserves", values: recentFinancials.map((f: any) => f.reserves), bold: false },
+                                        { label: "Total Assets", values: recentFinancials.map((f: any) => f.totalAssets), bold: true },
+                                    ];
+
+                                    return (
+                                        <>
+                                            <FinancialTable
+                                                title="Quarterly Results"
+                                                years={periods}
+                                                rows={quarterlyRows}
+                                            />
+                                            <FinancialTable
+                                                title="Balance Sheet (Computed)"
+                                                years={periods}
+                                                rows={balanceSheetRows}
+                                            />
+                                        </>
+                                    );
+                                })() : (
+                                    <div className="text-center py-10 text-muted-foreground">
+                                        No financial results available.
+                                        <br />
+                                        <span className="text-sm">Try running the scraper via API.</span>
+                                    </div>
+                                )}
                             </TabsContent>
 
                             {/* NEWS TAB */}
