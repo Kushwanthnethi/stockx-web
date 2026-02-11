@@ -196,51 +196,8 @@ export default function StockDetailsPage() {
 
 
                             {/* RESULTS TAB */}
-                            {/* RESULTS TAB */}
                             <TabsContent value="results" className="space-y-8">
-                                {data.financials && data.financials.length > 0 ? (() => {
-                                    // Process Dynamic Data
-                                    const sortedFinancials = [...data.financials]
-                                        .filter((f: any) => f.resultType === 'QUARTERLY')
-                                        .sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
-
-                                    // Limit to last 5 quarters if too many
-                                    const recentFinancials = sortedFinancials.slice(-5);
-
-                                    const periods = recentFinancials.map((f: any) => f.period);
-
-                                    const quarterlyRows = [
-                                        { label: "Revenue", values: recentFinancials.map((f: any) => f.revenue), bold: false },
-                                        { label: "Net Profit", values: recentFinancials.map((f: any) => f.netProfit), bold: true },
-                                        { label: "EPS", values: recentFinancials.map((f: any) => f.eps), bold: false },
-                                    ];
-
-                                    const balanceSheetRows = [
-                                        { label: "Reserves", values: recentFinancials.map((f: any) => f.reserves), bold: false },
-                                        { label: "Total Assets", values: recentFinancials.map((f: any) => f.totalAssets), bold: true },
-                                    ];
-
-                                    return (
-                                        <>
-                                            <FinancialTable
-                                                title="Quarterly Results"
-                                                years={periods}
-                                                rows={quarterlyRows}
-                                            />
-                                            <FinancialTable
-                                                title="Balance Sheet (Computed)"
-                                                years={periods}
-                                                rows={balanceSheetRows}
-                                            />
-                                        </>
-                                    );
-                                })() : (
-                                    <div className="text-center py-10 text-muted-foreground">
-                                        No financial results available.
-                                        <br />
-                                        <span className="text-sm">Try running the scraper via API.</span>
-                                    </div>
-                                )}
+                                <QuarterlyResults symbol={symbol} />
                             </TabsContent>
 
                             {/* NEWS TAB */}
