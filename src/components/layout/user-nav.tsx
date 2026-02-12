@@ -39,7 +39,7 @@ export function UserNav() {
                             <p className="text-sm font-medium leading-none">
                                 {user.firstName ? `${user.firstName} ${user.lastName || ''}` : user.handle}
                             </p>
-                            {(user.isVerified || user.verified) && <VerifiedBadge className="ml-1" />}
+                            {(user.isVerified || user.verified) && <VerifiedBadge className="ml-1" user={user} />}
                             <DeveloperBadge user={user} className="ml-1" />
                         </div>
                         <p className="text-xs leading-none text-muted-foreground">

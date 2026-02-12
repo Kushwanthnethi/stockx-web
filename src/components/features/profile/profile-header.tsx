@@ -87,7 +87,7 @@ export function ProfileHeader({
                         <div>
                             <div className="flex items-center gap-2">
                                 <h1 className="text-3xl font-bold tracking-tight">{profile.firstName} {profile.lastName}</h1>
-                                {(profile.isVerified || profile.verified) && <VerifiedBadge />}
+                                {(profile.isVerified || profile.verified) && <VerifiedBadge user={profile} />}
                                 <DeveloperBadge user={profile} iconSize={24} />
                             </div>
                             <p className="text-muted-foreground font-medium">@{profile.handle}</p>

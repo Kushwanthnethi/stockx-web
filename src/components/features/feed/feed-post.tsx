@@ -377,7 +377,7 @@ export function FeedPost({ post }: { post: any }) {
                                     {displayPost.user?.name || displayPost.user?.firstName}
                                 </Link>
                                 {(displayPost.user?.isVerified || displayPost.user?.verified) && (
-                                    <VerifiedBadge />
+                                    <VerifiedBadge user={displayPost.user} />
                                 )}
                                 <DeveloperBadge user={displayPost.user} />
                             </div>
@@ -587,7 +587,7 @@ export function FeedPost({ post }: { post: any }) {
                                                             {comment.user?.name || comment.user?.firstName}
                                                         </Link>
                                                         {(comment.user?.isVerified || comment.user?.verified) && (
-                                                            <VerifiedBadge className="ml-1" />
+                                                            <VerifiedBadge className="ml-1" user={comment.user} />
                                                         )}
                                                         <DeveloperBadge user={comment.user} className="ml-1" />
                                                     </div>

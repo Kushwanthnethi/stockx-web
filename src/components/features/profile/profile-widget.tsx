@@ -74,7 +74,7 @@ export function ProfileWidget() {
                     <div className="space-y-0.5">
                         <h3 className="font-bold text-foreground leading-tight group-hover:text-primary transition-colors flex items-center gap-1">
                             {user.firstName} {user.lastName}
-                            {(user.isVerified || user.verified) && <VerifiedBadge />}
+                            {(user.isVerified || user.verified) && <VerifiedBadge user={user} />}
                         </h3>
                         <p className="text-sm text-muted-foreground font-medium">@{user.handle}</p>
                     </div>

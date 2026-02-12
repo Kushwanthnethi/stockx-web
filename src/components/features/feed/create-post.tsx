@@ -171,7 +171,7 @@ export function CreatePost({ onPostCreated, onOptimisticAdd, onPostSuccess, onPo
                     </div>
                     <span className="text-xs font-semibold text-muted-foreground ml-2 uppercase tracking-wider flex items-center gap-1">
                         New Post
-                        {(user.isVerified || user.verified) && <VerifiedBadge />}
+                        {(user.isVerified || user.verified) && <VerifiedBadge user={user} />}
                     </span>
                     <div className="flex-1" />
                     {isPosting && <span className="text-xs text-primary animate-pulse">Posting...</span>}
