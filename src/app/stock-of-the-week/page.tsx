@@ -443,7 +443,16 @@ export default function StockOfTheWeekPage() {
                                                                     </span>
                                                                 </div>
                                                             </td>
-                                                            <td className="px-6 py-4 text-center">
+                                                            <td className="px-6 py-4 text-center relative group-hover:bg-muted/30">
+                                                                {/* Target Achieved Logic: If maxHigh within 2% or exceeded target */}
+                                                                {(pick.maxHigh || effectivePrice) >= (pick.targetPrice * 0.98) && (
+                                                                    <div className="absolute inset-0 flex items-center justify-center opacity-80 pointer-events-none select-none z-10">
+                                                                        <div className="border-[3px] border-red-600 text-red-600 font-black text-xs px-2 py-1 transform -rotate-12 uppercase tracking-widest bg-background/50 backdrop-blur-sm shadow-sm">
+                                                                            Target Achieved
+                                                                        </div>
+                                                                    </div>
+                                                                )}
+
                                                                 {isClosed ? (
                                                                     <Badge variant="outline">Closed</Badge>
                                                                 ) : (
@@ -467,7 +476,16 @@ export default function StockOfTheWeekPage() {
 
                                             return (
                                                 <div key={pick.id} className="bg-card border border-border/50 rounded-xl p-4 shadow-sm">
-                                                    <div className="flex justify-between items-start mb-3">
+                                                    <div className="flex justify-between items-start mb-3 relative">
+                                                        {/* Mobile Stamp */}
+                                                        {(pick.maxHigh || effectivePrice) >= (pick.targetPrice * 0.98) && (
+                                                            <div className="absolute top-8 right-0 transform rotate-12 z-20">
+                                                                <div className="border-2 border-red-500 text-red-500 font-extrabold text-[10px] px-2 py-0.5 uppercase tracking-wider bg-background/80 backdrop-blur-sm shadow-sm">
+                                                                    Target Hit
+                                                                </div>
+                                                            </div>
+                                                        )}
+
                                                         <div>
                                                             <div className="text-xs text-muted-foreground font-medium mb-1">
                                                                 {new Date(pick.weekStartDate).toLocaleDateString()}
