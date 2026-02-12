@@ -19,10 +19,10 @@ export function VerifiedBadge({ className }: { className?: string }) {
                         transition={{ type: "spring", stiffness: 300, damping: 15 }}
                     >
                         <BadgeCheck
-                            className="w-[14px] h-[14px] md:w-[15px] md:h-[15px] text-[#1D9BF0]"
+                            className="w-[16px] h-[16px] md:w-[17px] md:h-[17px] text-[#1D9BF0]"
                             fill="currentColor"
                             stroke="white"
-                            strokeWidth={2.5}
+                            strokeWidth={2}
                         />
                     </motion.div>
                 </TooltipTrigger>
