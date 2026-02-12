@@ -25,10 +25,29 @@ import { usePostInteraction, useUserInteraction } from "@/lib/store/interaction-
 const formatContent = (content: string) => {
     if (!content) return null;
 
-    // Split by cashtags ($SYMBOL) and URLs
-    const parts = content.split(/(\$[A-Za-z0-9]+|https?:\/\/[^\s]+)/g);
+    // 1. Support Markdown Links [Text](URL)
+    // 2. Support Cashtags ($SYMBOL)
+    // 3. Support raw URLs (fallback)
+
+    const parts = content.split(/(\[.*?\]\(https?:\/\/[^\s\)]+\)|\$[A-Za-z0-9]+|https?:\/\/[^\s]+)/g);
 
     return parts.map((part, i) => {
+        // Match Markdown Link: [Text](URL)
+        const mdMatch = part.match(/\[(.*?)\]\((https?:\/\/[^\s\)]+)\)/);
+        if (mdMatch) {
+            return (
+                <a
+                    key={i}
+                    href={mdMatch[2]}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 font-bold hover:underline"
+                >
+                    {mdMatch[1]}
+                </a>
+            );
+        }
+
         if (part.startsWith('$')) {
             const symbol = part.substring(1).toUpperCase();
             return (
@@ -100,6 +119,8 @@ export function FeedPost({ post }: { post: any }) {
     const [editContent, setEditContent] = React.useState(post.content);
     const [isDeleted, setIsDeleted] = React.useState(false);
     const [hasReported, setHasReported] = React.useState(false);
+    const [isExpanded, setIsExpanded] = React.useState(false);
+    const CONTENT_LIMIT = 280;
 
     // Haptic Helper
     const vibrate = () => {
@@ -424,7 +445,20 @@ export function FeedPost({ post }: { post: any }) {
                             </div>
                         </div>
                     ) : (
-                        formatContent(displayPost.content)
+                        <div className="relative">
+                            <div className={cn(!isExpanded && displayPost.content?.length > CONTENT_LIMIT && "line-clamp-6")}>
+                                {formatContent(isExpanded ? displayPost.content : displayPost.content?.slice(0, CONTENT_LIMIT))}
+                                {!isExpanded && displayPost.content?.length > CONTENT_LIMIT && "..."}
+                            </div>
+                            {displayPost.content?.length > CONTENT_LIMIT && (
+                                <button
+                                    onClick={() => setIsExpanded(!isExpanded)}
+                                    className="text-blue-500 font-bold text-sm mt-1 hover:underline focus:outline-none block"
+                                >
+                                    {isExpanded ? "Show less" : "Show more"}
+                                </button>
+                            )}
+                        </div>
                     )}
 
                     {displayPost.imageUrl && !imageError && (
