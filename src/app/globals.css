@@ -114,6 +114,15 @@
             @apply px-4;
         }
     }
+
+    /* Professional Desktop Layout - Wider Container */
+    @media (min-width: 1400px) {
+        .container {
+            max-width: 1800px;
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+    }
 }
 
 @layer utilities {

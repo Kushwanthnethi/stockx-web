@@ -19,17 +19,13 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
             className={cn(
                 "flex items-start mx-auto min-h-[calc(100vh-3.5rem)]",
                 // Only act as a container with padding for non-auth pages
-                !isAuthPage && "container py-8 gap-8",
-
-                // Home stays focused (max-w-7xl/1280px), others get full container width (max-w-2xl/1400px defined in tailwind config)
-                // We let the 'container' class handle padding (2rem) for a professional consistent alignment
-                isHomePage ? "max-w-7xl" : ""
+                !isAuthPage && "container py-8 gap-8"
             )}
         >
             {!shouldHideSidebar && <AppSidebar className="sticky top-20 w-56 shrink-0" />}
             <main className="flex-1 min-w-0 w-full pb-28 md:pb-0">
                 {children}
             </main>
-        </div>
+        </div >
     );
 }
