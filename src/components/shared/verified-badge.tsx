@@ -7,7 +7,7 @@ import { BadgeCheck, Bot } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 export function VerifiedBadge({ className, user }: { className?: string, user?: any }) {
-    const isBot = user?.handle?.toLowerCase() === 'stocksxbot' || user?.name === 'StocksX Bot';
+    const isBot = user?.handle?.toLowerCase().startsWith('stocksxbot') || user?.name === 'StocksX Bot';
 
     return (
         <TooltipProvider>
