@@ -119,7 +119,7 @@ export function GuestAuthModal() {
                         </motion.div>
                         <div className="space-y-1">
                             <DialogTitle className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
-                                Welcome to StockX
+                                Welcome to StocksX
                             </DialogTitle>
                             <DialogDescription className="text-base text-muted-foreground/80">
                                 Join India's fastest growing investment community
