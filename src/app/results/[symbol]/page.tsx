@@ -76,9 +76,9 @@ export default function ResultAnalysisPage() {
         if (!val && val !== 0) return <span className="text-muted-foreground">-</span>;
         const isPos = val > 0;
         return (
-            <span className={`flex items-center gap-1 font-medium ${isPos ? 'text-green-500' : 'text-red-500'}`}>
+            <span className={`flex items-center justify-end gap-1 font-medium ${isPos ? 'text-green-500' : 'text-red-500'}`}>
                 {isPos ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
-                {Math.abs(val * 100).toFixed(1)}%
+                {(Math.abs(val) * 100).toFixed(1)}%
             </span>
         );
     };
@@ -186,13 +186,13 @@ export default function ResultAnalysisPage() {
                             </CardHeader>
                             <CardContent className="p-0">
                                 <div className="overflow-x-auto">
-                                    <table className="w-full text-sm">
+                                    <table className="w-full text-sm table-fixed">
                                         <thead>
                                             <tr className="border-b bg-muted/30">
-                                                <th className="text-left p-4 font-semibold text-muted-foreground">Metric</th>
-                                                <th className="text-right p-4 font-semibold text-muted-foreground">Reported (Cr)</th>
-                                                <th className="text-right p-4 font-semibold text-muted-foreground">QoQ Growth</th>
-                                                <th className="text-right p-4 font-semibold text-muted-foreground">YoY Growth</th>
+                                                <th className="text-left p-4 font-semibold text-muted-foreground w-[30%]">Metric</th>
+                                                <th className="text-right p-4 font-semibold text-muted-foreground w-[25%]">Reported (Cr)</th>
+                                                <th className="text-right p-4 font-semibold text-muted-foreground w-[22%]">QoQ Growth</th>
+                                                <th className="text-right p-4 font-semibold text-muted-foreground w-[23%]">YoY Growth</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y">
@@ -200,15 +200,20 @@ export default function ResultAnalysisPage() {
                                                 { label: 'Revenue', val: currentQtr?.revenue, qoq: growth?.qoq?.revenue, yoy: growth?.yoy?.revenue },
                                                 { label: 'EBITDA', val: currentQtr?.ebitda, qoq: growth?.qoq?.ebitda, yoy: growth?.yoy?.ebitda },
                                                 { label: 'Net Profit', val: currentQtr?.netIncome, qoq: growth?.qoq?.netIncome, yoy: growth?.yoy?.netIncome },
+                                                { label: 'Net Profit Margin', val: currentQtr?.netIncome && currentQtr?.revenue ? (currentQtr.netIncome / currentQtr.revenue) * 100 : null, valPrefix: '', valSuffix: '%', isPercentage: true },
                                                 { label: 'EPS', val: currentQtr?.eps, valPrefix: '₹', qoq: growth?.qoq?.eps, yoy: growth?.yoy?.eps },
-                                            ].map((row, i) => (
+                                            ].filter(row => row.val && row.val !== 0).map((row, i) => (
                                                 <tr key={i} className="hover:bg-muted/10 transition-colors">
                                                     <td className="p-4 font-medium">{row.label}</td>
                                                     <td className="p-4 text-right font-bold font-mono text-base">
-                                                        {row.valPrefix}{row.val ? (row.valPrefix ? row.val.toFixed(2) : (row.val / 1e7).toFixed(1)) : '-'}
+                                                        {row.valPrefix}
+                                                        {row.val ?
+                                                            (row.isPercentage ? row.val.toFixed(2) + (row.valSuffix || '') :
+                                                                (row.valPrefix ? row.val.toFixed(2) : (row.val / 1e7).toFixed(1)))
+                                                            : '-'}
                                                     </td>
-                                                    <td className="p-4 text-right flex justify-end">{renderGrowth(row.qoq)}</td>
-                                                    <td className="p-4 text-right">{renderGrowth(row.yoy)}</td>
+                                                    <td className="p-4 text-right whitespace-nowrap">{renderGrowth(row.qoq)}</td>
+                                                    <td className="p-4 text-right whitespace-nowrap">{renderGrowth(row.yoy)}</td>
                                                 </tr>
                                             ))}
                                         </tbody>
@@ -218,15 +223,21 @@ export default function ResultAnalysisPage() {
                                 <div className="grid grid-cols-3 divide-x border-t bg-muted/5">
                                     <div className="p-4 text-center">
                                         <div className="text-xs text-muted-foreground mb-1 uppercase">Op. Margin</div>
-                                        <div className="font-bold text-lg">{formatPercent(currentQtr?.operatingMargin)}</div>
+                                        <div className="font-bold text-lg">
+                                            {currentQtr?.opmPercent ? formatPercent(currentQtr.opmPercent) :
+                                                (currentQtr?.ebitda && currentQtr?.revenue ? formatPercent(currentQtr.ebitda / currentQtr.revenue) : '-')}
+                                        </div>
                                     </div>
                                     <div className="p-4 text-center">
                                         <div className="text-xs text-muted-foreground mb-1 uppercase">Net Margin</div>
-                                        <div className="font-bold text-lg">{formatPercent(currentQtr?.netProfitMargin)}</div>
+                                        <div className="font-bold text-lg">
+                                            {currentQtr?.netProfitMargin ? formatPercent(currentQtr.netProfitMargin) :
+                                                (currentQtr?.netIncome && currentQtr?.revenue ? formatPercent(currentQtr.netIncome / currentQtr.revenue) : '-')}
+                                        </div>
                                     </div>
                                     <div className="p-4 text-center">
                                         <div className="text-xs text-muted-foreground mb-1 uppercase">EPS (TTM)</div>
-                                        <div className="font-bold text-lg">₹{data.financials.eps?.toFixed(2)}</div>
+                                        <div className="font-bold text-lg">₹{data.keyStats?.trailingEps?.toFixed(2) || data.financials?.eps?.toFixed(2) || '-'}</div>
                                     </div>
                                 </div>
                             </CardContent>
@@ -241,7 +252,7 @@ export default function ResultAnalysisPage() {
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="p-6">
-                                <div className="h-[200px] w-full mb-4">
+                                <div className="h-[200px] w-full mb-4 min-h-[200px]">
                                     <ResponsiveContainer width="100%" height="100%">
                                         <BarChart data={chartData}>
                                             <XAxis dataKey="name" fontSize={10} tickLine={false} axisLine={false} />
