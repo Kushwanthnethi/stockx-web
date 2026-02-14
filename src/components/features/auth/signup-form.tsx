@@ -98,7 +98,7 @@ export function SignupForm({ className }: React.HTMLAttributes<HTMLDivElement>) 
                     <div className="flex items-start gap-2 mt-2">
                         <input type="checkbox" id="terms" className="mt-1 h-3 w-3 rounded border-gray-300" required />
                         <Label htmlFor="terms" className="font-normal text-xs text-muted-foreground leading-snug">
-                            I agree to the <a href="#" className="underline hover:text-foreground">Terms of Service</a> and <a href="#" className="underline hover:text-foreground">Privacy Policy</a>, and I acknowledge that StockX does not provide financial advice.
+                            I agree to the <a href="#" className="underline hover:text-foreground">Terms of Service</a> and <a href="#" className="underline hover:text-foreground">Privacy Policy</a>, and I acknowledge that StocksX does not provide financial advice.
                         </Label>
                     </div>
 

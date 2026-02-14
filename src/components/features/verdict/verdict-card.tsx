@@ -78,7 +78,7 @@ export function VerdictCard({
     rationale,
     catalyst,
     date,
-    author = "StockX Intelligence"
+    author = "StocksX Intelligence"
 }: VerdictCardProps) {
     const style = getVerdictStyle(verdict);
     const Icon = style.icon;

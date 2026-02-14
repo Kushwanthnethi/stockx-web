@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 
 export const SIDEBAR_ITEMS = [
     { label: "Home", href: "/", icon: Home },
-    { label: "StockX Screener", href: "/explore", icon: TrendingUp },
+    { label: "StocksX Screener", href: "/explore", icon: TrendingUp },
     { label: "Stock of the Week", href: "/stock-of-the-week", icon: Target, isNew: true },
     { label: "Result Corner", href: "/results", icon: Megaphone },
     { label: "Verdict", href: "/verdict", icon: Gavel },

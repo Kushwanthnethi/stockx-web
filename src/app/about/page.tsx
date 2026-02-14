@@ -97,7 +97,7 @@ export default function AboutPage() {
                             <h2>Current Focus</h2>
                         </div>
                         <p className="text-muted-foreground leading-relaxed">
-                            Currently, I’m working on <strong className="text-foreground">StockX</strong>, a premium stock intelligence and social platform.
+                            Currently, I’m working on <strong className="text-foreground">StocksX</strong>, a premium stock intelligence and social platform.
                             My focus is on bridging the gap between complex financial data and user-friendly interfaces.
                         </p>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

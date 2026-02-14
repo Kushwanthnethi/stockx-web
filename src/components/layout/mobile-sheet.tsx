@@ -14,7 +14,7 @@ import { useAuth } from "@/providers/auth-provider";
 // Custom items for Mobile Drawer (Profile Menu) as per user request
 // Order: StockX Screener, Markets, News, Notifications, Bookmarks (Saved), About
 const MOBILE_DRAWER_ITEMS = [
-    { label: "StockX Screener", href: "/explore", icon: TrendingUp },
+    { label: "StocksX Screener", href: "/explore", icon: TrendingUp },
     { label: "Markets", href: "/trending", icon: TrendingUp },
     { label: "News", href: "/news", icon: FileText },
     { label: "Notifications", href: "/notifications", icon: Bell },
@@ -86,7 +86,7 @@ export function MobileSheet({ trigger, className }: { trigger?: React.ReactNode,
                             >
                                 <div className="flex items-center justify-between mb-8 px-2 pt-4">
                                     <Link href="/" className="font-bold text-xl tracking-tighter flex items-center gap-1" onClick={() => setOpen(false)}>
-                                        StockX
+                                        StocksX
                                     </Link>
                                     <Button variant="ghost" size="icon" onClick={() => setOpen(false)}>
                                         <X className="h-5 w-5" />
@@ -122,7 +122,7 @@ export function MobileSheet({ trigger, className }: { trigger?: React.ReactNode,
                                 </div>
 
                                 <div className="mt-8 pt-8 border-t">
-                                    <p className="text-xs text-muted-foreground text-center">© 2026 StockX Inc.</p>
+                                    <p className="text-xs text-muted-foreground text-center">© 2026 StocksX Inc.</p>
                                 </div>
                             </div>
                         </>,

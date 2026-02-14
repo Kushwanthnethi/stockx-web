@@ -36,7 +36,7 @@ export function ProfileWidget() {
                         <User className="h-6 w-6 text-primary" />
                     </div>
                     <div className="space-y-1">
-                        <h3 className="font-bold text-base">New to StockX?</h3>
+                        <h3 className="font-bold text-base">New to StocksX?</h3>
                         <p className="text-xs text-muted-foreground leading-relaxed">
                             Sign up now to share insights and build your investor profile.
                         </p>

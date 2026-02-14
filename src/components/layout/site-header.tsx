@@ -46,7 +46,7 @@ export function SiteHeader() {
                     <MobileSheet />
                     <Link href="/" className="font-bold text-lg md:text-xl tracking-tighter flex items-center gap-1">
                         <TrendingUp className="text-green-600 h-5 w-5 md:h-6 md:w-6" />
-                        StockX
+                        StocksX
                     </Link>
                 </div>
                 <div className="flex items-center gap-4 flex-1 justify-end">

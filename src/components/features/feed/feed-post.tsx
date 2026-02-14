@@ -173,7 +173,7 @@ export function FeedPost({ post }: { post: any }) {
     // Social & Other Handlers (Kept Local)
     const handleSocialShare = (platform: string) => {
         const postUrl = `${window.location.origin}/post/${post.id}`;
-        const text = `Check out this post on StockX: ${post.content?.substring(0, 50)}...`;
+        const text = `Check out this post on StocksX: ${post.content?.substring(0, 50)}...`;
         let url = '';
 
         switch (platform) {

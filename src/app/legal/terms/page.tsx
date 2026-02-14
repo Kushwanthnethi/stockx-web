@@ -8,7 +8,7 @@ export default function TermsPage() {
             <section>
                 <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight first:mt-0">1. Acceptance of Terms</h2>
                 <p className="leading-7 [&:not(:first-child)]:mt-6">
-                    By accessing and using StockX ("the Platform"), you agree to comply with and be bound by these Terms of Service.
+                    By accessing and using StocksX ("the Platform"), you agree to comply with and be bound by these Terms of Service.
                     If you do not agree to these terms, please do not use our services.
                 </p>
             </section>
@@ -16,7 +16,7 @@ export default function TermsPage() {
             <section>
                 <h2 className="scroll-m-20 border-b pb-2 text-3xl font-semibold tracking-tight">2. No Financial Advice</h2>
                 <p className="leading-7 [&:not(:first-child)]:mt-6">
-                    StockX is a community platform for information sharing only.
+                    StocksX is a community platform for information sharing only.
                     <strong>Content generally provided on this site does not constitute financial advice.</strong>
                     We are not a SEBI registered investment advisor. Users should conduct their own due diligence
                     before making any investment decisions.

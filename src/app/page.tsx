@@ -49,7 +49,7 @@ function FeedSidebar() {
                         <span>·</span>
                         <Link href="/legal/cookies" className="hover:underline hover:text-foreground transition-colors">Cookies</Link>
                     </div>
-                    <p>© 2026 StockX Inc.</p>
+                    <p>© 2026 StocksX Inc.</p>
                 </div>
             </div>
         </div>
@@ -207,7 +207,7 @@ export default function Home() {
                     <div className="mt-8 p-4 bg-yellow-50/50 dark:bg-yellow-900/10 rounded-lg border border-yellow-100 dark:border-yellow-900 text-yellow-800 dark:text-yellow-500 text-xs flex gap-2 items-start">
                         <Info size={16} className="mt-0.5 flex-shrink-0" />
                         <p>
-                            <strong>Disclaimer:</strong> Content on StockX is for educational purposes only.
+                            <strong>Disclaimer:</strong> Content on StocksX is for educational purposes only.
                             No content here constitutes financial advice or a recommendation to buy/sell equities.
                             Please consult a SEBI registered investment advisor before making trades.
                         </p>
