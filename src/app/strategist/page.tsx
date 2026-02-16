@@ -89,7 +89,7 @@ export default function StrategistPage() {
     }
 
     return (
-        <div className="relative flex flex-col h-screen min-h-[100svh] w-full overflow-hidden bg-white dark:bg-background text-slate-900 dark:text-slate-50 transition-colors duration-500 scrollbar-hide">
+        <div className="relative flex flex-col h-[calc(100vh-4rem)] md:h-[calc(100vh-4rem)] min-h-[100svh] w-full overflow-hidden bg-white dark:bg-background text-slate-900 dark:text-slate-50 transition-colors duration-500 scrollbar-hide">
             <PremiumGuard>
                 {/* 1. Ultra-Premium Background Elements */}
                 <div className="absolute inset-0 pointer-events-none overflow-hidden">
