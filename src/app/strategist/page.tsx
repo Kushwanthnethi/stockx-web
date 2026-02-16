@@ -128,7 +128,7 @@ export default function StrategistPage() {
 
                             {/* Empty State */}
                             {!result && !loading && showInput && (
-                                <div className="flex flex-col items-center justify-center min-h-[40vh] md:min-h-[50vh] animate-in fade-in zoom-in duration-1000 px-4">
+                                <div className="flex flex-col items-center justify-center min-h-[40vh] md:min-h-[40vh] animate-in fade-in zoom-in duration-1000 px-4">
                                     <div className="relative mb-4 md:mb-6 group">
                                         <div className="absolute inset-0 bg-amber-500/10 blur-3xl rounded-full scale-150 animate-pulse" />
                                         <div className="relative p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] bg-slate-100/50 dark:bg-slate-900/40 border border-slate-200/50 dark:border-white/5 backdrop-blur-2xl shadow-xl dark:shadow-2xl transition-all duration-700 group-hover:scale-105 group-hover:border-amber-500/20">
