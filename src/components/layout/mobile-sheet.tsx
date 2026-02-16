@@ -8,14 +8,15 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SIDEBAR_ITEMS } from "./app-sidebar";
-import { TrendingUp, Megaphone, Gavel, Bell, Bookmark, User, FileText, Target } from "lucide-react";
+import { TrendingUp, Megaphone, Gavel, Bell, Bookmark, User, FileText, Target, Sparkles } from "lucide-react";
 import { useAuth } from "@/providers/auth-provider";
 
 // Custom items for Mobile Drawer (Profile Menu) as per user request
-// Order: StockX Screener, Markets, News, Notifications, Bookmarks (Saved), About
+// Order: StockX Screener, Markets, Strategist, News, Notifications, Bookmarks (Saved), About
 const MOBILE_DRAWER_ITEMS = [
     { label: "StocksX Screener", href: "/explore", icon: TrendingUp },
     { label: "Markets", href: "/trending", icon: TrendingUp },
+    { label: "Strategist", href: "/strategist", icon: Sparkles, isNew: true },
     { label: "News", href: "/news", icon: FileText },
     { label: "Notifications", href: "/notifications", icon: Bell },
     { label: "Bookmarks", href: "/bookmarks", icon: Bookmark },
