@@ -113,8 +113,8 @@ export default function StrategistPage() {
 
                 {/* 3. Main Dynamic Content - Isolated Scrolling Area */}
                 <div className="flex-1 relative overflow-hidden">
-                    <ScrollArea className="h-full z-10 scrollbar-hide" ref={scrollRef} type="always">
-                        <div className="max-w-7xl mx-auto px-2 md:px-6 pb-96 md:pb-56 pt-6 md:pt-8">
+                    <ScrollArea className="h-full z-10 scrollbar-hide" ref={scrollRef} type="hover">
+                        <div className="max-w-7xl mx-auto px-4 md:px-6 pb-96 md:pb-56 pt-6 md:pt-8">
                             {/* Integrated Header Area */}
                             <div className="flex flex-col gap-1 md:gap-1.5 mb-10 animate-in fade-in slide-in-from-top-4 duration-700">
                                 <div className="flex items-center gap-2">
@@ -183,11 +183,11 @@ export default function StrategistPage() {
                                         {/* Verdict Banner Card */}
                                         <div className="relative group">
                                             <div className="absolute -inset-1 bg-gradient-to-r from-amber-500/20 to-orange-600/20 rounded-[2rem] blur-2xl opacity-10 dark:opacity-20 group-hover:opacity-40 transition duration-1000" />
-                                            <Card className="relative bg-white/70 dark:bg-slate-950/60 border-black/[0.05] dark:border-white/5 backdrop-blur-[40px] rounded-2xl md:rounded-[2rem] overflow-hidden shadow-2xl ring-1 ring-black/[0.05] dark:ring-white/5">
+                                            <Card className="relative bg-white/70 dark:bg-slate-950/60 border-black/[0.05] dark:border-white/5 backdrop-blur-[40px] rounded-[2rem] overflow-hidden shadow-2xl ring-1 ring-black/[0.05] dark:ring-white/5">
                                                 <div className="absolute -top-10 -right-10 p-12 opacity-[0.05] dark:opacity-[0.02]">
                                                     <TrendingUp size={200} className="text-amber-500" />
                                                 </div>
-                                                <CardHeader className="p-4 md:p-8 relative z-10">
+                                                <CardHeader className="p-6 md:p-8 relative z-10">
                                                     <div className="flex flex-col md:flex-row justify-between items-start gap-4">
                                                         <div className="space-y-1.5 md:space-y-2">
                                                             <div className="flex items-center gap-3 md:gap-4">
