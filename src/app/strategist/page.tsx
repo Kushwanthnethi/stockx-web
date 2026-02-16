@@ -113,8 +113,8 @@ export default function StrategistPage() {
 
                 {/* 3. Main Dynamic Content - Isolated Scrolling Area */}
                 <div className="flex-1 relative overflow-hidden">
-                    <ScrollArea className="h-full z-10" ref={scrollRef} type="always">
-                        <div className="max-w-5xl mx-auto px-4 md:px-6 pb-96 md:pb-56 pt-6 md:pt-8">
+                    <ScrollArea className="h-full z-10 scrollbar-hide" ref={scrollRef} type="always">
+                        <div className="max-w-7xl mx-auto px-2 md:px-6 pb-96 md:pb-56 pt-6 md:pt-8">
                             {/* Integrated Header Area */}
                             <div className="flex flex-col gap-1 md:gap-1.5 mb-10 animate-in fade-in slide-in-from-top-4 duration-700">
                                 <div className="flex items-center gap-2">
