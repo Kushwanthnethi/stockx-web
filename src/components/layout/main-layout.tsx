@@ -12,14 +12,15 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
     const isResultDetailPage = pathname?.startsWith("/results/") && pathname !== "/results";
 
     const isAuthPage = pathname === "/login" || pathname === "/signup";
-    const shouldHideSidebar = isStockPage || isResultDetailPage || isAuthPage;
+    const isStrategistPage = pathname === "/strategist";
+    const shouldHideSidebar = isStockPage || isResultDetailPage || isAuthPage || isStrategistPage;
 
     return (
         <div
             className={cn(
                 "flex items-start mx-auto min-h-[calc(100vh-3.5rem)]",
-                // Only act as a container with padding for non-auth pages
-                !isAuthPage && "container py-8 gap-8"
+                // Only act as a container with padding for non-auth/non-strategist pages
+                (!isAuthPage && !isStrategistPage) && "container py-8 gap-8"
             )}
         >
             {!shouldHideSidebar && <AppSidebar className="sticky top-20 w-56 shrink-0" />}

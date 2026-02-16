@@ -150,6 +150,11 @@
         /* Chrome, Safari and Opera */
     }
 
+    /* Hide Radix UI scrollbars */
+    .scrollbar-hide [data-orientation] {
+        display: none !important;
+    }
+
     @keyframes scan {
         0% {
             transform: translateX(-100%);

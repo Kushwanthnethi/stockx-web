@@ -183,11 +183,11 @@ export default function StrategistPage() {
                                         {/* Verdict Banner Card */}
                                         <div className="relative group">
                                             <div className="absolute -inset-1 bg-gradient-to-r from-amber-500/20 to-orange-600/20 rounded-[2rem] blur-2xl opacity-10 dark:opacity-20 group-hover:opacity-40 transition duration-1000" />
-                                            <Card className="relative bg-white/70 dark:bg-slate-950/60 border-black/[0.05] dark:border-white/5 backdrop-blur-[40px] rounded-[2rem] overflow-hidden shadow-2xl ring-1 ring-black/[0.05] dark:ring-white/5">
+                                            <Card className="relative bg-white/70 dark:bg-slate-950/60 border-black/[0.05] dark:border-white/5 backdrop-blur-[40px] rounded-2xl md:rounded-[2rem] overflow-hidden shadow-2xl ring-1 ring-black/[0.05] dark:ring-white/5">
                                                 <div className="absolute -top-10 -right-10 p-12 opacity-[0.05] dark:opacity-[0.02]">
                                                     <TrendingUp size={200} className="text-amber-500" />
                                                 </div>
-                                                <CardHeader className="p-5 md:p-8 relative z-10">
+                                                <CardHeader className="p-4 md:p-8 relative z-10">
                                                     <div className="flex flex-col md:flex-row justify-between items-start gap-4">
                                                         <div className="space-y-1.5 md:space-y-2">
                                                             <div className="flex items-center gap-3 md:gap-4">
@@ -218,7 +218,7 @@ export default function StrategistPage() {
                                                         </div>
                                                     </div>
                                                 </CardHeader>
-                                                <CardContent className="p-5 md:p-8 pt-0 relative z-10">
+                                                <CardContent className="p-4 md:p-8 pt-0 relative z-10">
                                                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 pt-5 md:pt-6 border-t border-black/[0.05] dark:border-white/[0.03]">
                                                         {[
                                                             { label: "Support", mobileLabel: "Support", value: `₹${result.technicals.support.toLocaleString()}`, color: "text-emerald-600 dark:text-emerald-400" },
@@ -237,9 +237,9 @@ export default function StrategistPage() {
                                         </div>
 
                                         {/* Detailed Strategy Markdown */}
-                                        <Card className="bg-white/50 dark:bg-slate-900/20 border-black/[0.05] dark:border-white/[0.03] backdrop-blur-xl rounded-[1.5rem] md:rounded-[2rem] overflow-hidden shadow-2xl relative">
+                                        <Card className="bg-white/50 dark:bg-slate-900/20 border-black/[0.05] dark:border-white/[0.03] backdrop-blur-xl rounded-2xl md:rounded-[2rem] overflow-hidden shadow-2xl relative">
                                             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-500/20 to-transparent" />
-                                            <CardContent className="p-6 md:p-12 pb-12 prose prose-slate dark:prose-invert prose-amber max-w-none">
+                                            <CardContent className="p-4 md:p-12 pb-12 prose prose-slate dark:prose-invert prose-amber max-w-none">
                                                 <ReactMarkdown
                                                     components={{
                                                         h1: ({ ...props }) => <h1 className="text-xl md:text-3xl font-black tracking-tight text-slate-900 dark:text-white mb-6 md:mb-8 border-l-4 border-amber-500 pl-4 md:pl-6 drop-shadow-md" {...props} />,
