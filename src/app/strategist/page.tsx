@@ -89,7 +89,7 @@ export default function StrategistPage() {
     }
 
     return (
-        <div className="relative flex flex-col h-[calc(100vh-4rem)] md:h-[calc(100vh-4rem)] min-h-[100svh] w-full overflow-hidden bg-white dark:bg-background text-slate-900 dark:text-slate-50 transition-colors duration-500">
+        <div className="relative flex flex-col h-[calc(100vh-6rem)] md:h-[calc(100vh-5rem)] min-h-[100svh] md:min-h-0 w-full overflow-hidden bg-white dark:bg-background text-slate-900 dark:text-slate-50 transition-colors duration-500">
             <PremiumGuard>
                 {/* 1. Ultra-Premium Background Elements */}
                 <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -110,21 +110,24 @@ export default function StrategistPage() {
 
 
 
+                {/* 2. Fixed Header Area */}
+                <div className="z-20 flex flex-col gap-1 md:gap-1.5 p-6 md:px-12 pt-8 md:pt-6 shrink-0 bg-white/50 dark:bg-background/50 backdrop-blur-md border-b border-black/[0.03] dark:border-white/[0.03]">
+                    <div className="flex items-center gap-3">
+                        <Sparkles size={24} className="text-amber-500 md:w-7 md:h-7" />
+                        <h1 className="text-2xl md:text-3xl font-black tracking-tight bg-gradient-to-r from-amber-100 via-amber-400 to-orange-500 bg-clip-text text-transparent">
+                            Market Strategist
+                        </h1>
+                    </div>
+                    <p className="text-slate-500 dark:text-slate-400 text-[xs] md:text-sm font-semibold ml-0.5 tracking-tight max-w-xl leading-relaxed">
+                        AI-Driven Strategic Alpha. Fusing technical indicators & fundamental charts for institutional-grade portfolio guidance.
+                    </p>
+                </div>
+
                 {/* 3. Main Dynamic Content - Isolated Scrolling Area */}
                 <div className="flex-1 relative overflow-hidden">
-                    <ScrollArea className="h-full z-10" ref={scrollRef}>
-                        <div className="max-w-5xl mx-auto px-4 md:px-6 pb-40 md:pb-48 space-y-8 md:space-y-10 pt-4 md:pt-2">
-                            <div className="flex flex-col gap-1 md:gap-1.5 mb-1 animate-in fade-in slide-in-from-top-4 duration-700">
-                                <div className="flex items-center gap-3">
-                                    <Sparkles size={24} className="text-amber-500 md:w-7 md:h-7" />
-                                    <h1 className="text-2xl md:text-3xl font-black tracking-tight bg-gradient-to-r from-amber-100 via-amber-400 to-orange-500 bg-clip-text text-transparent">
-                                        Market Strategist
-                                    </h1>
-                                </div>
-                                <p className="text-slate-500 dark:text-slate-400 text-[xs] md:text-sm font-semibold ml-0.5 tracking-tight max-w-xl leading-relaxed">
-                                    AI-Driven Strategic Alpha. Fusing technical indicators & fundamental charts for institutional-grade portfolio guidance.
-                                </p>
-                            </div>
+                    <ScrollArea className="h-full z-10" ref={scrollRef} type="always">
+                        <div className="max-w-5xl mx-auto px-4 md:px-6 pb-40 md:pb-56 space-y-8 md:space-y-10 pt-6 md:pt-8">
+                            {/* Content items... */}
 
                             {/* Empty State */}
                             {!result && !loading && showInput && (
