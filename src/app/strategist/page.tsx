@@ -89,7 +89,7 @@ export default function StrategistPage() {
     }
 
     return (
-        <div className="relative flex flex-col h-[calc(100vh-4rem)] md:h-[calc(100vh-4rem)] min-h-[100svh] w-full overflow-hidden bg-white dark:bg-background text-slate-900 dark:text-slate-50 transition-colors duration-500 scrollbar-hide">
+        <div className="relative flex flex-col h-[calc(100vh-4rem)] md:h-[calc(100vh-4rem)] min-h-[100svh] w-full overflow-hidden bg-white dark:bg-background text-slate-900 dark:text-slate-50 transition-colors duration-500">
             <PremiumGuard>
                 {/* 1. Ultra-Premium Background Elements */}
                 <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -112,7 +112,7 @@ export default function StrategistPage() {
 
                 {/* 3. Main Dynamic Content - Isolated Scrolling Area */}
                 <div className="flex-1 relative overflow-hidden">
-                    <ScrollArea className="h-full z-10 scrollbar-hide" ref={scrollRef}>
+                    <ScrollArea className="h-full z-10" ref={scrollRef}>
                         <div className="max-w-5xl mx-auto px-4 md:px-6 pb-40 md:pb-48 space-y-8 md:space-y-10 pt-4 md:pt-2">
                             <div className="flex flex-col gap-1 md:gap-1.5 mb-1 animate-in fade-in slide-in-from-top-4 duration-700">
                                 <div className="flex items-center gap-3">
