@@ -114,7 +114,7 @@ export default function StrategistPage() {
                 {/* 3. Main Dynamic Content - Isolated Scrolling Area */}
                 <div className="flex-1 relative overflow-hidden">
                     <ScrollArea className="h-full z-10" ref={scrollRef} type="always">
-                        <div className="max-w-5xl mx-auto px-4 md:px-6 pb-40 md:pb-56 pt-6 md:pt-8">
+                        <div className="max-w-5xl mx-auto px-4 md:px-6 pb-64 md:pb-56 pt-6 md:pt-8">
                             {/* Integrated Header Area */}
                             <div className="flex flex-col gap-1 md:gap-1.5 mb-10 animate-in fade-in slide-in-from-top-4 duration-700">
                                 <div className="flex items-center gap-3">
@@ -261,7 +261,7 @@ export default function StrategistPage() {
                 </div>
 
                 {/* 4. Bottom-Anchored Input Console */}
-                <div className="absolute bottom-2 md:bottom-3 left-0 right-0 flex justify-center w-full z-10 pointer-events-none px-4 md:px-12 pb-safe">
+                <div className="absolute bottom-28 md:bottom-6 left-0 right-0 flex justify-center w-full z-20 pointer-events-none px-4 md:px-12 pb-safe md:pb-0">
                     <div className="max-w-4xl w-full pointer-events-auto">
                         {showInput ? (
                             <div className="animate-in slide-in-from-bottom-16 duration-700">
@@ -326,7 +326,7 @@ export default function StrategistPage() {
                                 </motion.div>
                             </div>
                         ) : (
-                            <div className="flex justify-center pb-6">
+                            <div className="flex justify-center pb-32 md:pb-6">
                                 <Button
                                     size="lg"
                                     className="h-10 md:h-11 px-6 md:px-8 rounded-lg md:rounded-xl bg-gradient-to-r from-amber-500 via-orange-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 shadow-[0_15px_30px_rgba(245,158,11,0.2)] gap-2 animate-in fade-in zoom-in duration-700 transform hover:scale-105 transition-all text-xs md:text-sm font-black tracking-tight border border-white/10 active:scale-95 group ring-2 ring-amber-500/5 focus:outline-none"
