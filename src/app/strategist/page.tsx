@@ -90,7 +90,7 @@ export default function StrategistPage() {
     }
 
     return (
-        <div className="relative flex flex-col h-[calc(100vh-6rem)] md:h-[calc(100vh-5rem)] min-h-[100svh] md:min-h-0 w-full overflow-hidden bg-white dark:bg-background text-slate-900 dark:text-slate-50 transition-colors duration-500">
+        <div className="relative flex flex-col h-[calc(100svh-3.5rem)] md:h-[calc(100vh-5rem)] w-full overflow-hidden bg-white dark:bg-background text-slate-900 dark:text-slate-50 transition-colors duration-500">
             <PremiumGuard>
                 {/* 1. Ultra-Premium Background Elements */}
                 <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -261,7 +261,7 @@ export default function StrategistPage() {
                 </div>
 
                 {/* 4. Bottom-Anchored Input Console */}
-                <div className="absolute bottom-28 md:bottom-6 left-0 right-0 flex justify-center w-full z-20 pointer-events-none px-4 md:px-12 pb-safe md:pb-0">
+                <div className="absolute bottom-24 md:bottom-6 left-0 right-0 flex justify-center w-full z-20 pointer-events-none px-4 md:px-12 pb-safe md:pb-0">
                     <div className="max-w-4xl w-full pointer-events-auto">
                         {showInput ? (
                             <div className="animate-in slide-in-from-bottom-16 duration-700">
