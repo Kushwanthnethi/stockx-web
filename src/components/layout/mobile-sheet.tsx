@@ -12,12 +12,13 @@ import { TrendingUp, Megaphone, Gavel, Bell, Bookmark, User, FileText, Target, S
 import { useAuth } from "@/providers/auth-provider";
 
 // Custom items for Mobile Drawer (Profile Menu) as per user request
-// Order: StockX Screener, Markets, Strategist, News, Notifications, Bookmarks (Saved), About
+// Order: StockX Screener, Markets, News, Result Corner, Notifications, Bookmarks (Saved), About
 const MOBILE_DRAWER_ITEMS = [
     { label: "StocksX Screener", href: "/explore", icon: TrendingUp },
     { label: "Markets", href: "/trending", icon: TrendingUp },
-    { label: "Strategist", href: "/strategist", icon: Sparkles, isNew: true },
     { label: "News", href: "/news", icon: FileText },
+    { label: "Result Corner", href: "/results", icon: Megaphone },
+    { label: "Strategist", href: "/strategist", icon: Sparkles, isNew: true },
     { label: "Notifications", href: "/notifications", icon: Bell },
     { label: "Bookmarks", href: "/bookmarks", icon: Bookmark },
     { label: "About", href: "/about", icon: User },
@@ -89,6 +90,9 @@ export function MobileSheet({ trigger, className }: { trigger?: React.ReactNode,
                                     <Link href="/" className="font-bold text-xl tracking-tighter flex items-center gap-1" onClick={() => setOpen(false)}>
                                         StocksX
                                     </Link>
+                                    <Button variant="ghost" size="icon" onClick={() => setOpen(false)}>
+                                        <X className="h-5 w-5" />
+                                    </Button>
                                 </div>
 
                                 <div className="space-y-2">

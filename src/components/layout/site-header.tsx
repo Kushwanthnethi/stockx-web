@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { TrendingUp, Sparkles } from "lucide-react";
+import { TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/providers/auth-provider";
 import { UserNav } from "@/components/layout/user-nav";
@@ -44,20 +44,9 @@ export function SiteHeader() {
             <div className="container flex h-14 items-center justify-between px-3 md:px-4 max-w-7xl mx-auto">
                 <div className="flex items-center gap-0.5 md:gap-1">
                     <MobileSheet />
-                    <Link href="/" className="font-bold text-lg md:text-xl tracking-tighter flex items-center gap-1.5 md:gap-2 transition-all duration-500">
-                        {pathname === "/strategist" ? (
-                            <>
-                                <Sparkles className="text-amber-500 h-5 w-5 md:h-6 md:w-6 animate-pulse" />
-                                <span className="bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent">
-                                    Strategist
-                                </span>
-                            </>
-                        ) : (
-                            <>
-                                <TrendingUp className="text-green-600 h-5 w-5 md:h-6 md:w-6" />
-                                StocksX
-                            </>
-                        )}
+                    <Link href="/" className="font-bold text-lg md:text-xl tracking-tighter flex items-center gap-1">
+                        <TrendingUp className="text-green-600 h-5 w-5 md:h-6 md:w-6" />
+                        StocksX
                     </Link>
                 </div>
                 <div className="flex items-center gap-4 flex-1 justify-end">
