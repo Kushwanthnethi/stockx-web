@@ -12,6 +12,7 @@ import ReactMarkdown from "react-markdown";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { PremiumGuard } from "@/components/shared/premium-guard";
+import { API_BASE_URL } from "@/lib/config";
 
 interface AnalysisResult {
     symbol: string;
@@ -51,7 +52,7 @@ export default function StrategistPage() {
         setShowInput(false); // Hide input immediately to focus on loading/result
 
         try {
-            const res = await fetch("http://localhost:3333/strategist/analyze", {
+            const res = await fetch(`${API_BASE_URL}/strategist/analyze`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ query }),
