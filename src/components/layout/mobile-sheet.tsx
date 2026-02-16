@@ -89,9 +89,6 @@ export function MobileSheet({ trigger, className }: { trigger?: React.ReactNode,
                                     <Link href="/" className="font-bold text-xl tracking-tighter flex items-center gap-1" onClick={() => setOpen(false)}>
                                         StocksX
                                     </Link>
-                                    <Button variant="ghost" size="icon" onClick={() => setOpen(false)}>
-                                        <X className="h-5 w-5" />
-                                    </Button>
                                 </div>
 
                                 <div className="space-y-2">
