@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, PlusCircle, Gavel, Target, Megaphone } from "lucide-react"; // Updated icons for new layout
+import { Home, PlusCircle, Gavel, Target, Megaphone, Sparkles } from "lucide-react"; // Updated icons for new layout
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
@@ -24,7 +24,7 @@ export function BottomNav() {
 
     const navItems = [
         { label: "Home", href: "/", icon: Home },
-        { label: "Stock of Week", href: "/stock-of-the-week", icon: Target },
+        { label: "Strategist", href: "/strategist", icon: Sparkles },
         { label: "Create", href: "#create", icon: PlusCircle, special: true }, // href is dummy now
         { label: "Verdict", href: "/verdict", icon: Gavel },
         { label: "Results", href: "/results", icon: Megaphone },
