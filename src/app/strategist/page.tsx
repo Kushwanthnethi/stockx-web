@@ -110,151 +110,151 @@ export default function StrategistPage() {
 
 
 
-                {/* 2. Fixed Header Area */}
-                <div className="z-20 flex flex-col gap-1 md:gap-1.5 p-6 md:px-12 pt-8 md:pt-6 shrink-0 bg-white/50 dark:bg-background/50 backdrop-blur-md border-b border-black/[0.03] dark:border-white/[0.03]">
-                    <div className="flex items-center gap-3">
-                        <Sparkles size={24} className="text-amber-500 md:w-7 md:h-7" />
-                        <h1 className="text-2xl md:text-3xl font-black tracking-tight bg-gradient-to-r from-amber-100 via-amber-400 to-orange-500 bg-clip-text text-transparent">
-                            Market Strategist
-                        </h1>
-                    </div>
-                    <p className="text-slate-500 dark:text-slate-400 text-[xs] md:text-sm font-semibold ml-0.5 tracking-tight max-w-xl leading-relaxed">
-                        AI-Driven Strategic Alpha. Fusing technical indicators & fundamental charts for institutional-grade portfolio guidance.
-                    </p>
-                </div>
-
                 {/* 3. Main Dynamic Content - Isolated Scrolling Area */}
                 <div className="flex-1 relative overflow-hidden">
                     <ScrollArea className="h-full z-10" ref={scrollRef} type="always">
-                        <div className="max-w-5xl mx-auto px-4 md:px-6 pb-40 md:pb-56 space-y-8 md:space-y-10 pt-6 md:pt-8">
-                            {/* Content items... */}
-
-                            {/* Empty State */}
-                            {!result && !loading && showInput && (
-                                <div className="flex flex-col items-center justify-center min-h-[40vh] md:min-h-[40vh] animate-in fade-in zoom-in duration-1000 px-4">
-                                    <div className="relative mb-4 md:mb-6 group">
-                                        <div className="absolute inset-0 bg-amber-500/10 blur-3xl rounded-full scale-150 animate-pulse" />
-                                        <div className="relative p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] bg-slate-100/50 dark:bg-slate-900/40 border border-slate-200/50 dark:border-white/5 backdrop-blur-2xl shadow-xl dark:shadow-2xl transition-all duration-700 group-hover:scale-105 group-hover:border-amber-500/20">
-                                            <Target size={50} className="text-amber-500 dark:text-amber-400 transition-transform group-hover:rotate-12 md:w-[70px] md:h-[70px]" />
-                                        </div>
-                                    </div>
-                                    <h3 className="text-xl md:text-2xl font-black mb-2 text-slate-900 dark:text-white tracking-tighter text-center">Ready for Strategic Intel</h3>
-                                    <p className="text-slate-500 dark:text-slate-400 text-center max-w-md text-sm md:text-base leading-relaxed font-semibold">
-                                        AI systems standing by. Input your holdings or queries to synthesize technical indicators and fundamental data into actionable insights.
-                                    </p>
-                                    <div className="mt-8 md:mt-12 group/ex p-3 md:p-4 rounded-xl md:rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/[0.05] dark:border-white/[0.03] hover:border-amber-500/20 transition-all">
-                                        <p className="text-[8px] md:text-[10px] text-slate-400 dark:text-slate-700 font-mono uppercase tracking-[0.2em] font-black group-hover/ex:text-amber-500 transition-colors text-center">
-                                            Example: "I bought 50 shares of SBIN at ₹600. Next move?"
-                                        </p>
-                                    </div>
+                        <div className="max-w-5xl mx-auto px-4 md:px-6 pb-40 md:pb-56 pt-6 md:pt-8">
+                            {/* Integrated Header Area */}
+                            <div className="flex flex-col gap-1 md:gap-1.5 mb-10 animate-in fade-in slide-in-from-top-4 duration-700">
+                                <div className="flex items-center gap-3">
+                                    <Sparkles size={24} className="text-amber-500 md:w-7 md:h-7" />
+                                    <h1 className="text-2xl md:text-3xl font-black tracking-tight bg-gradient-to-r from-amber-100 via-amber-400 to-orange-500 bg-clip-text text-transparent">
+                                        Market Strategist
+                                    </h1>
                                 </div>
-                            )}
+                                <p className="text-slate-500 dark:text-slate-400 text-[xs] md:text-sm font-semibold ml-0.5 tracking-tight max-w-xl leading-relaxed">
+                                    AI-Driven Strategic Alpha. Fusing technical indicators & fundamental charts for institutional-grade portfolio guidance.
+                                </p>
+                            </div>
 
-                            {/* Loading State - "Scanning Market" */}
-                            {loading && (
-                                <div className="flex flex-col items-center justify-center py-20 gap-8 animate-in fade-in duration-500">
-                                    <div className="relative w-20 h-20">
-                                        <div className="absolute inset-0 border-4 border-amber-500/10 rounded-full" />
-                                        <div className="absolute inset-0 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
-                                        <div className="absolute inset-4 border-4 border-slate-500/20 rounded-full animate-ping" />
-                                        <div className="absolute inset-0 flex items-center justify-center">
-                                            <Sparkles size={18} className="text-amber-500 animate-pulse" />
+                            <div className="space-y-8 md:space-y-10">
+                                {/* Empty State */}
+                                {!result && !loading && showInput && (
+                                    <div className="flex flex-col items-center justify-center min-h-[40vh] md:min-h-[40vh] animate-in fade-in zoom-in duration-1000 px-4 text-center">
+                                        <div className="relative mb-4 md:mb-6 group inline-block">
+                                            <div className="absolute inset-0 bg-amber-500/10 blur-3xl rounded-full scale-150 animate-pulse" />
+                                            <div className="relative p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] bg-slate-100/50 dark:bg-slate-900/40 border border-slate-200/50 dark:border-white/5 backdrop-blur-2xl shadow-xl dark:shadow-2xl transition-all duration-700 group-hover:scale-105 group-hover:border-amber-500/20">
+                                                <Target size={50} className="text-amber-500 dark:text-amber-400 transition-transform group-hover:rotate-12 md:w-[70px] md:h-[70px]" />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="flex flex-col items-center gap-3">
-                                        <p className="text-xl font-black bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent animate-pulse tracking-tighter">
-                                            Synthesizing Market Intelligence
+                                        <h3 className="text-xl md:text-2xl font-black mb-2 text-slate-900 dark:text-white tracking-tighter">Ready for Strategic Intel</h3>
+                                        <p className="text-slate-500 dark:text-slate-400 text-center max-w-md text-sm md:text-base leading-relaxed font-semibold mx-auto">
+                                            AI systems standing by. Input your holdings or queries to synthesize technical indicators and fundamental data into actionable insights.
                                         </p>
-                                        <div className="relative h-1 w-48 bg-slate-900 rounded-full overflow-hidden ring-1 ring-white/5">
-                                            <div className="absolute inset-y-0 left-0 bg-gradient-to-r from-amber-500 to-orange-600 animate-[loading_2s_infinite]" style={{ width: '40%' }} />
-                                        </div>
-                                        <div className="flex flex-col items-center opacity-40">
-                                            <p className="text-[9px] font-mono text-slate-500 uppercase tracking-[0.3em]">
-                                                Mapping Technical Fractals • fundamental health • News Sentiment
+                                        <div className="mt-8 md:mt-12 group/ex p-3 md:p-4 rounded-xl md:rounded-2xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/[0.05] dark:border-white/[0.03] hover:border-amber-500/20 transition-all inline-block mx-auto">
+                                            <p className="text-[8px] md:text-[10px] text-slate-400 dark:text-slate-700 font-mono uppercase tracking-[0.2em] font-black group-hover/ex:text-amber-500 transition-colors">
+                                                Example: "I bought 50 shares of SBIN at ₹600. Next move?"
                                             </p>
                                         </div>
                                     </div>
-                                </div>
-                            )}
+                                )}
 
-                            {/* Analysis Result */}
-                            {result && (
-                                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-12 duration-1000">
-                                    {/* Verdict Banner Card */}
-                                    <div className="relative group">
-                                        <div className="absolute -inset-1 bg-gradient-to-r from-amber-500/20 to-orange-600/20 rounded-[2rem] blur-2xl opacity-10 dark:opacity-20 group-hover:opacity-40 transition duration-1000" />
-                                        <Card className="relative bg-white/70 dark:bg-slate-950/60 border-black/[0.05] dark:border-white/5 backdrop-blur-[40px] rounded-[2rem] overflow-hidden shadow-2xl ring-1 ring-black/[0.05] dark:ring-white/5">
-                                            <div className="absolute -top-10 -right-10 p-12 opacity-[0.05] dark:opacity-[0.02]">
-                                                <TrendingUp size={200} className="text-amber-500" />
+                                {/* Loading State - "Scanning Market" */}
+                                {loading && (
+                                    <div className="flex flex-col items-center justify-center py-20 gap-8 animate-in fade-in duration-500">
+                                        <div className="relative w-20 h-20">
+                                            <div className="absolute inset-0 border-4 border-amber-500/10 rounded-full" />
+                                            <div className="absolute inset-0 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
+                                            <div className="absolute inset-4 border-4 border-slate-500/20 rounded-full animate-ping" />
+                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                <Sparkles size={18} className="text-amber-500 animate-pulse" />
                                             </div>
-                                            <CardHeader className="p-5 md:p-8 relative z-10">
-                                                <div className="flex flex-col md:flex-row justify-between items-start gap-4">
-                                                    <div className="space-y-1.5 md:space-y-2">
-                                                        <div className="flex items-center gap-3 md:gap-4">
-                                                            <span className="text-3xl md:text-4xl font-black tracking-tighter text-slate-900 dark:text-white drop-shadow-2xl">
-                                                                {result.symbol}
-                                                            </span>
-                                                            <Badge className="bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-slate-900 dark:text-white border-black/10 dark:border-white/10 text-xs md:text-base px-2 md:px-3 py-0.5 md:py-1 rounded-full backdrop-blur-xl font-bold">
-                                                                NSE
-                                                            </Badge>
+                                        </div>
+                                        <div className="flex flex-col items-center gap-3">
+                                            <p className="text-xl font-black bg-gradient-to-r from-amber-400 to-orange-500 bg-clip-text text-transparent animate-pulse tracking-tighter">
+                                                Synthesizing Market Intelligence
+                                            </p>
+                                            <div className="relative h-1 w-48 bg-slate-900 rounded-full overflow-hidden ring-1 ring-white/5">
+                                                <div className="absolute inset-y-0 left-0 bg-gradient-to-r from-amber-500 to-orange-600 animate-[loading_2s_infinite]" style={{ width: '40%' }} />
+                                            </div>
+                                            <div className="flex flex-col items-center opacity-40">
+                                                <p className="text-[9px] font-mono text-slate-500 uppercase tracking-[0.3em]">
+                                                    Mapping Technical Fractals • fundamental health • News Sentiment
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Analysis Result */}
+                                {result && (
+                                    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-12 duration-1000">
+                                        {/* Verdict Banner Card */}
+                                        <div className="relative group">
+                                            <div className="absolute -inset-1 bg-gradient-to-r from-amber-500/20 to-orange-600/20 rounded-[2rem] blur-2xl opacity-10 dark:opacity-20 group-hover:opacity-40 transition duration-1000" />
+                                            <Card className="relative bg-white/70 dark:bg-slate-950/60 border-black/[0.05] dark:border-white/5 backdrop-blur-[40px] rounded-[2rem] overflow-hidden shadow-2xl ring-1 ring-black/[0.05] dark:ring-white/5">
+                                                <div className="absolute -top-10 -right-10 p-12 opacity-[0.05] dark:opacity-[0.02]">
+                                                    <TrendingUp size={200} className="text-amber-500" />
+                                                </div>
+                                                <CardHeader className="p-5 md:p-8 relative z-10">
+                                                    <div className="flex flex-col md:flex-row justify-between items-start gap-4">
+                                                        <div className="space-y-1.5 md:space-y-2">
+                                                            <div className="flex items-center gap-3 md:gap-4">
+                                                                <span className="text-3xl md:text-4xl font-black tracking-tighter text-slate-900 dark:text-white drop-shadow-2xl">
+                                                                    {result.symbol}
+                                                                </span>
+                                                                <Badge className="bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-slate-900 dark:text-white border-black/10 dark:border-white/10 text-xs md:text-base px-2 md:px-3 py-0.5 md:py-1 rounded-full backdrop-blur-xl font-bold">
+                                                                    NSE
+                                                                </Badge>
+                                                            </div>
+                                                            <div className="flex items-center gap-2 md:gap-3">
+                                                                <span className="text-lg md:text-xl font-bold text-slate-600 dark:text-slate-400 tracking-tight">
+                                                                    ₹{result.quote.regularMarketPrice.toLocaleString()}
+                                                                </span>
+                                                                <span className={cn(
+                                                                    "text-xs md:text-base font-black px-2 md:px-3 py-0.5 rounded-[8px] md:rounded-[10px] border",
+                                                                    result.quote.regularMarketChangePercent >= 0
+                                                                        ? "text-emerald-500 dark:text-emerald-400 border-emerald-500/20 dark:border-emerald-500/10 bg-emerald-500/5"
+                                                                        : "text-rose-500 dark:text-rose-400 border-rose-500/20 dark:border-rose-500/10 bg-rose-500/5"
+                                                                )}>
+                                                                    {result.quote.regularMarketChangePercent >= 0 ? "+" : ""}{result.quote.regularMarketChangePercent.toFixed(2)}%
+                                                                </span>
+                                                            </div>
                                                         </div>
-                                                        <div className="flex items-center gap-2 md:gap-3">
-                                                            <span className="text-lg md:text-xl font-bold text-slate-600 dark:text-slate-400 tracking-tight">
-                                                                ₹{result.quote.regularMarketPrice.toLocaleString()}
-                                                            </span>
-                                                            <span className={cn(
-                                                                "text-xs md:text-base font-black px-2 md:px-3 py-0.5 rounded-[8px] md:rounded-[10px] border",
-                                                                result.quote.regularMarketChangePercent >= 0
-                                                                    ? "text-emerald-500 dark:text-emerald-400 border-emerald-500/20 dark:border-emerald-500/10 bg-emerald-500/5"
-                                                                    : "text-rose-500 dark:text-rose-400 border-rose-500/20 dark:border-rose-500/10 bg-rose-500/5"
-                                                            )}>
-                                                                {result.quote.regularMarketChangePercent >= 0 ? "+" : ""}{result.quote.regularMarketChangePercent.toFixed(2)}%
-                                                            </span>
+                                                        <div className="flex md:flex-col gap-2 md:gap-3 items-center md:items-end w-full md:w-auto">
+                                                            <TrendBadge trend={result.technicals.trend} />
+                                                            <RsiBadge value={result.technicals.rsi} />
                                                         </div>
                                                     </div>
-                                                    <div className="flex md:flex-col gap-2 md:gap-3 items-center md:items-end w-full md:w-auto">
-                                                        <TrendBadge trend={result.technicals.trend} />
-                                                        <RsiBadge value={result.technicals.rsi} />
+                                                </CardHeader>
+                                                <CardContent className="p-5 md:p-8 pt-0 relative z-10">
+                                                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 pt-5 md:pt-6 border-t border-black/[0.05] dark:border-white/[0.03]">
+                                                        {[
+                                                            { label: "Support", mobileLabel: "Support", value: `₹${result.technicals.support.toLocaleString()}`, color: "text-emerald-600 dark:text-emerald-400" },
+                                                            { label: "Resistance", mobileLabel: "Resist", value: `₹${result.technicals.resistance.toLocaleString()}`, color: "text-orange-600 dark:text-orange-400" },
+                                                            { label: "AI Momentum", mobileLabel: "Momentum", value: result.technicals.macdHistogram > 0 ? "BULL" : "BEAR", color: result.technicals.macdHistogram > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400" },
+                                                            { label: "Confidence", mobileLabel: "Confid.", value: "HIGH", color: "text-amber-600 dark:text-amber-400" }
+                                                        ].map((item, i) => (
+                                                            <div key={i} className="group/item relative p-3 md:p-4 rounded-xl md:rounded-[1.5rem] bg-black/[0.02] dark:bg-white/[0.02] border border-black/[0.05] dark:border-white/5 hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-all duration-500 hover:scale-[1.02]">
+                                                                <p className="text-[8px] md:text-[9px] uppercase tracking-[0.2em] md:tracking-[0.3em] text-slate-500 dark:text-slate-600 font-black mb-1 md:mb-2">{item.label}</p>
+                                                                <p className={cn("text-base md:text-xl font-black tracking-tight font-mono", item.color)}>{item.value}</p>
+                                                            </div>
+                                                        ))}
                                                     </div>
-                                                </div>
-                                            </CardHeader>
-                                            <CardContent className="p-5 md:p-8 pt-0 relative z-10">
-                                                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 pt-5 md:pt-6 border-t border-black/[0.05] dark:border-white/[0.03]">
-                                                    {[
-                                                        { label: "Support", mobileLabel: "Support", value: `₹${result.technicals.support.toLocaleString()}`, color: "text-emerald-600 dark:text-emerald-400" },
-                                                        { label: "Resistance", mobileLabel: "Resist", value: `₹${result.technicals.resistance.toLocaleString()}`, color: "text-orange-600 dark:text-orange-400" },
-                                                        { label: "AI Momentum", mobileLabel: "Momentum", value: result.technicals.macdHistogram > 0 ? "BULL" : "BEAR", color: result.technicals.macdHistogram > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400" },
-                                                        { label: "Confidence", mobileLabel: "Confid.", value: "HIGH", color: "text-amber-600 dark:text-amber-400" }
-                                                    ].map((item, i) => (
-                                                        <div key={i} className="group/item relative p-3 md:p-4 rounded-xl md:rounded-[1.5rem] bg-black/[0.02] dark:bg-white/[0.02] border border-black/[0.05] dark:border-white/5 hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-all duration-500 hover:scale-[1.02]">
-                                                            <p className="text-[8px] md:text-[9px] uppercase tracking-[0.2em] md:tracking-[0.3em] text-slate-500 dark:text-slate-600 font-black mb-1 md:mb-2">{item.label}</p>
-                                                            <p className={cn("text-base md:text-xl font-black tracking-tight font-mono", item.color)}>{item.value}</p>
-                                                        </div>
-                                                    ))}
-                                                </div>
+                                                </CardContent>
+                                            </Card>
+                                        </div>
+
+                                        {/* Detailed Strategy Markdown */}
+                                        <Card className="bg-white/50 dark:bg-slate-900/20 border-black/[0.05] dark:border-white/[0.03] backdrop-blur-xl rounded-[1.5rem] md:rounded-[2rem] overflow-hidden shadow-2xl relative">
+                                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-500/20 to-transparent" />
+                                            <CardContent className="p-6 md:p-12 pb-12 prose prose-slate dark:prose-invert prose-amber max-w-none">
+                                                <ReactMarkdown
+                                                    components={{
+                                                        h1: ({ ...props }) => <h1 className="text-xl md:text-3xl font-black tracking-tight text-slate-900 dark:text-white mb-6 md:mb-8 border-l-4 border-amber-500 pl-4 md:pl-6 drop-shadow-md" {...props} />,
+                                                        h2: ({ ...props }) => <h2 className="text-lg md:text-2xl font-bold text-slate-800 dark:text-slate-100 mt-8 md:mt-12 mb-4 md:mb-6 flex items-center gap-3 md:gap-4 before:content-[''] before:w-1.5 md:before:w-2 before:h-6 md:before:h-8 before:bg-gradient-to-b before:from-amber-400 before:to-orange-600 before:rounded-full" {...props} />,
+                                                        p: ({ ...props }) => <p className="text-slate-600 dark:text-slate-400 text-sm md:text-lg leading-relaxed mb-4 md:mb-6 font-semibold" {...props} />,
+                                                        li: ({ ...props }) => <li className="text-slate-600 dark:text-slate-400 text-sm md:text-lg mb-2 marker:text-amber-500 font-semibold" {...props} />,
+                                                        strong: ({ ...props }) => <strong className="text-amber-600 dark:text-amber-400/90 font-black" {...props} />,
+                                                    }}
+                                                >
+                                                    {result.strategy}
+                                                </ReactMarkdown>
                                             </CardContent>
                                         </Card>
                                     </div>
-
-                                    {/* Detailed Strategy Markdown */}
-                                    <Card className="bg-white/50 dark:bg-slate-900/20 border-black/[0.05] dark:border-white/[0.03] backdrop-blur-xl rounded-[1.5rem] md:rounded-[2rem] overflow-hidden shadow-2xl relative">
-                                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-500/20 to-transparent" />
-                                        <CardContent className="p-6 md:p-12 pb-12 prose prose-slate dark:prose-invert prose-amber max-w-none">
-                                            <ReactMarkdown
-                                                components={{
-                                                    h1: ({ ...props }) => <h1 className="text-xl md:text-3xl font-black tracking-tight text-slate-900 dark:text-white mb-6 md:mb-8 border-l-4 border-amber-500 pl-4 md:pl-6 drop-shadow-md" {...props} />,
-                                                    h2: ({ ...props }) => <h2 className="text-lg md:text-2xl font-bold text-slate-800 dark:text-slate-100 mt-8 md:mt-12 mb-4 md:mb-6 flex items-center gap-3 md:gap-4 before:content-[''] before:w-1.5 md:before:w-2 before:h-6 md:before:h-8 before:bg-gradient-to-b before:from-amber-400 before:to-orange-600 before:rounded-full" {...props} />,
-                                                    p: ({ ...props }) => <p className="text-slate-600 dark:text-slate-400 text-sm md:text-lg leading-relaxed mb-4 md:mb-6 font-semibold" {...props} />,
-                                                    li: ({ ...props }) => <li className="text-slate-600 dark:text-slate-400 text-sm md:text-lg mb-2 marker:text-amber-500 font-semibold" {...props} />,
-                                                    strong: ({ ...props }) => <strong className="text-amber-600 dark:text-amber-400/90 font-black" {...props} />,
-                                                }}
-                                            >
-                                                {result.strategy}
-                                            </ReactMarkdown>
-                                        </CardContent>
-                                    </Card>
-                                </div>
-                            )}
+                                )}
+                            </div>
                         </div>
                     </ScrollArea>
                 </div>
