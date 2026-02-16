@@ -117,7 +117,7 @@ export default function StrategistPage() {
                         <div className="max-w-5xl mx-auto px-4 md:px-6 pb-64 md:pb-56 pt-6 md:pt-8">
                             {/* Integrated Header Area */}
                             <div className="flex flex-col gap-1 md:gap-1.5 mb-10 animate-in fade-in slide-in-from-top-4 duration-700">
-                                <div className="flex items-center gap-3">
+                                <div className="hidden md:flex items-center gap-3">
                                     <Sparkles size={24} className="text-amber-500 md:w-7 md:h-7" />
                                     <h1 className="text-2xl md:text-3xl font-black tracking-tight bg-gradient-to-r from-amber-100 via-amber-400 to-orange-500 bg-clip-text text-transparent">
                                         Market Strategist
