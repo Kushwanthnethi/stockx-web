@@ -18,12 +18,12 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
         <div
             className={cn(
                 "flex items-start mx-auto min-h-[calc(100vh-3.5rem)]",
-                // Only act as a container with padding for non-auth pages
-                !isAuthPage && "container py-8 gap-8"
+                // Mobile: Full width without stacked padding. Desktop: Constrained container.
+                !isAuthPage && "w-full lg:container lg:py-8 lg:gap-8"
             )}
         >
             {!shouldHideSidebar && <AppSidebar className="sticky top-20 w-56 shrink-0" />}
-            <main className="flex-1 min-w-0 w-full pb-28 md:pb-0">
+            <main className="flex-1 min-w-0 w-full px-[var(--mobile-safe-padding)] lg:px-0 pb-28 lg:pb-0">
                 {children}
             </main>
         </div >

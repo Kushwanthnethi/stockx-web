@@ -340,10 +340,36 @@ export function FeedPost({ post }: { post: any }) {
                 </div>
             )}
             <Card className="border-border shadow-sm hover:border-primary/20 transition-colors bg-card relative">
-                <div className="absolute top-4 right-4 z-10">
+                <div className="absolute top-4 right-4 z-10 flex flex-col items-center gap-2">
+                    {/* Follow Button - Moved to Top Right Corner */}
+                    <AnimatePresence>
+                        {currentUser && displayPost.user && currentUser.handle !== displayPost.user.handle && !isFollowing && (
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.8 }}
+                                transition={{ duration: 0.2 }}
+                            >
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="h-7 px-3 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-full shadow-sm hover:shadow active:scale-95 transition-all"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        handleFollow();
+                                    }}
+                                >
+                                    Follow
+                                </Button>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+
+                    {/* More Options Menu - Moved slightly down if Follow exists */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full hover:bg-muted">
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full hover:bg-muted transition-colors">
                                 <MoreHorizontal size={16} className="text-muted-foreground" />
                             </Button>
                         </DropdownMenuTrigger>
@@ -392,30 +418,6 @@ export function FeedPost({ post }: { post: any }) {
                                 </span>
                             </div>
 
-                            {/* Follow Button */}
-                            <AnimatePresence>
-                                {currentUser && displayPost.user && currentUser.handle !== displayPost.user.handle && !isFollowing && (
-                                    <motion.div
-                                        initial={{ opacity: 0, width: 0 }}
-                                        animate={{ opacity: 1, width: "auto" }}
-                                        exit={{ opacity: 0, width: 0, scale: 0.8 }}
-                                        transition={{ duration: 0.3, type: "spring", bounce: 0, stiffness: 300, damping: 20 }}
-                                        className="overflow-hidden ml-1"
-                                    >
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            className="h-7 px-3 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-full shadow-sm hover:shadow active:scale-95 transition-all"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                handleFollow();
-                                            }}
-                                        >
-                                            Follow
-                                        </Button>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
                         </div>
 
                         {/* Sentiment Badge */}

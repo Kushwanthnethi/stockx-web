@@ -114,21 +114,21 @@ export default function StrategistPage() {
                 {/* 3. Main Dynamic Content - Isolated Scrolling Area */}
                 <div className="flex-1 relative overflow-hidden">
                     <ScrollArea className="h-full z-10 scrollbar-hide" ref={scrollRef} type="hover">
-                        <div className="max-w-7xl mx-auto px-4 md:px-6 pb-96 md:pb-56 pt-6 md:pt-8">
+                        <div className="max-w-7xl mx-auto px-0 lg:px-6 pb-96 lg:pb-56 pt-6 lg:pt-8">
                             {/* Integrated Header Area */}
-                            <div className="flex flex-col gap-1 md:gap-1.5 mb-10 animate-in fade-in slide-in-from-top-4 duration-700">
+                            <div className="flex flex-col gap-2 mb-8 animate-in fade-in slide-in-from-top-4 duration-700">
                                 <div className="flex items-center gap-2">
-                                    <Sparkles size={20} className="text-amber-500 md:w-6 md:h-6" />
-                                    <h1 className="text-2xl md:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+                                    <Sparkles size={20} className="text-amber-500 lg:w-6 lg:h-6" />
+                                    <h1 className="text-2xl lg:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
                                         Market Strategist
                                     </h1>
                                 </div>
-                                <p className="text-slate-500 dark:text-slate-400 text-[xs] md:text-sm font-semibold ml-0.5 tracking-tight max-w-xl leading-relaxed">
+                                <p className="text-slate-500 dark:text-slate-400 text-xs lg:text-sm font-semibold ml-0.5 tracking-tight max-w-xl leading-relaxed">
                                     AI-Driven Strategic Alpha. Fusing technical indicators & fundamental charts for institutional-grade portfolio guidance.
                                 </p>
                             </div>
 
-                            <div className="space-y-8 md:space-y-10">
+                            <div className="space-y-8 lg:space-y-10">
                                 {/* Empty State */}
                                 {!result && !loading && showInput && (
                                     <div className="flex flex-col items-center justify-center min-h-[40vh] md:min-h-[40vh] animate-in fade-in zoom-in duration-1000 px-4 text-center">
@@ -183,27 +183,27 @@ export default function StrategistPage() {
                                         {/* Verdict Banner Card */}
                                         <div className="relative group">
                                             <div className="absolute -inset-1 bg-gradient-to-r from-amber-500/20 to-orange-600/20 rounded-[2rem] blur-2xl opacity-10 dark:opacity-20 group-hover:opacity-40 transition duration-1000" />
-                                            <Card className="relative bg-white/70 dark:bg-slate-950/60 border-black/[0.05] dark:border-white/5 backdrop-blur-[40px] rounded-[2rem] overflow-hidden shadow-2xl ring-1 ring-black/[0.05] dark:ring-white/5">
+                                            <Card className="relative bg-white/70 dark:bg-slate-950/60 border-black/[0.05] dark:border-white/5 backdrop-blur-[40px] rounded-[1.5rem] lg:rounded-[2rem] overflow-hidden shadow-2xl ring-1 ring-black/[0.05] dark:ring-white/5">
                                                 <div className="absolute -top-10 -right-10 p-12 opacity-[0.05] dark:opacity-[0.02]">
                                                     <TrendingUp size={200} className="text-amber-500" />
                                                 </div>
-                                                <CardHeader className="p-6 md:p-8 relative z-10">
-                                                    <div className="flex flex-col md:flex-row justify-between items-start gap-4">
-                                                        <div className="space-y-1.5 md:space-y-2">
-                                                            <div className="flex items-center gap-3 md:gap-4">
-                                                                <span className="text-3xl md:text-4xl font-black tracking-tighter text-slate-900 dark:text-white drop-shadow-2xl">
+                                                <CardHeader className="p-4 lg:p-8 relative z-10">
+                                                    <div className="flex flex-col lg:flex-row justify-between items-start gap-4">
+                                                        <div className="space-y-2">
+                                                            <div className="flex items-center gap-3 lg:gap-4">
+                                                                <span className="text-3xl lg:text-4xl font-black tracking-tighter text-slate-900 dark:text-white drop-shadow-2xl">
                                                                     {result.symbol}
                                                                 </span>
-                                                                <Badge className="bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-slate-900 dark:text-white border-black/10 dark:border-white/10 text-xs md:text-base px-2 md:px-3 py-0.5 md:py-1 rounded-full backdrop-blur-xl font-bold">
+                                                                <Badge className="bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-slate-900 dark:text-white border-black/10 dark:border-white/10 text-xs lg:text-base px-2 lg:px-3 py-0.5 lg:py-1 rounded-full backdrop-blur-xl font-bold">
                                                                     NSE
                                                                 </Badge>
                                                             </div>
-                                                            <div className="flex items-center gap-2 md:gap-3">
-                                                                <span className="text-lg md:text-xl font-bold text-slate-600 dark:text-slate-400 tracking-tight">
+                                                            <div className="flex items-center gap-2 lg:gap-3">
+                                                                <span className="text-lg lg:text-xl font-bold text-slate-600 dark:text-slate-400 tracking-tight">
                                                                     ₹{result.quote.regularMarketPrice.toLocaleString()}
                                                                 </span>
                                                                 <span className={cn(
-                                                                    "text-xs md:text-base font-black px-2 md:px-3 py-0.5 rounded-[8px] md:rounded-[10px] border",
+                                                                    "text-xs lg:text-base font-black px-2 lg:px-3 py-0.5 rounded-[8px] lg:rounded-[10px] border",
                                                                     result.quote.regularMarketChangePercent >= 0
                                                                         ? "text-emerald-500 dark:text-emerald-400 border-emerald-500/20 dark:border-emerald-500/10 bg-emerald-500/5"
                                                                         : "text-rose-500 dark:text-rose-400 border-rose-500/20 dark:border-rose-500/10 bg-rose-500/5"
@@ -212,23 +212,23 @@ export default function StrategistPage() {
                                                                 </span>
                                                             </div>
                                                         </div>
-                                                        <div className="flex md:flex-col gap-2 md:gap-3 items-center md:items-end w-full md:w-auto">
+                                                        <div className="flex lg:flex-col gap-2 lg:gap-3 items-center lg:items-end w-full lg:w-auto">
                                                             <TrendBadge trend={result.technicals.trend} />
                                                             <RsiBadge value={result.technicals.rsi} />
                                                         </div>
                                                     </div>
                                                 </CardHeader>
-                                                <CardContent className="p-4 md:p-8 pt-0 relative z-10">
-                                                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 pt-5 md:pt-6 border-t border-black/[0.05] dark:border-white/[0.03]">
+                                                <CardContent className="p-4 lg:p-8 pt-0 relative z-10">
+                                                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 pt-4 lg:pt-6 border-t border-black/[0.05] dark:border-white/[0.03]">
                                                         {[
                                                             { label: "Support", mobileLabel: "Support", value: `₹${result.technicals.support.toLocaleString()}`, color: "text-emerald-600 dark:text-emerald-400" },
                                                             { label: "Resistance", mobileLabel: "Resist", value: `₹${result.technicals.resistance.toLocaleString()}`, color: "text-orange-600 dark:text-orange-400" },
                                                             { label: "AI Momentum", mobileLabel: "Momentum", value: result.technicals.macdHistogram > 0 ? "BULL" : "BEAR", color: result.technicals.macdHistogram > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400" },
                                                             { label: "Confidence", mobileLabel: "Confid.", value: "HIGH", color: "text-amber-600 dark:text-amber-400" }
                                                         ].map((item, i) => (
-                                                            <div key={i} className="group/item relative p-3 md:p-4 rounded-xl md:rounded-[1.5rem] bg-black/[0.02] dark:bg-white/[0.02] border border-black/[0.05] dark:border-white/5 hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-all duration-500 hover:scale-[1.02]">
-                                                                <p className="text-[8px] md:text-[9px] uppercase tracking-[0.2em] md:tracking-[0.3em] text-slate-500 dark:text-slate-600 font-black mb-1 md:mb-2">{item.label}</p>
-                                                                <p className={cn("text-base md:text-xl font-black tracking-tight font-mono", item.color)}>{item.value}</p>
+                                                            <div key={i} className="group/item relative p-3 lg:p-4 rounded-xl lg:rounded-[1.5rem] bg-black/[0.02] dark:bg-white/[0.02] border border-black/[0.05] dark:border-white/5 hover:bg-black/[0.04] dark:hover:bg-white/[0.05] transition-all duration-500 hover:scale-[1.02]">
+                                                                <p className="text-[8px] lg:text-[9px] uppercase tracking-[0.2em] lg:tracking-[0.3em] text-slate-500 dark:text-slate-600 font-black mb-1 lg:mb-2">{item.label}</p>
+                                                                <p className={cn("text-base lg:text-xl font-black tracking-tight font-mono", item.color)}>{item.value}</p>
                                                             </div>
                                                         ))}
                                                     </div>
@@ -239,13 +239,13 @@ export default function StrategistPage() {
                                         {/* Detailed Strategy Markdown */}
                                         <Card className="bg-white/50 dark:bg-slate-900/20 border-black/[0.05] dark:border-white/[0.03] backdrop-blur-xl rounded-2xl md:rounded-[2rem] overflow-hidden shadow-2xl relative">
                                             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-500/20 to-transparent" />
-                                            <CardContent className="p-4 md:p-12 pb-12 prose prose-slate dark:prose-invert prose-amber max-w-none">
+                                            <CardContent className="p-4 lg:p-12 pb-12 prose prose-slate dark:prose-invert prose-amber max-w-none">
                                                 <ReactMarkdown
                                                     components={{
-                                                        h1: ({ ...props }) => <h1 className="text-xl md:text-3xl font-black tracking-tight text-slate-900 dark:text-white mb-6 md:mb-8 border-l-4 border-amber-500 pl-4 md:pl-6 drop-shadow-md" {...props} />,
-                                                        h2: ({ ...props }) => <h2 className="text-lg md:text-2xl font-bold text-slate-800 dark:text-slate-100 mt-8 md:mt-12 mb-4 md:mb-6 flex items-center gap-3 md:gap-4 before:content-[''] before:w-1.5 md:before:w-2 before:h-6 md:before:h-8 before:bg-gradient-to-b before:from-amber-400 before:to-orange-600 before:rounded-full" {...props} />,
-                                                        p: ({ ...props }) => <p className="text-slate-600 dark:text-slate-400 text-sm md:text-lg leading-relaxed mb-4 md:mb-6 font-semibold" {...props} />,
-                                                        li: ({ ...props }) => <li className="text-slate-600 dark:text-slate-400 text-sm md:text-lg mb-2 marker:text-amber-500 font-semibold" {...props} />,
+                                                        h1: ({ ...props }) => <h1 className="text-xl lg:text-3xl font-black tracking-tight text-slate-900 dark:text-white mb-6 lg:mb-8 border-l-4 border-amber-500 pl-4 lg:pl-6 drop-shadow-md" {...props} />,
+                                                        h2: ({ ...props }) => <h2 className="text-lg lg:text-2xl font-bold text-slate-800 dark:text-slate-100 mt-8 lg:mt-12 mb-4 lg:mb-6 flex items-center gap-3 lg:gap-4 before:content-[''] before:w-1.5 lg:before:w-2 before:h-6 lg:before:h-8 before:bg-gradient-to-b before:from-amber-400 before:to-orange-600 before:rounded-full" {...props} />,
+                                                        p: ({ ...props }) => <p className="text-slate-600 dark:text-slate-400 text-sm lg:text-lg leading-relaxed mb-4 lg:mb-6 font-semibold" {...props} />,
+                                                        li: ({ ...props }) => <li className="text-slate-600 dark:text-slate-400 text-sm lg:text-lg mb-2 marker:text-amber-500 font-semibold" {...props} />,
                                                         strong: ({ ...props }) => <strong className="text-amber-600 dark:text-amber-400/90 font-black" {...props} />,
                                                     }}
                                                 >
@@ -261,7 +261,7 @@ export default function StrategistPage() {
                 </div>
 
                 {/* 4. Bottom-Anchored Input Console */}
-                <div className="absolute bottom-40 md:bottom-6 left-0 right-0 flex justify-center w-full z-20 pointer-events-none px-4 md:px-12 pb-safe md:pb-0">
+                <div className="absolute bottom-40 lg:bottom-6 left-0 right-0 flex justify-center w-full z-20 pointer-events-none px-4 lg:px-12 pb-safe lg:pb-0">
                     <div className="max-w-4xl w-full pointer-events-auto">
                         {showInput ? (
                             <div className="animate-in slide-in-from-bottom-16 duration-700">
@@ -271,21 +271,21 @@ export default function StrategistPage() {
                                     className="relative group/console"
                                 >
                                     {/* Multi-Layered Premium Glow */}
-                                    <div className="absolute -inset-1 md:-inset-2 bg-gradient-to-r from-amber-500/20 via-orange-600/25 to-amber-500/20 rounded-[1.5rem] md:rounded-[2.5rem] blur-2xl md:blur-3xl opacity-20 group-hover/console:opacity-40 transition duration-1000 animate-pulse" />
-                                    <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-500/30 to-orange-600/30 rounded-[1.1rem] md:rounded-[2.1rem] blur-sm opacity-0 group-focus-within/console:opacity-100 transition duration-500" />
+                                    <div className="absolute -inset-1 lg:-inset-2 bg-gradient-to-r from-amber-500/20 via-orange-600/25 to-amber-500/20 rounded-[1.5rem] lg:rounded-[2.5rem] blur-2xl lg:blur-3xl opacity-20 group-hover/console:opacity-40 transition duration-1000 animate-pulse" />
+                                    <div className="absolute -inset-0.5 bg-gradient-to-r from-amber-500/30 to-orange-600/30 rounded-[1.1rem] lg:rounded-[2.1rem] blur-sm opacity-0 group-focus-within/console:opacity-100 transition duration-500" />
 
-                                    <Card className="relative rounded-[1.25rem] md:rounded-[2rem] border-black/10 dark:border-white/10 bg-white/95 dark:bg-slate-900/90 backdrop-blur-[50px] shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_80px_150px_rgba(0,0,0,0.8)] overflow-hidden ring-1 ring-black/5 dark:ring-white/10 transition-all duration-500 focus-within:ring-2 focus-within:ring-amber-500/50 focus-within:border-amber-500/40">
+                                    <Card className="relative rounded-[1.25rem] lg:rounded-[2rem] border-black/10 dark:border-white/10 bg-white/95 dark:bg-slate-900/90 backdrop-blur-[50px] shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_80px_150px_rgba(0,0,0,0.8)] overflow-hidden ring-1 ring-black/5 dark:ring-white/10 transition-all duration-500 focus-within:ring-2 focus-within:ring-amber-500/50 focus-within:border-amber-500/40">
                                         {/* Scanning Line Animation */}
                                         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-amber-500/50 to-transparent -translate-x-full animate-[scan_3s_linear_infinite]" />
 
-                                        <CardContent className="p-2 md:p-3 flex gap-4 items-end relative z-10">
-                                            <div className="flex-1 px-2 md:px-3 py-1 flex flex-col">
-                                                <span className="text-[8px] md:text-[10px] uppercase tracking-[0.2em] md:tracking-[0.3em] font-black text-amber-500/50 mb-1 pointer-events-none select-none">
+                                        <CardContent className="p-2 lg:p-3 flex gap-4 items-end relative z-10">
+                                            <div className="flex-1 px-2 lg:px-3 py-1 flex flex-col">
+                                                <span className="text-[8px] lg:text-[10px] uppercase tracking-[0.2em] lg:tracking-[0.3em] font-black text-amber-500/50 mb-1 pointer-events-none select-none">
                                                     Strategic Terminal v2.1
                                                 </span>
                                                 <textarea
                                                     placeholder="Input Strategic Parameters..."
-                                                    className="w-full resize-none min-h-[30px] max-h-[100px] border-0 focus:outline-none focus:ring-0 shadow-none text-sm md:text-base bg-transparent p-0 placeholder:text-slate-400 dark:placeholder:text-slate-700 text-slate-900 dark:text-slate-100 selection:bg-amber-500/30 font-bold tracking-tight"
+                                                    className="w-full resize-none min-h-[30px] max-h-[100px] border-0 focus:outline-none focus:ring-0 shadow-none text-sm lg:text-base bg-transparent p-0 placeholder:text-slate-400 dark:placeholder:text-slate-700 text-slate-900 dark:text-slate-100 selection:bg-amber-500/30 font-bold tracking-tight"
                                                     value={query}
                                                     onChange={(e) => setQuery(e.target.value)}
                                                     autoFocus
@@ -302,22 +302,22 @@ export default function StrategistPage() {
                                                     <Button
                                                         variant="ghost"
                                                         size="icon"
-                                                        className="h-9 w-9 md:h-11 md:w-11 rounded-lg md:rounded-[1.25rem] hover:bg-white/5 text-slate-600 transition-all active:scale-90"
+                                                        className="h-9 w-9 lg:h-11 lg:w-11 rounded-lg lg:rounded-[1.25rem] hover:bg-white/5 text-slate-600 transition-all active:scale-90"
                                                         onClick={() => setShowInput(false)}
                                                     >
-                                                        <Minus size={18} className="md:w-[22px] md:h-[22px]" />
+                                                        <Minus size={18} className="lg:w-[22px] lg:h-[22px]" />
                                                     </Button>
                                                 )}
                                                 <Button
                                                     size="icon"
-                                                    className="h-10 w-10 md:h-12 md:w-12 rounded-lg md:rounded-[1rem] bg-gradient-to-br from-amber-400 via-orange-500 to-orange-700 hover:scale-110 transition-all duration-500 shadow-xl shadow-orange-500/20 active:scale-95 group/btn border border-white/10"
+                                                    className="h-10 w-10 lg:h-12 lg:w-12 rounded-lg lg:rounded-[1rem] bg-gradient-to-br from-amber-400 via-orange-500 to-orange-700 hover:scale-110 transition-all duration-500 shadow-xl shadow-orange-500/20 active:scale-95 group/btn border border-white/10"
                                                     onClick={handleAnalyze}
                                                     disabled={loading || !query.trim()}
                                                 >
                                                     {loading ? (
                                                         <Zap className="animate-pulse text-white" size={16} />
                                                     ) : (
-                                                        <Send size={16} className="text-white group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform duration-300 md:w-[18px] md:h-[18px]" />
+                                                        <Send size={16} className="text-white group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform duration-300 lg:w-[18px] lg:h-[18px]" />
                                                     )}
                                                 </Button>
                                             </div>
