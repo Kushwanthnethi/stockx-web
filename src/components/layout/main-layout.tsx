@@ -17,13 +17,17 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
     return (
         <div
             className={cn(
-                "flex items-start mx-auto min-h-[calc(100vh-3.5rem)]",
+                "flex items-start mx-auto",
+                isAuthPage ? "min-h-screen" : "min-h-[calc(100vh-3.5rem)]",
                 // Mobile: Full width without stacked padding. Desktop: Constrained container.
                 !isAuthPage && "w-full lg:container lg:py-8 lg:gap-8"
             )}
         >
             {!shouldHideSidebar && <AppSidebar className="sticky top-20 w-56 shrink-0" />}
-            <main className="flex-1 min-w-0 w-full px-[var(--mobile-safe-padding)] lg:px-0 pb-28 lg:pb-0">
+            <main className={cn(
+                "flex-1 min-w-0 w-full px-[var(--mobile-safe-padding)] lg:px-0",
+                isAuthPage ? "pb-0" : "pb-28 lg:pb-0"
+            )}>
                 {children}
             </main>
         </div >
