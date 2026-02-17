@@ -82,8 +82,8 @@ export function MobileSheet({ trigger, className }: { trigger?: React.ReactNode,
             {trigger ? (
                 <div onClick={() => setOpen(true)}>{trigger}</div>
             ) : (
-                <Button variant="ghost" size="icon" onClick={() => setOpen(true)}>
-                    <Menu className="h-5 w-5" />
+                <Button variant="ghost" className="h-12 w-12 p-0" onClick={() => setOpen(true)}>
+                    <Menu className="h-7 w-7" />
                     <span className="sr-only">Toggle Menu</span>
                 </Button>
             )}

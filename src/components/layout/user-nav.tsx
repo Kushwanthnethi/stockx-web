@@ -25,8 +25,8 @@ export function UserNav() {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                    <Avatar className="h-10 w-10 border border-slate-200">
+                <Button variant="ghost" className="relative h-12 w-12 md:h-10 md:w-10 rounded-full">
+                    <Avatar className="h-12 w-12 md:h-10 md:w-10 border border-slate-200">
                         <AvatarImage src={user.avatarUrl} alt={user.firstName || user.handle} />
                         <AvatarFallback>{(user.firstName?.[0] || user.handle[0]).toUpperCase()}</AvatarFallback>
                     </Avatar>

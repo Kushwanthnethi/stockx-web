@@ -22,10 +22,10 @@ function AuthButtons() {
     return (
         <>
             <Link href="/login">
-                <Button variant="ghost" size="sm">Log In</Button>
+                <Button variant="ghost" className="text-base md:text-sm px-4 md:px-3 h-10 md:h-8">Log In</Button>
             </Link>
             <Link href="/signup">
-                <Button size="sm">Sign Up</Button>
+                <Button className="text-base md:text-sm px-4 md:px-3 h-10 md:h-8">Sign Up</Button>
             </Link>
         </>
     );
@@ -44,8 +44,8 @@ export function SiteHeader() {
             <div className="flex h-20 md:h-14 items-center justify-between px-1.5 lg:container max-w-7xl mx-auto">
                 <div className="flex items-center gap-0.5 md:gap-1">
                     <MobileSheet />
-                    <Link href="/" className="font-bold text-lg md:text-xl tracking-tighter flex items-center gap-1">
-                        <TrendingUp className="text-green-600 h-5 w-5 md:h-6 md:w-6" />
+                    <Link href="/" className="font-bold text-2xl md:text-xl tracking-tighter flex items-center gap-1.5 md:gap-1">
+                        <TrendingUp className="text-green-600 h-8 w-8 md:h-6 md:w-6" />
                         StocksX
                     </Link>
                 </div>
