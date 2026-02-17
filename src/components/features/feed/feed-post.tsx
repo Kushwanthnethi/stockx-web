@@ -448,14 +448,34 @@ export function FeedPost({ post }: { post: any }) {
                         </div>
                     ) : (
                         <div className="relative">
-                            <div className={cn(!isExpanded && displayPost.content?.length > CONTENT_LIMIT && "line-clamp-6")}>
-                                {formatContent(isExpanded ? displayPost.content : displayPost.content?.slice(0, CONTENT_LIMIT))}
-                                {!isExpanded && displayPost.content?.length > CONTENT_LIMIT && "..."}
-                            </div>
+                            <motion.div
+                                animate={{
+                                    height: isExpanded ? "auto" : (displayPost.content?.length > CONTENT_LIMIT ? 140 : "auto")
+                                }}
+                                transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+                                className="relative overflow-hidden"
+                            >
+                                <div className="text-sm md:text-base text-foreground whitespace-pre-line leading-relaxed pb-1">
+                                    {formatContent(displayPost.content)}
+                                </div>
+
+                                {/* Gradient Fade for collapsed long content */}
+                                <AnimatePresence>
+                                    {!isExpanded && displayPost.content?.length > CONTENT_LIMIT && (
+                                        <motion.div
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-card via-card/80 to-transparent pointer-events-none z-10"
+                                        />
+                                    )}
+                                </AnimatePresence>
+                            </motion.div>
+
                             {displayPost.content?.length > CONTENT_LIMIT && (
                                 <button
                                     onClick={() => setIsExpanded(!isExpanded)}
-                                    className="text-blue-500 font-bold text-sm mt-1 hover:underline focus:outline-none block"
+                                    className="text-primary font-bold text-sm mt-1 hover:text-primary/80 transition-colors focus:outline-none relative z-20"
                                 >
                                     {isExpanded ? "Show less" : "Show more"}
                                 </button>

@@ -7,9 +7,10 @@ import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { SIDEBAR_ITEMS } from "./app-sidebar";
 import { TrendingUp, Megaphone, Gavel, Bell, Bookmark, User, FileText, Target, Sparkles, LogOut, Send as SendIcon, ShieldCheck } from "lucide-react";
 import { useAuth } from "@/providers/auth-provider";
+import { useTheme } from "next-themes";
+import { Moon, Sun } from "lucide-react";
 
 // New X (formerly Twitter) icon component
 const XIcon = ({ className }: { className?: string }) => (
@@ -44,6 +45,7 @@ export function MobileSheet({ trigger, className }: { trigger?: React.ReactNode,
     const pathname = usePathname();
     const { user, logout } = useAuth();
     const [quote, setQuote] = React.useState(INVESTOR_QUOTES[0]);
+    const { theme, setTheme } = useTheme();
 
     React.useEffect(() => {
         const randomQuote = INVESTOR_QUOTES[Math.floor(Math.random() * INVESTOR_QUOTES.length)];
@@ -175,13 +177,24 @@ export function MobileSheet({ trigger, className }: { trigger?: React.ReactNode,
                                     {/* Socials & Meta */}
                                     <div className="px-2 space-y-4">
                                         <div className="flex items-center justify-between">
-                                            <div className="flex gap-4">
+                                            <div className="flex gap-4 items-center">
                                                 <Link href="https://x.com" target="_blank" className="text-muted-foreground hover:text-primary transition-colors">
                                                     <XIcon className="h-4 w-4" />
                                                 </Link>
                                                 <Link href="https://t.me" target="_blank" className="text-muted-foreground hover:text-primary transition-colors">
                                                     <SendIcon className="h-4 w-4" />
                                                 </Link>
+                                                <div className="h-4 w-[1px] bg-border mx-1" />
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="h-8 w-8 text-muted-foreground hover:text-primary"
+                                                    onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                                                >
+                                                    <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                                                    <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                                                    <span className="sr-only">Toggle theme</span>
+                                                </Button>
                                             </div>
                                             <div className="flex items-center gap-1 opacity-50">
                                                 <ShieldCheck className="h-3 w-3" />
