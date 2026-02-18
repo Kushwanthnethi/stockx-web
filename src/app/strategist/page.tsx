@@ -46,6 +46,7 @@ interface AnalysisResult {
     };
     news: any[];
     strategy: string;
+    isFallback?: boolean;
 }
 
 export default function StrategistPage() {
@@ -198,6 +199,19 @@ export default function StrategistPage() {
                                 {/* Analysis Result */}
                                 {result && (
                                     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-12 duration-1000">
+                                        {/* Fallback Warning */}
+                                        {result.isFallback && (
+                                            <div className="p-4 rounded-[1.5rem] bg-amber-500/10 border border-amber-500/20 backdrop-blur-xl flex items-center gap-4">
+                                                <div className="p-2 bg-amber-500/20 rounded-full">
+                                                    <ShieldAlert className="text-amber-500 w-5 h-5 lg:w-6 lg:h-6" />
+                                                </div>
+                                                <div className="space-y-0.5">
+                                                    <p className="text-amber-500 font-black text-sm lg:text-base tracking-tight">Fundamental Data Incomplete</p>
+                                                    <p className="text-amber-500/60 font-semibold text-[10px] lg:text-xs">Yahoo Finance is currently under heavy load. AI is using an alternative data source for analysis.</p>
+                                                </div>
+                                            </div>
+                                        )}
+
                                         {/* Verdict Banner Card */}
                                         <div className="relative group">
                                             <div className="absolute -inset-1 bg-gradient-to-r from-amber-500/20 to-orange-600/20 rounded-[2rem] blur-2xl opacity-10 dark:opacity-20 group-hover:opacity-40 transition duration-1000" />
