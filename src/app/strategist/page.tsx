@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Send, Sparkles, TrendingUp, TrendingDown, Minus, ShieldAlert, Target, Zap } from "lucide-react";
+import { Send, Sparkles, TrendingUp, TrendingDown, Minus, ShieldAlert, Target, Zap, Activity, ExternalLink } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -19,6 +19,8 @@ interface AnalysisResult {
     quote: {
         regularMarketPrice: number;
         regularMarketChangePercent: number;
+        fiftyTwoWeekHigh?: number;
+        fiftyTwoWeekLow?: number;
     };
     technicals: {
         rsi: number;
@@ -26,7 +28,23 @@ interface AnalysisResult {
         macdHistogram: number;
         support: number;
         resistance: number;
+        ema20?: number;
+        ema50?: number;
+        ema200?: number;
     };
+    fundamentals: {
+        pe?: number;
+        pb?: number;
+        roe?: number;
+        roa?: number;
+        debtToEquity?: number;
+        revenueGrowth?: number;
+        earningsGrowth?: number;
+        currentRatio?: number;
+        targetHigh?: number;
+        recommendationTrend?: any;
+    };
+    news: any[];
     strategy: string;
 }
 
@@ -234,6 +252,106 @@ export default function StrategistPage() {
                                                     </div>
                                                 </CardContent>
                                             </Card>
+                                        </div>
+
+                                        {/* Intelligence Deep Dive Section */}
+                                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
+                                            {/* Fundamental Health Card */}
+                                            <Card className="bg-white/40 dark:bg-slate-900/40 border-black/[0.05] dark:border-white/5 backdrop-blur-3xl rounded-[1.5rem] lg:rounded-[2rem] overflow-hidden shadow-xl ring-1 ring-black/[0.05] dark:ring-white/5">
+                                                <CardHeader className="p-6">
+                                                    <div className="flex items-center gap-2 mb-1">
+                                                        <Activity size={18} className="text-amber-500" />
+                                                        <CardTitle className="text-lg font-bold tracking-tight">Fundamental Vitality</CardTitle>
+                                                    </div>
+                                                    <CardDescription className="text-xs font-medium">Core financial health & valuation metrics</CardDescription>
+                                                </CardHeader>
+                                                <CardContent className="px-6 pb-6 space-y-4">
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        {[
+                                                            { label: "P/E Ratio", value: result.fundamentals?.pe?.toFixed(2) || "N/A", color: "text-slate-900 dark:text-white" },
+                                                            { label: "P/B Ratio", value: result.fundamentals?.pb?.toFixed(2) || "N/A", color: "text-slate-900 dark:text-white" },
+                                                            { label: "ROE", value: result.fundamentals?.roe ? `${(result.fundamentals.roe * 100).toFixed(2)}%` : "N/A", color: "text-emerald-500" },
+                                                            { label: "Revenue Growth", value: result.fundamentals?.revenueGrowth ? `${(result.fundamentals.revenueGrowth * 100).toFixed(2)}%` : "N/A", color: "text-amber-500" },
+                                                            { label: "Debt/Equity", value: result.fundamentals?.debtToEquity?.toFixed(2) || "N/A", color: "text-slate-900 dark:text-white" },
+                                                            { label: "Current Ratio", value: result.fundamentals?.currentRatio?.toFixed(2) || "N/A", color: "text-slate-900 dark:text-white" }
+                                                        ].map((stat, i) => (
+                                                            <div key={i} className="p-3 rounded-xl bg-black/[0.03] dark:bg-white/[0.02] border border-black/[0.03] dark:border-white/[0.03]">
+                                                                <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">{stat.label}</p>
+                                                                <p className={cn("text-sm lg:text-base font-black tracking-tight", stat.color)}>{stat.value}</p>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+
+                                            {/* Strategic News & Sentiment */}
+                                            <div className="space-y-6">
+                                                {/* Brokerage Sentiment Card */}
+                                                {result.fundamentals?.recommendationTrend && (
+                                                    <Card className="bg-gradient-to-br from-amber-500/5 to-orange-600/5 border-amber-500/10 backdrop-blur-3xl rounded-[1.5rem] p-6 shadow-lg ring-1 ring-amber-500/10">
+                                                        <div className="flex items-start justify-between">
+                                                            <div>
+                                                                <div className="flex items-center gap-2 mb-1">
+                                                                    <ShieldAlert size={18} className="text-amber-500" />
+                                                                    <h3 className="font-bold text-slate-800 dark:text-white">Institutional Pulse</h3>
+                                                                </div>
+                                                                <p className="text-xs text-slate-500 font-medium">Global brokerage consensus</p>
+                                                            </div>
+                                                            <Badge className="bg-amber-500/20 text-amber-600 dark:text-amber-400 border-amber-500/20">
+                                                                {result.fundamentals.recommendationTrend.strongBuy + result.fundamentals.recommendationTrend.buy > 10 ? "HEAVILY TRADED" : "SELECTIVE"}
+                                                            </Badge>
+                                                        </div>
+                                                        <div className="mt-4 grid grid-cols-3 gap-2">
+                                                            <div className="text-center p-2 rounded-lg bg-emerald-500/10">
+                                                                <p className="text-[9px] uppercase font-black text-emerald-600 mb-0.5">Buy</p>
+                                                                <p className="font-black text-emerald-600">{result.fundamentals.recommendationTrend.buy + result.fundamentals.recommendationTrend.strongBuy}</p>
+                                                            </div>
+                                                            <div className="text-center p-2 rounded-lg bg-slate-500/10">
+                                                                <p className="text-[9px] uppercase font-black text-slate-500 mb-0.5">Hold</p>
+                                                                <p className="font-black text-slate-600 dark:text-slate-400">{result.fundamentals.recommendationTrend.hold}</p>
+                                                            </div>
+                                                            <div className="text-center p-2 rounded-lg bg-rose-500/10">
+                                                                <p className="text-[9px] uppercase font-black text-rose-600 mb-0.5">Sell</p>
+                                                                <p className="font-black text-rose-600">{result.fundamentals.recommendationTrend.sell + result.fundamentals.recommendationTrend.strongSell}</p>
+                                                            </div>
+                                                        </div>
+                                                    </Card>
+                                                )}
+
+                                                {/* News Card */}
+                                                <Card className="bg-white/40 dark:bg-slate-900/40 border-black/[0.05] dark:border-white/5 backdrop-blur-3xl rounded-[1.5rem] overflow-hidden shadow-xl ring-1 ring-black/[0.05] dark:ring-white/5 flex-1">
+                                                    <CardHeader className="p-6 pb-2">
+                                                        <div className="flex items-center gap-2 mb-1">
+                                                            <Zap size={18} className="text-amber-500" />
+                                                            <CardTitle className="text-lg font-bold tracking-tight">Market Catalysts</CardTitle>
+                                                        </div>
+                                                        <CardDescription className="text-xs font-medium">Recent headlines influencing price action</CardDescription>
+                                                    </CardHeader>
+                                                    <CardContent className="p-4 space-y-3">
+                                                        {result.news && result.news.length > 0 ? (
+                                                            result.news.slice(0, 3).map((item: any, i: number) => (
+                                                                <a
+                                                                    key={i}
+                                                                    href={item.link}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="group block p-3 rounded-xl hover:bg-black/[0.03] dark:hover:bg-white/[0.03] transition-all duration-300 border border-transparent hover:border-black/[0.05] dark:hover:border-white/[0.05] cursor-pointer"
+                                                                >
+                                                                    <div className="flex items-center justify-between mb-1">
+                                                                        <p className="text-[10px] font-mono text-amber-500 opacity-60">CATALYST {i + 1}</p>
+                                                                        <ExternalLink size={10} className="text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                                                    </div>
+                                                                    <p className="text-sm font-bold text-slate-800 dark:text-slate-200 line-clamp-2 leading-tight group-hover:text-amber-500 transition-colors">
+                                                                        {item.title}
+                                                                    </p>
+                                                                </a>
+                                                            ))
+                                                        ) : (
+                                                            <p className="text-xs text-slate-500 font-medium p-4 text-center italic">No high-impact catalysts found in last 24h.</p>
+                                                        )}
+                                                    </CardContent>
+                                                </Card>
+                                            </div>
                                         </div>
 
                                         {/* Detailed Strategy Markdown */}
