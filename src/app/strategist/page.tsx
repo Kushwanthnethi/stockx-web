@@ -28,6 +28,7 @@ interface AnalysisResult {
         macdHistogram: number;
         support: number;
         resistance: number;
+        volumeShock?: string;
         ema20?: number;
         ema50?: number;
         ema200?: number;
@@ -43,6 +44,10 @@ interface AnalysisResult {
         currentRatio?: number;
         targetHigh?: number;
         recommendationTrend?: any;
+        sector?: string;
+        industry?: string;
+        insidersPercent?: number;
+        institutionsPercent?: number;
     };
     news: any[];
     strategy: string;
@@ -136,11 +141,19 @@ export default function StrategistPage() {
                         <div className="max-w-7xl mx-auto px-0 lg:px-6 pb-96 lg:pb-56 pt-6 lg:pt-8">
                             {/* Integrated Header Area */}
                             <div className="flex flex-col gap-2 mb-8 animate-in fade-in slide-in-from-top-4 duration-700">
-                                <div className="flex items-center gap-2">
-                                    <Sparkles size={20} className="text-amber-500 lg:w-6 lg:h-6" />
-                                    <h1 className="text-2xl lg:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
-                                        Market Strategist
-                                    </h1>
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <Sparkles size={20} className="text-amber-500 lg:w-6 lg:h-6" />
+                                        <h1 className="text-2xl lg:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+                                            Market Strategist
+                                        </h1>
+                                    </div>
+                                    {result && result.fundamentals?.sector && (
+                                        <div className="flex flex-col items-end opacity-60">
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">{result.fundamentals.sector}</p>
+                                            <p className="text-[8px] font-mono text-slate-400">{result.fundamentals.industry}</p>
+                                        </div>
+                                    )}
                                 </div>
                                 <p className="text-slate-500 dark:text-slate-400 text-xs lg:text-sm font-semibold ml-0.5 tracking-tight max-w-xl leading-relaxed">
                                     AI-Driven Strategic Alpha. Fusing technical indicators & fundamental charts for institutional-grade portfolio guidance.
@@ -245,7 +258,15 @@ export default function StrategistPage() {
                                                             </div>
                                                         </div>
                                                         <div className="flex lg:flex-col gap-2 lg:gap-3 items-center lg:items-end w-full lg:w-auto">
-                                                            <TrendBadge trend={result.technicals.trend} />
+                                                            <div className="flex gap-2">
+                                                                {result.technicals.volumeShock === 'POSITIVE' && (
+                                                                    <Badge className="bg-orange-500/20 text-orange-600 dark:text-orange-400 border-orange-500/20 gap-1">
+                                                                        <Zap size={12} fill="currentColor" />
+                                                                        Vol Shock
+                                                                    </Badge>
+                                                                )}
+                                                                <TrendBadge trend={result.technicals.trend} />
+                                                            </div>
                                                             <RsiBadge value={result.technicals.rsi} />
                                                         </div>
                                                     </div>
@@ -271,32 +292,63 @@ export default function StrategistPage() {
                                         {/* Intelligence Deep Dive Section */}
                                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
                                             {/* Fundamental Health Card */}
-                                            <Card className="bg-white/40 dark:bg-slate-900/40 border-black/[0.05] dark:border-white/5 backdrop-blur-3xl rounded-[1.5rem] lg:rounded-[2rem] overflow-hidden shadow-xl ring-1 ring-black/[0.05] dark:ring-white/5">
-                                                <CardHeader className="p-6">
-                                                    <div className="flex items-center gap-2 mb-1">
-                                                        <Activity size={18} className="text-amber-500" />
-                                                        <CardTitle className="text-lg font-bold tracking-tight">Fundamental Vitality</CardTitle>
-                                                    </div>
-                                                    <CardDescription className="text-xs font-medium">Core financial health & valuation metrics</CardDescription>
-                                                </CardHeader>
-                                                <CardContent className="px-6 pb-6 space-y-4">
-                                                    <div className="grid grid-cols-2 gap-4">
-                                                        {[
-                                                            { label: "P/E Ratio", value: result.fundamentals?.pe?.toFixed(2) || "N/A", color: "text-slate-900 dark:text-white" },
-                                                            { label: "P/B Ratio", value: result.fundamentals?.pb?.toFixed(2) || "N/A", color: "text-slate-900 dark:text-white" },
-                                                            { label: "ROE", value: result.fundamentals?.roe ? `${(result.fundamentals.roe * 100).toFixed(2)}%` : "N/A", color: "text-emerald-500" },
-                                                            { label: "Revenue Growth", value: result.fundamentals?.revenueGrowth ? `${(result.fundamentals.revenueGrowth * 100).toFixed(2)}%` : "N/A", color: "text-amber-500" },
-                                                            { label: "Debt/Equity", value: result.fundamentals?.debtToEquity?.toFixed(2) || "N/A", color: "text-slate-900 dark:text-white" },
-                                                            { label: "Current Ratio", value: result.fundamentals?.currentRatio?.toFixed(2) || "N/A", color: "text-slate-900 dark:text-white" }
-                                                        ].map((stat, i) => (
-                                                            <div key={i} className="p-3 rounded-xl bg-black/[0.03] dark:bg-white/[0.02] border border-black/[0.03] dark:border-white/[0.03]">
-                                                                <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">{stat.label}</p>
-                                                                <p className={cn("text-sm lg:text-base font-black tracking-tight", stat.color)}>{stat.value}</p>
+                                            <div className="space-y-6">
+                                                <Card className="bg-white/40 dark:bg-slate-900/40 border-black/[0.05] dark:border-white/5 backdrop-blur-3xl rounded-[1.5rem] lg:rounded-[2rem] overflow-hidden shadow-xl ring-1 ring-black/[0.05] dark:ring-white/5 font-semibold">
+                                                    <CardHeader className="p-6">
+                                                        <div className="flex items-center gap-2 mb-1">
+                                                            <Activity size={18} className="text-amber-500" />
+                                                            <CardTitle className="text-lg font-bold tracking-tight">Fundamental Vitality</CardTitle>
+                                                        </div>
+                                                        <CardDescription className="text-xs font-medium">Core financial health & valuation metrics</CardDescription>
+                                                    </CardHeader>
+                                                    <CardContent className="px-6 pb-6 space-y-4">
+                                                        <div className="grid grid-cols-2 gap-4">
+                                                            {[
+                                                                { label: "P/E Ratio", value: result.fundamentals?.pe?.toFixed(2) || "N/A", color: "text-slate-900 dark:text-white" },
+                                                                { label: "P/B Ratio", value: result.fundamentals?.pb?.toFixed(2) || "N/A", color: "text-slate-900 dark:text-white" },
+                                                                { label: "ROE", value: result.fundamentals?.roe ? `${(result.fundamentals.roe * 100).toFixed(2)}%` : "N/A", color: "text-emerald-500" },
+                                                                { label: "Revenue Growth", value: result.fundamentals?.revenueGrowth ? `${(result.fundamentals.revenueGrowth * 100).toFixed(2)}%` : "N/A", color: "text-amber-500" },
+                                                                { label: "Debt/Equity", value: result.fundamentals?.debtToEquity?.toFixed(2) || "N/A", color: "text-slate-900 dark:text-white" },
+                                                                { label: "Current Ratio", value: result.fundamentals?.currentRatio?.toFixed(2) || "N/A", color: "text-slate-900 dark:text-white" }
+                                                            ].map((stat, i) => (
+                                                                <div key={i} className="p-3 rounded-xl bg-black/[0.03] dark:bg-white/[0.02] border border-black/[0.03] dark:border-white/[0.03]">
+                                                                    <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold mb-1">{stat.label}</p>
+                                                                    <p className={cn("text-sm lg:text-base font-black tracking-tight", stat.color)}>{stat.value}</p>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </CardContent>
+                                                </Card>
+
+                                                {(result.fundamentals?.insidersPercent || result.fundamentals?.institutionsPercent) && (
+                                                    <Card className="bg-white/20 dark:bg-slate-950/40 border-black/5 dark:border-white/5 backdrop-blur-2xl rounded-[1.5rem] p-6 shadow-xl">
+                                                        <div className="flex items-center gap-2 mb-4">
+                                                            <ShieldAlert size={18} className="text-indigo-500" />
+                                                            <h3 className="font-bold text-sm tracking-tight">Institutional Footprint</h3>
+                                                        </div>
+                                                        <div className="space-y-4">
+                                                            <div className="space-y-1.5">
+                                                                <div className="flex justify-between text-[10px] font-black uppercase text-slate-500">
+                                                                    <span>Institutions</span>
+                                                                    <span>{(result.fundamentals.institutionsPercent! * 100).toFixed(1)}%</span>
+                                                                </div>
+                                                                <div className="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden">
+                                                                    <div className="h-full bg-indigo-500" style={{ width: `${(result.fundamentals.institutionsPercent! * 100)}%` }} />
+                                                                </div>
                                                             </div>
-                                                        ))}
-                                                    </div>
-                                                </CardContent>
-                                            </Card>
+                                                            <div className="space-y-1.5">
+                                                                <div className="flex justify-between text-[10px] font-black uppercase text-slate-500">
+                                                                    <span>Insiders / Promoters</span>
+                                                                    <span>{(result.fundamentals.insidersPercent! * 100).toFixed(1)}%</span>
+                                                                </div>
+                                                                <div className="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden">
+                                                                    <div className="h-full bg-emerald-500" style={{ width: `${(result.fundamentals.insidersPercent! * 100)}%` }} />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </Card>
+                                                )}
+                                            </div>
 
                                             {/* Strategic News & Sentiment */}
                                             <div className="space-y-6">
