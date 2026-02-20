@@ -83,8 +83,9 @@ export function TrendingWidget() {
                                 <span className="text-xs text-muted-foreground truncate max-w-[120px]">{stock.name}</span>
                             </div>
                             <div className="text-right">
-                                <div className="text-sm font-medium tabular-nums transition-colors duration-300">₹{stock.price.toFixed(2)}</div>
+                                <div className="text-sm font-medium tabular-nums transition-colors duration-300">₹{(stock.price || 0).toFixed(2)}</div>
                                 <div className={`text-xs font-semibold ${stock.change >= 0 ? 'text-green-500' : 'text-red-500'} flex items-center justify-end gap-1 tabular-nums`}>
+
                                     {stock.change >= 0 ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
                                     {stock.change > 0 ? '+' : ''}{stock.change}%
                                 </div>

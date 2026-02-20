@@ -253,8 +253,9 @@ export default function StrategistPage() {
                                                                         ? "text-emerald-500 dark:text-emerald-400 border-emerald-500/20 dark:border-emerald-500/10 bg-emerald-500/5"
                                                                         : "text-rose-500 dark:text-rose-400 border-rose-500/20 dark:border-rose-500/10 bg-rose-500/5"
                                                                 )}>
-                                                                    {result.quote.regularMarketChangePercent >= 0 ? "+" : ""}{result.quote.regularMarketChangePercent.toFixed(2)}%
+                                                                    {(result.quote.regularMarketChangePercent || 0) >= 0 ? "+" : ""}{(result.quote.regularMarketChangePercent || 0).toFixed(2)}%
                                                                 </span>
+
                                                             </div>
                                                         </div>
                                                         <div className="flex lg:flex-col gap-2 lg:gap-3 items-center lg:items-end w-full lg:w-auto">

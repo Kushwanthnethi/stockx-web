@@ -23,6 +23,7 @@ export function IndicesTicker() {
                 const res = await fetch(`${API_BASE_URL}/stocks/indices`);
                 if (res.ok) {
                     const data = await res.json();
+                    console.log("Indices Data:", data);
                     setIndices(data);
                 }
             } catch (error) {
@@ -117,16 +118,18 @@ export function IndicesTicker() {
                             </div>
                             <div className="text-right">
                                 <div className="text-xl font-bold tabular-nums">
-                                    {index.price.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 })}
+                                    {(index.price || 0).toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 })}
                                 </div>
+
                                 <div className={cn(
                                     "text-sm font-semibold flex items-center justify-end gap-1 tabular-nums",
                                     index.change >= 0 ? "text-green-500" : "text-red-500"
                                 )}>
                                     {index.change >= 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
-                                    {Math.abs(index.change).toFixed(2)} ({index.changePercent.toFixed(2)}%)
+                                    {Math.abs(index.change || 0).toFixed(2)} ({(index.changePercent || 0).toFixed(2)}%)
                                 </div>
                             </div>
+
                         </CardContent>
                     </Card>
                 ))}
@@ -142,16 +145,18 @@ export function IndicesTicker() {
                         </div>
                         <div className="text-right">
                             <div className="text-base font-bold tabular-nums tracking-tighter leading-none">
-                                {index.price.toLocaleString(undefined, { maximumFractionDigits: 0, minimumFractionDigits: 0 })}
+                                {(index.price || 0).toLocaleString(undefined, { maximumFractionDigits: 0, minimumFractionDigits: 0 })}
                             </div>
+
                             <div className={cn(
                                 "text-[9px] font-bold flex items-center justify-end gap-0.5 tabular-nums mt-0.5 leading-none",
                                 index.change >= 0 ? "text-green-600" : "text-red-600"
                             )}>
                                 {index.change >= 0 ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
-                                {index.changePercent.toFixed(2)}%
+                                {(index.changePercent || 0).toFixed(2)}%
                             </div>
                         </div>
+
                     </div>
                 ))}
             </div>

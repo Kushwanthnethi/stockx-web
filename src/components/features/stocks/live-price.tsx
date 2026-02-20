@@ -12,7 +12,12 @@ interface LivePriceProps {
 }
 
 export function LivePrice({ price, change, changePercent, flash }: LivePriceProps) {
-    const isPositive = change >= 0;
+    const isPositive = (change || 0) >= 0;
+
+    if (price === undefined || price === null) {
+        return <div className="font-mono text-right text-muted-foreground">--</div>;
+    }
+
 
     return (
         <div className="flex flex-col items-end">
