@@ -26,6 +26,8 @@ import { FloatingPostButton } from "@/components/features/feed/floating-post-but
 import { MainLayout } from "@/components/layout/main-layout";
 import { JsonLd } from "@/components/seo/json-ld";
 
+import { SocketProvider } from "@/providers/socket-provider";
+
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -45,15 +47,17 @@ export default function RootLayout({
                     disableTransitionOnChange
                 >
                     <AuthProvider>
-                        <GuestAuthModal />
-                        <SiteHeader />
+                        <SocketProvider>
+                            <GuestAuthModal />
+                            <SiteHeader />
 
-                        <MainLayout>
-                            {children}
-                        </MainLayout>
+                            <MainLayout>
+                                {children}
+                            </MainLayout>
 
-                        <BottomNav />
-                        <Toaster theme="system" richColors closeButton position="top-center" />
+                            <BottomNav />
+                            <Toaster theme="system" richColors closeButton position="top-center" />
+                        </SocketProvider>
                     </AuthProvider>
                 </ThemeProvider>
             </body>

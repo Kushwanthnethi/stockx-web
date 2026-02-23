@@ -10,6 +10,7 @@ interface LiveStockTickerProps {
 
 export function LiveStockTicker({ initialPrice, initialChangePercent, symbol }: LiveStockTickerProps) {
     const { price, change, changePercent, flash } = useLivePrice({
+        symbol,
         initialPrice,
         initialChangePercent
     });

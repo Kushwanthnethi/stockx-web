@@ -30,8 +30,9 @@ export function LivePrice({ price, change, changePercent, flash }: LivePriceProp
 
             {/* Change Indicator */}
             <div className={`text-xs font-bold flex items-center justify-end gap-1 ${isPositive ? 'text-green-600' : 'text-red-600'}`}>
-                <span>{isPositive ? '+' : ''}{change.toFixed(2)}</span>
-                <span>({isPositive ? '+' : ''}{changePercent.toFixed(2)}%)</span>
+                {isPositive ? <ArrowUp size={10} /> : <ArrowDown size={10} />}
+                <span>{Math.abs(change).toFixed(2)}</span>
+                <span>({Math.abs(changePercent).toFixed(2)}%)</span>
             </div>
         </div>
     );

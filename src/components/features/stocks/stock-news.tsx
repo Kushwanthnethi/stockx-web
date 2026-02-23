@@ -46,8 +46,8 @@ export function StockNews({ symbol }: StockNewsProps) {
 
     return (
         <div className="space-y-4">
-            {news.map((item) => (
-                <Card key={item.uuid} className="overflow-hidden hover:bg-accent/5 transition-colors group">
+            {news.map((item, index) => (
+                <Card key={item.uuid || item.link || index} className="overflow-hidden hover:bg-accent/5 transition-colors group">
                     <CardContent className="p-4 sm:p-6 flex gap-4">
                         {/* Thumbnail if available */}
                         {item.thumbnail?.resolutions?.[0]?.url && (
@@ -71,6 +71,21 @@ export function StockNews({ symbol }: StockNewsProps) {
                                 <h3 className="text-base sm:text-lg font-semibold leading-tight mb-2 line-clamp-2">
                                     {item.title}
                                 </h3>
+                            </Link>
+
+                            {item.contentSnippet && (
+                                <p className="text-sm text-muted-foreground line-clamp-3 mb-3">
+                                    {item.contentSnippet}
+                                </p>
+                            )}
+
+                            <Link
+                                href={item.link}
+                                target="_blank"
+                                className="text-xs font-bold text-primary hover:text-primary/80 flex items-center gap-1 transition-colors group/link"
+                            >
+                                Read More
+                                <ExternalLink className="w-3 h-3 transition-transform group-hover/link:translate-x-0.5" />
                             </Link>
 
                             <div className="flex items-center gap-2 mt-3">

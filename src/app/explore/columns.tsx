@@ -5,6 +5,27 @@ import { ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { LiveStockTicker } from "@/components/features/stocks/live-stock-ticker";
 import { cn } from "@/lib/utils";
+import { useLivePrice } from "@/hooks/use-live-price";
+
+function LiveChangePercentTicker({ symbol, initialPrice, initialChangePercent }: { symbol: string, initialPrice: number, initialChangePercent: number }) {
+    const { changePercent, flash } = useLivePrice({
+        symbol,
+        initialPrice,
+        initialChangePercent
+    });
+
+    const isPositive = changePercent >= 0;
+    return (
+        <div className={cn(
+            "text-right font-semibold flex items-center justify-end gap-1 px-1 rounded transition-colors duration-300",
+            flash === "up" ? "bg-green-500/20 text-emerald-700 dark:text-emerald-400" : flash === "down" ? "bg-red-500/20 text-rose-700 dark:text-rose-400" :
+                isPositive ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"
+        )}>
+            {isPositive ? <ArrowUp size={12} /> : <ArrowDown size={12} />}
+            {Math.abs(changePercent).toFixed(2)}%
+        </div>
+    );
+}
 
 // This type maps to the properties returned by the API
 export type MarketStock = {
@@ -103,17 +124,9 @@ export const columns: ColumnDef<MarketStock>[] = [
             </div>
         ),
         cell: ({ row }) => {
-            const val = row.original.changePercent;
-            const isPositive = val >= 0;
-            return (
-                <div className={cn(
-                    "text-right font-semibold flex items-center justify-end gap-1",
-                    isPositive ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"
-                )}>
-                    {isPositive ? <ArrowUp size={12} /> : <ArrowDown size={12} />}
-                    {Math.abs(val).toFixed(2)}%
-                </div>
-            )
+            const price = parseFloat(row.getValue("currentPrice")) || 0;
+            const chgPercent = row.original.changePercent || 0;
+            return <LiveChangePercentTicker symbol={row.original.symbol} initialPrice={price} initialChangePercent={chgPercent} />;
         }
     },
     {

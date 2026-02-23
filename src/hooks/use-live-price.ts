@@ -1,52 +1,78 @@
-import { useState, useEffect, useRef } from 'react';
-import { isMarketOpen } from '@/lib/market-time';
+import { useState, useEffect } from 'react';
+import { useSocket } from '@/providers/socket-provider';
 
 interface UseLivePriceOptions {
+    symbol: string;
     initialPrice: number;
     initialChangePercent: number;
 }
 
-export function useLivePrice({ initialPrice, initialChangePercent }: UseLivePriceOptions) {
+interface PriceUpdate {
+    symbol: string;
+    price: number;
+    change: number;
+    changePercent: number;
+}
+
+export function useLivePrice({ symbol, initialPrice, initialChangePercent }: UseLivePriceOptions) {
     const [price, setPrice] = useState(initialPrice);
+
+    // Calculate initial absolute change from price and percentage
+    // Formula: change = (price * (percent/100)) / (1 + percent/100)
+    const initialDiff = initialPrice > 0
+        ? (initialPrice * (initialChangePercent / 100)) / (1 + (initialChangePercent / 100))
+        : 0;
+
+    const [diff, setDiff] = useState(initialDiff);
+    const [diffPercent, setDiffPercent] = useState(initialChangePercent);
     const [flash, setFlash] = useState<"up" | "down" | null>(null);
-    const basePriceRef = useRef(initialPrice / (1 + initialChangePercent / 100));
 
+    // Sync state when async data loads and initialPrice becomes available
     useEffect(() => {
-        // Reset if initialPrice changes significantly (e.g., page reload)
-        if (Math.abs(initialPrice - price) > price * 0.05) {
+        if (initialPrice > 0 && price === 0) {
             setPrice(initialPrice);
-            // Recalculate base only on hard reset
-            basePriceRef.current = initialPrice / (1 + initialChangePercent / 100);
+            setDiff(
+                (initialPrice * (initialChangePercent / 100)) / (1 + (initialChangePercent / 100))
+            );
+            setDiffPercent(initialChangePercent);
         }
-    }, [initialPrice]);
+    }, [initialPrice, initialChangePercent, price]);
+
+    const socket = useSocket();
 
     useEffect(() => {
-        // Only run simulation if market is open
-        if (!isMarketOpen()) return;
+        if (!socket) return;
 
-        const interval = setInterval(() => {
-            setPrice((prev) => {
-                const volatility = 0.0005; // 0.05%
-                const change = prev * (Math.random() - 0.5) * volatility;
-                const newPrice = prev + change;
+        console.log(`Subscribing to live updates for ${symbol}`);
+        socket.emit('subscribeStock', symbol);
 
-                setFlash(change > 0 ? "up" : "down");
-                setTimeout(() => setFlash(null), 300);
+        const handlePriceUpdate = (data: PriceUpdate) => {
+            if (data.symbol === symbol) {
+                setPrice((prev) => {
+                    if (data.price !== prev) {
+                        setFlash(data.price > prev ? "up" : "down");
+                        setTimeout(() => setFlash(null), 300);
+                    }
+                    return data.price;
+                });
+                setDiff(data.change || 0);
+                setDiffPercent(data.changePercent || 0);
+            }
+        };
 
-                return newPrice;
-            });
-        }, 3000); // Slower update for smoother feel
+        socket.on('priceUpdate', handlePriceUpdate);
 
-        return () => clearInterval(interval);
-    }, []);
-
-    const currentChange = price - basePriceRef.current;
-    const currentChangePercent = (currentChange / basePriceRef.current) * 100;
+        return () => {
+            console.log(`Unsubscribing from ${symbol}`);
+            socket.emit('unsubscribeStock', symbol);
+            socket.off('priceUpdate', handlePriceUpdate);
+        };
+    }, [socket, symbol]);
 
     return {
         price,
-        change: currentChange,
-        changePercent: currentChangePercent,
+        change: diff,
+        changePercent: diffPercent,
         flash
     };
 }

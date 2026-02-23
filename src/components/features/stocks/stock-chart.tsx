@@ -7,17 +7,29 @@ import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { API_BASE_URL } from '@/lib/config';
+import { useSocket } from '@/providers/socket-provider';
 
 interface StockChartProps {
     symbol: string;
 }
 
-type Range = '1d' | '1mo' | '3mo' | '1y';
+type Range = '1d' | '1w' | '1mo' | '3mo' | '1y';
+
+interface ChartData {
+    date: string;
+    price: number;
+}
+
+interface PriceUpdate {
+    symbol: string;
+    price: number;
+}
 
 export function StockChart({ symbol }: StockChartProps) {
-    const [data, setData] = useState<any[]>([]);
+    const [data, setData] = useState<ChartData[]>([]);
     const [loading, setLoading] = useState(true);
     const [range, setRange] = useState<Range>('1mo');
+    const socket = useSocket();
 
     useEffect(() => {
         const fetchHistory = async () => {
@@ -38,9 +50,39 @@ export function StockChart({ symbol }: StockChartProps) {
         fetchHistory();
     }, [symbol, range]);
 
+    useEffect(() => {
+        if (!socket || (range !== '1d' && range !== '1w')) return;
+
+        socket.emit('subscribeStock', symbol);
+
+        const handlePriceUpdate = (update: PriceUpdate) => {
+            if (update.symbol === symbol) {
+                setData((prev) => {
+                    const lastPoint = prev[prev.length - 1];
+                    const now = new Date().toISOString();
+
+                    // If the last point is very recent (less than 1 minute old), replace it
+                    // Otherwise append a new point
+                    if (lastPoint && new Date(now).getTime() - new Date(lastPoint.date).getTime() < 60000) {
+                        return [...prev.slice(0, -1), { ...lastPoint, price: update.price }];
+                    }
+                    return [...prev, { date: now, price: update.price }];
+                });
+            }
+        };
+
+        socket.on('priceUpdate', handlePriceUpdate);
+
+        return () => {
+            // Only unsubscribe if we aren't using this symbol elsewhere (hooks do their own)
+            socket.off('priceUpdate', handlePriceUpdate);
+        };
+    }, [socket, symbol, range]);
+
     const formatXAxis = (tickItem: string) => {
         const date = new Date(tickItem);
         if (range === '1d') return format(date, 'HH:mm');
+        if (range === '1w') return format(date, 'EEE HH:mm');
         if (range === '1mo') return format(date, 'dd MMM');
         if (range === '3mo') return format(date, 'dd MMM');
         return format(date, 'MMM yy');
@@ -51,7 +93,7 @@ export function StockChart({ symbol }: StockChartProps) {
             <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold">Price Performance</h3>
                 <div className="flex bg-muted rounded-lg p-1">
-                    {['1d', '1mo', '3mo', '1y'].map((r) => (
+                    {['1d', '1w', '1mo', '3mo', '1y'].map((r) => (
                         <button
                             key={r}
                             onClick={() => setRange(r as Range)}
@@ -108,7 +150,7 @@ export function StockChart({ symbol }: StockChartProps) {
                                 itemStyle={{ color: 'hsl(var(--foreground))' }}
                                 labelStyle={{ color: 'hsl(var(--muted-foreground))' }}
                                 labelFormatter={(label) => format(new Date(label), 'PPP p')}
-                                formatter={(value: any) => [`₹${(Number(value) || 0).toFixed(2)}`, 'Price']}
+                                formatter={(value: string | number | undefined) => [`₹${(Number(value) || 0).toFixed(2)}`, 'Price']}
                             />
                             <Area
                                 type="monotone"

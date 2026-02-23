@@ -68,6 +68,7 @@ export default function StockDetailsPage() {
     // Use the hook to get simulated live updates
     // We default to data values if available, otherwise safe defaults to prevent crash
     const { price, change, changePercent, flash } = useLivePrice({
+        symbol: data ? data.symbol : symbol,
         initialPrice: data?.currentPrice || 0,
         initialChangePercent: data?.changePercent || 0
     });
