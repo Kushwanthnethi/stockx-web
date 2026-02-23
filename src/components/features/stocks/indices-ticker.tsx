@@ -117,14 +117,8 @@ export function IndicesTicker() {
 
     // Separate primary and secondary indices
     // We assume NIFTY 50 and SENSEX are primary
-    const primaryIndices = indices.filter(idx => {
-        const sym = idx.symbol.toUpperCase();
-        return sym === "NIFTY 50" || sym === "SENSEX";
-    });
-    const secondaryIndices = indices.filter(idx => {
-        const sym = idx.symbol.toUpperCase();
-        return sym !== "NIFTY 50" && sym !== "SENSEX";
-    });
+    const primaryIndices = indices.filter(idx => idx.symbol === "NIFTY 50" || idx.symbol === "SENSEX");
+    const secondaryIndices = indices.filter(idx => idx.symbol !== "NIFTY 50" && idx.symbol !== "SENSEX");
 
     return (
         <div className="mb-6">
