@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/providers/auth-provider';
 import Link from 'next/link';
-import { LogOut, User, LayoutDashboard, Settings } from 'lucide-react';
+import { LogOut, User, LayoutDashboard, Settings, Briefcase } from 'lucide-react';
 import { DeveloperBadge } from '@/components/shared/developer-badge';
 import { VerifiedBadge } from '@/components/shared/verified-badge';
 
@@ -54,6 +54,12 @@ export function UserNav() {
                         <Link href={`/u/${user.handle}`} className="cursor-pointer">
                             <User className="mr-2 h-4 w-4" />
                             <span>Profile</span>
+                        </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                        <Link href="/portfolio" className="cursor-pointer">
+                            <Briefcase className="mr-2 h-4 w-4" />
+                            <span>My Portfolio</span>
                         </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem>

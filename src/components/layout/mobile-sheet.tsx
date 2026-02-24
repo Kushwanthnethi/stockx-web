@@ -7,7 +7,7 @@ import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { TrendingUp, Megaphone, Gavel, Bell, Bookmark, User, FileText, Target, Sparkles, LogOut, Send as SendIcon, ShieldCheck } from "lucide-react";
+import { TrendingUp, Megaphone, Gavel, Bell, Bookmark, User, FileText, Target, Sparkles, LogOut, Send as SendIcon, ShieldCheck, Briefcase } from "lucide-react";
 import { useAuth } from "@/providers/auth-provider";
 import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
@@ -32,6 +32,7 @@ const INVESTOR_QUOTES = [
 // Order: StockX Screener, Markets, News, Result Corner, Notifications, Bookmarks (Saved), About
 const MOBILE_DRAWER_ITEMS = [
     { label: "Result Corner", href: "/results", icon: Megaphone },
+    { label: "Verdict", href: "/verdict", icon: Gavel },
     { label: "StocksX Screener", href: "/explore", icon: TrendingUp },
     { label: "Markets", href: "/trending", icon: TrendingUp },
     { label: "News", href: "/news", icon: FileText },
