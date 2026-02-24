@@ -163,6 +163,26 @@ export default function StrategistPage() {
         return m ? m[1].trim() : "Medium-Term";
     };
 
+    const extractScenarioModeling = (strategy: string) => {
+        const rows: { scenario: string; probability: string; cagr: string; target: string }[] = [];
+        const re = /\|\s*(Bull Case|Base Case|Bear Case)\s*\|\s*([^|]+)\|\s*([^|]+)\|\s*([^|]+)\|/gi;
+        let m;
+        while ((m = re.exec(strategy)) !== null) {
+            rows.push({ scenario: m[1].trim(), probability: m[2].trim(), cagr: m[3].trim(), target: m[4].trim() });
+        }
+        return rows;
+    };
+
+    const extractRiskMatrix = (strategy: string) => {
+        const rows: { category: string; risk: string; severity: string }[] = [];
+        const re = /\|\s*(Business Risk|Sector Risk|Financial Risk|Regulatory[^|]*)\s*\|\s*([^|]+)\|\s*(Low|Moderate|High)\s*\|/gi;
+        let m;
+        while ((m = re.exec(strategy)) !== null) {
+            rows.push({ category: m[1].trim(), risk: m[2].trim(), severity: m[3].trim() });
+        }
+        return rows;
+    };
+
     return (
         <div className="relative flex flex-col h-[calc(100svh-3.5rem)] md:h-[calc(100vh-5rem)] w-full overflow-hidden bg-white dark:bg-background text-slate-900 dark:text-slate-50 transition-colors duration-500">
             <PremiumGuard>
@@ -438,6 +458,165 @@ export default function StrategistPage() {
                                                     </CardContent>
                                                 </Card>
                                             )}
+
+                                            {/* ── Technical Snapshot Card ── */}
+                                            <Card className="bg-white/40 dark:bg-slate-900/40 border-black/[0.05] dark:border-white/5 backdrop-blur-3xl rounded-[1.5rem] overflow-hidden shadow-lg ring-1 ring-black/[0.05] dark:ring-white/5">
+                                                <CardContent className="p-4 lg:p-5">
+                                                    <p className="text-[9px] uppercase tracking-[0.25em] font-black text-slate-400 mb-4">Technical Snapshot</p>
+                                                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                                                        {/* RSI Arc Gauge */}
+                                                        <div className="flex flex-col items-center gap-1.5">
+                                                            <svg viewBox="0 0 80 48" className="w-20">
+                                                                <path d="M 10 44 A 30 30 0 0 1 70 44" fill="none" strokeWidth="7" stroke="currentColor" strokeLinecap="round" className="text-slate-100 dark:text-slate-800" />
+                                                                <path d="M 10 44 A 30 30 0 0 1 70 44" fill="none" strokeWidth="7" strokeLinecap="round"
+                                                                    stroke={d.technicals.rsi < 30 ? '#10b981' : d.technicals.rsi > 70 ? '#f43f5e' : '#f59e0b'}
+                                                                    strokeDasharray={`${Math.PI * 30}`}
+                                                                    strokeDashoffset={`${Math.PI * 30 * (1 - (d.technicals.rsi || 0) / 100)}`}
+                                                                    style={{ transition: 'stroke-dashoffset 1s ease' }}
+                                                                />
+                                                                <text x="40" y="42" textAnchor="middle" fontSize="12" fontWeight="900"
+                                                                    fill={d.technicals.rsi < 30 ? '#10b981' : d.technicals.rsi > 70 ? '#f43f5e' : '#f59e0b'}>
+                                                                    {d.technicals.rsi?.toFixed(0)}
+                                                                </text>
+                                                            </svg>
+                                                            <p className="text-[8px] uppercase tracking-widest font-black text-slate-400">RSI (14)</p>
+                                                            <span className={cn("text-[9px] font-black px-2 py-0.5 rounded-full",
+                                                                d.technicals.rsi < 30 ? "bg-emerald-500/10 text-emerald-500" :
+                                                                    d.technicals.rsi > 70 ? "bg-rose-500/10 text-rose-500" :
+                                                                        "bg-amber-500/10 text-amber-500"
+                                                            )}>{d.technicals.rsi < 30 ? 'Oversold' : d.technicals.rsi > 70 ? 'Overbought' : 'Neutral'}</span>
+                                                        </div>
+
+                                                        {/* MACD Histogram */}
+                                                        <div className="flex flex-col justify-center gap-2">
+                                                            <p className="text-[8px] uppercase tracking-widest font-black text-slate-400">MACD Histogram</p>
+                                                            <div className="relative h-2.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-visible">
+                                                                <div className="absolute inset-y-0 left-1/2 w-px bg-slate-300 dark:bg-slate-600 z-10" />
+                                                                {(d.technicals.macdHistogram || 0) >= 0 ? (
+                                                                    <div className="absolute inset-y-0 left-1/2 bg-emerald-500 rounded-r-full transition-all duration-700"
+                                                                        style={{ width: `${Math.min(48, Math.abs(d.technicals.macdHistogram || 0) * 800)}%` }} />
+                                                                ) : (
+                                                                    <div className="absolute inset-y-0 right-1/2 bg-rose-500 rounded-l-full transition-all duration-700"
+                                                                        style={{ width: `${Math.min(48, Math.abs(d.technicals.macdHistogram || 0) * 800)}%` }} />
+                                                                )}
+                                                            </div>
+                                                            <p className={cn("text-xs font-black font-mono", (d.technicals.macdHistogram || 0) >= 0 ? "text-emerald-500" : "text-rose-500")}>
+                                                                {(d.technicals.macdHistogram || 0) >= 0 ? '+' : ''}{d.technicals.macdHistogram?.toFixed(4)}
+                                                            </p>
+                                                            <p className="text-[8px] font-semibold text-slate-400">{(d.technicals.macdHistogram || 0) > 0 ? 'Bullish Momentum' : 'Bearish Momentum'}</p>
+                                                        </div>
+
+                                                        {/* S/R Band */}
+                                                        <div className="flex flex-col justify-center gap-2">
+                                                            <p className="text-[8px] uppercase tracking-widest font-black text-slate-400">Price vs S / R</p>
+                                                            <div className="relative h-2.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full">
+                                                                {d.technicals.support && d.technicals.resistance && d.technicals.resistance !== d.technicals.support && (
+                                                                    <div className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full shadow-lg z-10"
+                                                                        style={{
+                                                                            left: `${Math.min(88, Math.max(0, ((d.quote.regularMarketPrice - d.technicals.support) / (d.technicals.resistance - d.technicals.support)) * 100))}%`,
+                                                                            background: 'linear-gradient(135deg, #f59e0b, #ea580c)',
+                                                                            boxShadow: '0 0 8px rgba(245,158,11,0.7)'
+                                                                        }}
+                                                                    />
+                                                                )}
+                                                            </div>
+                                                            <div className="flex justify-between text-[8px] font-black text-slate-400">
+                                                                <span>S ₹{d.technicals.support?.toFixed(0)}</span>
+                                                                <span>R ₹{d.technicals.resistance?.toFixed(0)}</span>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Trend + Volume Shock */}
+                                                        <div className="flex flex-col justify-center gap-2">
+                                                            <span className={cn("text-[9px] font-black px-2.5 py-1 rounded-lg border w-fit",
+                                                                d.technicals.trend === 'BULLISH' ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" :
+                                                                    "bg-rose-500/10 text-rose-500 border-rose-500/20"
+                                                            )}>▲ {d.technicals.trend}</span>
+                                                            <p className="text-[8px] uppercase font-black text-slate-400">vs EMA-200</p>
+                                                            {d.technicals.volumeShock && (
+                                                                <span className={cn("text-[9px] font-black px-2.5 py-1 rounded-lg border w-fit",
+                                                                    d.technicals.volumeShock === 'POSITIVE' ? "bg-indigo-500/10 text-indigo-500 border-indigo-500/20" :
+                                                                        "bg-slate-500/10 text-slate-500 border-slate-500/10"
+                                                                )}>Vol: {d.technicals.volumeShock}</span>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </CardContent>
+                                            </Card>
+
+                                            {/* ── Scenario Modeling + Risk Matrix ── */}
+                                            {(() => {
+                                                const scenarios = extractScenarioModeling(d.strategy);
+                                                const risks = extractRiskMatrix(d.strategy);
+                                                if (scenarios.length === 0 && risks.length === 0) return null;
+                                                return (
+                                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                                                        {scenarios.length > 0 && (
+                                                            <Card className="bg-white/40 dark:bg-slate-900/40 border-black/[0.05] dark:border-white/5 backdrop-blur-3xl rounded-[1.5rem] overflow-hidden shadow-lg ring-1 ring-black/[0.05] dark:ring-white/5">
+                                                                <CardHeader className="p-5 pb-3">
+                                                                    <div className="flex items-center gap-2 mb-0.5">
+                                                                        <BarChart3 size={16} className="text-purple-500" />
+                                                                        <CardTitle className="text-sm font-bold">Scenario Modeling</CardTitle>
+                                                                    </div>
+                                                                    <CardDescription className="text-[10px]">Probability-weighted return scenarios</CardDescription>
+                                                                </CardHeader>
+                                                                <CardContent className="px-5 pb-5 space-y-2.5">
+                                                                    {scenarios.map((s, i) => (
+                                                                        <div key={i} className={cn("p-3 rounded-xl border",
+                                                                            s.scenario === 'Bull Case' ? "bg-emerald-500/5 border-emerald-500/15" :
+                                                                                s.scenario === 'Bear Case' ? "bg-rose-500/5 border-rose-500/15" :
+                                                                                    "bg-slate-500/5 border-slate-500/10"
+                                                                        )}>
+                                                                            <div className="flex items-center justify-between mb-1.5">
+                                                                                <span className={cn("text-[10px] font-black uppercase tracking-wider",
+                                                                                    s.scenario === 'Bull Case' ? "text-emerald-600 dark:text-emerald-400" :
+                                                                                        s.scenario === 'Bear Case' ? "text-rose-600 dark:text-rose-400" :
+                                                                                            "text-slate-600 dark:text-slate-400"
+                                                                                )}>{s.scenario}</span>
+                                                                                <span className={cn("text-[9px] font-black px-2 py-0.5 rounded-full",
+                                                                                    s.scenario === 'Bull Case' ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400" :
+                                                                                        s.scenario === 'Bear Case' ? "bg-rose-500/15 text-rose-600 dark:text-rose-400" :
+                                                                                            "bg-slate-500/10 text-slate-600 dark:text-slate-400"
+                                                                                )}>{s.probability}</span>
+                                                                            </div>
+                                                                            <div className="flex items-center justify-between">
+                                                                                <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400">{s.cagr}</span>
+                                                                                <span className="text-xs font-black text-slate-900 dark:text-white font-mono">{s.target}</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    ))}
+                                                                </CardContent>
+                                                            </Card>
+                                                        )}
+                                                        {risks.length > 0 && (
+                                                            <Card className="bg-white/40 dark:bg-slate-900/40 border-black/[0.05] dark:border-white/5 backdrop-blur-3xl rounded-[1.5rem] overflow-hidden shadow-lg ring-1 ring-black/[0.05] dark:ring-white/5">
+                                                                <CardHeader className="p-5 pb-3">
+                                                                    <div className="flex items-center gap-2 mb-0.5">
+                                                                        <ShieldAlert size={16} className="text-rose-500" />
+                                                                        <CardTitle className="text-sm font-bold">Risk Matrix</CardTitle>
+                                                                    </div>
+                                                                    <CardDescription className="text-[10px]">Key risk factors by category</CardDescription>
+                                                                </CardHeader>
+                                                                <CardContent className="px-5 pb-5 space-y-2">
+                                                                    {risks.map((r, i) => (
+                                                                        <div key={i} className="flex items-start gap-3 p-2.5 rounded-xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/[0.04] dark:border-white/[0.04]">
+                                                                            <div className="flex-1 min-w-0">
+                                                                                <p className="text-[8px] uppercase tracking-wider font-black text-slate-400 mb-0.5">{r.category}</p>
+                                                                                <p className="text-[11px] font-semibold text-slate-700 dark:text-slate-300 leading-snug line-clamp-2">{r.risk}</p>
+                                                                            </div>
+                                                                            <span className={cn("shrink-0 text-[9px] font-black px-2 py-0.5 rounded-lg border",
+                                                                                r.severity === 'High' ? "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20" :
+                                                                                    r.severity === 'Moderate' ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20" :
+                                                                                        "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
+                                                                            )}>{r.severity}</span>
+                                                                        </div>
+                                                                    ))}
+                                                                </CardContent>
+                                                            </Card>
+                                                        )}
+                                                    </div>
+                                                );
+                                            })()}
 
                                             {/* ── Card 2: Brokerage Sentiment + News ── */}
                                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
