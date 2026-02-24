@@ -8,8 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import {
     Send, Sparkles, TrendingUp, TrendingDown, Minus, ShieldAlert,
-    Target, Zap, Activity, ExternalLink, BarChart3, DollarSign,
-    LogOut, Clock, History, ChevronRight, Scale, Layers
+    Zap, ExternalLink, BarChart3, History, ChevronRight, Scale
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -81,6 +80,7 @@ export default function StrategistPage() {
     const [showInput, setShowInput] = useState(true);
     const [history, setHistory] = useState<HistoryEntry[]>([]);
     const [showHistory, setShowHistory] = useState(false);
+    const [placeholderIdx, setPlaceholderIdx] = useState(0);
     const scrollRef = useRef<HTMLDivElement>(null);
 
     const liveData = useLivePrice({
@@ -100,6 +100,12 @@ export default function StrategistPage() {
             const saved = localStorage.getItem("strategist_history");
             if (saved) setHistory(JSON.parse(saved));
         } catch { }
+    }, []);
+
+    // Rotating placeholder
+    useEffect(() => {
+        const id = setInterval(() => setPlaceholderIdx(i => (i + 1) % SUGGESTION_CHIPS.length), 3000);
+        return () => clearInterval(id);
     }, []);
 
     const saveToHistory = (q: string, r: AnalysisResult) => {
@@ -129,6 +135,8 @@ export default function StrategistPage() {
             setResult(data);
             saveToHistory(q, data);
             setQuery("");
+            // Auto-scroll to top of result
+            setTimeout(() => scrollRef.current?.scrollTo({ top: 0, behavior: 'smooth' }), 100);
         } catch (error: any) {
             toast.error(error.message || "Failed to analyze. Try again.");
             setShowInput(true);
@@ -262,9 +270,9 @@ export default function StrategistPage() {
                                             Institutional-grade investment analysis. Capital preservation first. Asymmetric upside second.
                                         </p>
 
-                                        {/* Suggestion Chips */}
-                                        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-xl w-full">
-                                            {SUGGESTION_CHIPS.slice(0, 4).map((chip, i) => (
+                                        {/* Suggestion Chips — all 6 */}
+                                        <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 max-w-3xl w-full">
+                                            {SUGGESTION_CHIPS.map((chip, i) => (
                                                 <button
                                                     key={i}
                                                     onClick={() => { setQuery(chip); handleAnalyze(chip); }}
@@ -407,6 +415,30 @@ export default function StrategistPage() {
                                                 </div>
                                             </div>
 
+                                            {/* ── Fundamentals Vitality Bar ── */}
+                                            {(d.fundamentals?.pe || d.fundamentals?.roe || d.fundamentals?.revenueGrowth || d.fundamentals?.debtToEquity) && (
+                                                <Card className="bg-white/40 dark:bg-slate-900/40 border-black/[0.05] dark:border-white/5 backdrop-blur-3xl rounded-[1.5rem] overflow-hidden shadow-lg ring-1 ring-black/[0.05] dark:ring-white/5">
+                                                    <CardContent className="p-4 lg:p-5">
+                                                        <p className="text-[9px] uppercase tracking-[0.25em] font-black text-slate-400 mb-3">Fundamental Vitality</p>
+                                                        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                                                            {[
+                                                                { label: "P/E", value: d.fundamentals.pe?.toFixed(1) ?? "N/A", color: "text-slate-900 dark:text-white" },
+                                                                { label: "P/B", value: d.fundamentals.pb?.toFixed(2) ?? "N/A", color: "text-slate-900 dark:text-white" },
+                                                                { label: "ROE", value: d.fundamentals.roe ? `${(d.fundamentals.roe * 100).toFixed(1)}%` : "N/A", color: "text-emerald-500" },
+                                                                { label: "Rev Growth", value: d.fundamentals.revenueGrowth ? `${(d.fundamentals.revenueGrowth * 100).toFixed(1)}%` : "N/A", color: "text-amber-500" },
+                                                                { label: "D/E", value: d.fundamentals.debtToEquity?.toFixed(2) ?? "N/A", color: d.fundamentals.debtToEquity && d.fundamentals.debtToEquity > 1 ? "text-rose-500" : "text-slate-700 dark:text-slate-300" },
+                                                                { label: "Curr. Ratio", value: d.fundamentals.currentRatio?.toFixed(2) ?? "N/A", color: "text-slate-700 dark:text-slate-300" },
+                                                            ].map((stat, i) => (
+                                                                <div key={i} className="p-2.5 rounded-xl bg-black/[0.02] dark:bg-white/[0.02] border border-black/[0.04] dark:border-white/[0.04] text-center">
+                                                                    <p className="text-[8px] uppercase tracking-wider text-slate-400 font-black mb-1">{stat.label}</p>
+                                                                    <p className={cn("text-sm font-black tracking-tight font-mono", stat.color)}>{stat.value}</p>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    </CardContent>
+                                                </Card>
+                                            )}
+
                                             {/* ── Card 2: Brokerage Sentiment + News ── */}
                                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
                                                 {/* Ownership / Recommendation */}
@@ -531,7 +563,7 @@ export default function StrategistPage() {
                                                 CIO Terminal — Long-Only Capital
                                             </span>
                                             <textarea
-                                                placeholder="e.g. Should I invest ₹1,00,000 in Reliance for 3 years?"
+                                                placeholder={SUGGESTION_CHIPS[placeholderIdx]}
                                                 className="w-full resize-none min-h-[30px] max-h-[100px] border-0 focus:outline-none focus:ring-0 shadow-none text-sm lg:text-base bg-transparent p-0 placeholder:text-slate-400 dark:placeholder:text-slate-700 text-slate-900 dark:text-slate-100 selection:bg-amber-500/30 font-semibold tracking-tight"
                                                 value={query}
                                                 onChange={(e) => setQuery(e.target.value)}
