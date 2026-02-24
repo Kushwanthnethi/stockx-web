@@ -168,14 +168,14 @@ export default function StockDetailsPage() {
                                 <div>
                                     <h3 className="text-lg font-semibold mb-4">Fundamentals</h3>
                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                        <StatBox label="Market Cap" value={`₹${(data.marketCap / 1e7).toFixed(0)}Cr`} />
+                                        <StatBox label="Market Cap" value={data.marketCap ? `₹${(data.marketCap / 1e7).toFixed(0)}Cr` : '-'} />
                                         <StatBox label="P/E Ratio" value={data.peRatio?.toFixed(2)} />
                                         <StatBox label="P/B Ratio" value={data.pbRatio?.toFixed(2)} />
-                                        <StatBox label="Div Yield" value={data.dividendYield ? `${(data.dividendYield * 100).toFixed(2)}%` : '-'} />
+                                        <StatBox label="EPS" value={data.eps ? `₹${data.eps.toFixed(2)}` : '-'} />
                                         <StatBox label="Book Value" value={data.bookValue?.toFixed(2)} />
                                         <StatBox label="ROE" value={data.returnOnEquity ? `${(data.returnOnEquity * 100).toFixed(2)}%` : '-'} />
-                                        <StatBox label="EPS" value={data.eps ? data.eps.toFixed(2) : '-'} />
-                                        <StatBox label="Debt" value={data.totalDebt ? `₹${(data.totalDebt / 1e7).toFixed(0)}Cr` : '-'} />
+                                        <StatBox label="ROCE" value={data.returnOnCapitalEmployed ? `${(data.returnOnCapitalEmployed * 100).toFixed(2)}%` : '-'} />
+                                        <StatBox label="Div Yield" value={data.dividendYield ? `${(data.dividendYield * 100).toFixed(2)}%` : '-'} />
                                     </div>
                                     <FundamentalsExpanded stock={data} />
                                 </div>
