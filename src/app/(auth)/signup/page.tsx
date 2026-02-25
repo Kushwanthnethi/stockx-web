@@ -10,7 +10,7 @@ export default function SignupPage() {
                     <TrendingUp className="h-6 w-6 text-primary" />
                 </div>
                 <h2 className="mt-2 text-3xl font-bold tracking-tight text-foreground">
-                    Join StockX
+                    Join StocksX
                 </h2>
                 <p className="mt-2 text-sm text-muted-foreground">
                     Start your investing journey today

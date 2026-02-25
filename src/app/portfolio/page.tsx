@@ -24,6 +24,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { API_BASE_URL } from "@/lib/config";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { useLivePrice } from "@/hooks/use-live-price";
 
 // ─── Types ──────────────────────────────────────────────────────────
 
@@ -97,7 +98,17 @@ function formatPercent(value: number) {
 // Subscribes a single row for live price updates
 
 function LiveHoldingRow({ holding, onRemove }: { holding: Holding; onRemove: (symbol: string) => void }) {
-    const isProfit = holding.pnl >= 0;
+    const { price: livePrice, changePercent: liveChangePercent, flash } = useLivePrice({
+        symbol: holding.stockSymbol,
+        initialPrice: holding.stock.currentPrice || holding.averageBuyPrice,
+        initialChangePercent: holding.stock.changePercent || 0
+    });
+
+    const currentPrice = livePrice || holding.averageBuyPrice;
+    const currentValue = holding.quantity * currentPrice;
+    const pnl = currentValue - holding.investedValue;
+    const pnlPercent = holding.investedValue > 0 ? (pnl / holding.investedValue) * 100 : 0;
+    const isProfit = pnl >= 0;
 
     return (
         <TableRow className="group hover:bg-muted/40 transition-colors">
@@ -126,15 +137,15 @@ function LiveHoldingRow({ holding, onRemove }: { holding: Holding; onRemove: (sy
                 ₹{holding.averageBuyPrice.toLocaleString("en-IN", { maximumFractionDigits: 2 })}
             </TableCell>
             <TableCell className="text-right">
-                <div className="font-mono text-sm font-medium tabular-nums">
-                    ₹{(holding.stock.currentPrice || holding.averageBuyPrice).toLocaleString("en-IN", { maximumFractionDigits: 2 })}
+                <div className={cn("font-mono text-sm font-medium tabular-nums transition-colors duration-300", flash === 'up' ? 'text-emerald-500' : flash === 'down' ? 'text-red-500' : '')}>
+                    ₹{currentPrice.toLocaleString("en-IN", { maximumFractionDigits: 2 })}
                 </div>
-                {holding.stock.changePercent !== null && (
+                {liveChangePercent !== null && (
                     <div className={cn(
                         "text-[10px] font-mono tabular-nums",
-                        (holding.stock.changePercent || 0) >= 0 ? "text-emerald-500" : "text-red-500"
+                        liveChangePercent >= 0 ? "text-emerald-500" : "text-red-500"
                     )}>
-                        {formatPercent(holding.stock.changePercent || 0)}
+                        {formatPercent(liveChangePercent)}
                     </div>
                 )}
             </TableCell>
@@ -142,14 +153,14 @@ function LiveHoldingRow({ holding, onRemove }: { holding: Holding; onRemove: (sy
                 {formatCurrency(holding.investedValue)}
             </TableCell>
             <TableCell className="text-right font-mono text-sm tabular-nums font-medium">
-                {formatCurrency(holding.currentValue)}
+                {formatCurrency(currentValue)}
             </TableCell>
             <TableCell className="text-right">
                 <div className={cn("font-mono text-sm font-semibold tabular-nums", isProfit ? "text-emerald-500" : "text-red-500")}>
-                    {isProfit ? "+" : ""}{formatCurrency(holding.pnl)}
+                    {isProfit ? "+" : ""}{formatCurrency(pnl)}
                 </div>
                 <div className={cn("text-[10px] font-mono tabular-nums", isProfit ? "text-emerald-500/80" : "text-red-500/80")}>
-                    {formatPercent(holding.pnlPercent)}
+                    {formatPercent(pnlPercent)}
                 </div>
             </TableCell>
             <TableCell className="text-right">

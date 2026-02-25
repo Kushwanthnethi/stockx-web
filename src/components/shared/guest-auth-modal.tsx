@@ -27,8 +27,20 @@ export function GuestAuthModal() {
     const [lastName, setLastName] = useState("");
     const [error, setError] = useState("");
 
+    const [otpSent, setOtpSent] = useState(false);
+    const [otp, setOtp] = useState("");
+    const [timeLeft, setTimeLeft] = useState(120);
+
     // Track if we've already auto-triggered the login modal to prevent loops
     const hasTriggeredRef = useRef(false);
+
+    // Timer effect
+    useEffect(() => {
+        if (otpSent && timeLeft > 0) {
+            const timerId = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+            return () => clearTimeout(timerId);
+        }
+    }, [otpSent, timeLeft]);
 
     // Sync local open state with global context state
     useEffect(() => {
@@ -76,24 +88,72 @@ export function GuestAuthModal() {
         }
     };
 
+    const handleRequestOtp = async (event?: React.SyntheticEvent) => {
+        if (event) event.preventDefault();
+
+        if (!email || !firstName || !lastName || !password) {
+            setError("All fields are required");
+            return;
+        }
+
+        const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        if (!PASSWORD_REGEX.test(password)) {
+            setError("Password must contain at least 8 characters, one uppercase, one lowercase, one number and one special character");
+            return;
+        }
+
+        try {
+            setError("");
+            const res = await fetch(`${API_BASE_URL}/auth/send-otp`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email }),
+            });
+            if (res.ok) {
+                setOtpSent(true);
+                setTimeLeft(120);
+            } else {
+                const data = await res.json().catch(() => ({}));
+                setError(data.message || "Failed to send OTP (User already exists?)");
+            }
+        } catch (e) {
+            setError("Failed to send OTP");
+        }
+    };
+
     const handleRegister = async () => {
         try {
             setError("");
             const res = await fetch(`${API_BASE_URL}/auth/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password, firstName, lastName }),
+                body: JSON.stringify({ email, password, firstName, lastName, otp }),
             });
             if (res.ok) {
                 // Auto login after register
-                await handleEmailLogin();
+                const loginRes = await fetch(`${API_BASE_URL}/auth/login`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email, password }),
+                });
+                if (loginRes.ok) {
+                    const data = await loginRes.json();
+                    localStorage.setItem("accessToken", data.access_token);
+                    window.location.href = '/';
+                }
             } else {
                 const data = await res.json().catch(() => ({}));
-                setError(data.message || "Registration failed (User exists?)");
+                setError(data.message || "Registration failed. Invalid OTP?");
             }
         } catch (e) {
             setError("Registration failed");
         }
+    };
+
+    const formatTime = (seconds: number) => {
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return `${m}:${s < 10 ? '0' : ''}${s}`;
     };
 
     return (
@@ -187,62 +247,117 @@ export function GuestAuthModal() {
                                     exit={{ opacity: 0, y: -10 }}
                                     className="space-y-4"
                                 >
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <Label htmlFor="first" className="text-sm font-medium ml-1">First name</Label>
-                                            <Input
-                                                id="first"
-                                                placeholder="John"
-                                                value={firstName}
-                                                onChange={e => setFirstName(e.target.value)}
-                                                className="rounded-xl h-11 bg-muted/30 border-muted-foreground/20 focus:border-primary/50 focus:bg-background transition-all"
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label htmlFor="last" className="text-sm font-medium ml-1">Last name</Label>
-                                            <Input
-                                                id="last"
-                                                placeholder="Doe"
-                                                value={lastName}
-                                                onChange={e => setLastName(e.target.value)}
-                                                className="rounded-xl h-11 bg-muted/30 border-muted-foreground/20 focus:border-primary/50 focus:bg-background transition-all"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="email-reg" className="text-sm font-medium ml-1">Email</Label>
-                                        <Input
-                                            id="email-reg"
-                                            type="email"
-                                            placeholder="name@example.com"
-                                            value={email}
-                                            onChange={e => setEmail(e.target.value)}
-                                            className="rounded-xl h-11 bg-muted/30 border-muted-foreground/20 focus:border-primary/50 focus:bg-background transition-all"
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label htmlFor="pass-reg" className="text-sm font-medium ml-1">Password</Label>
-                                        <Input
-                                            id="pass-reg"
-                                            type="password"
-                                            placeholder="••••••••"
-                                            value={password}
-                                            onChange={e => setPassword(e.target.value)}
-                                            className="rounded-xl h-11 bg-muted/30 border-muted-foreground/20 focus:border-primary/50 focus:bg-background transition-all"
-                                        />
-                                    </div>
-                                    {error && (
-                                        <motion.p
-                                            initial={{ opacity: 0 }}
-                                            animate={{ opacity: 1 }}
-                                            className="text-sm text-red-500 text-center font-medium bg-red-500/10 py-2 rounded-lg"
+                                    {!otpSent ? (
+                                        <>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="first" className="text-sm font-medium ml-1">First name</Label>
+                                                    <Input
+                                                        id="first"
+                                                        placeholder="John"
+                                                        value={firstName}
+                                                        onChange={e => setFirstName(e.target.value)}
+                                                        className="rounded-xl h-11 bg-muted/30 border-muted-foreground/20 focus:border-primary/50 focus:bg-background transition-all"
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label htmlFor="last" className="text-sm font-medium ml-1">Last name</Label>
+                                                    <Input
+                                                        id="last"
+                                                        placeholder="Doe"
+                                                        value={lastName}
+                                                        onChange={e => setLastName(e.target.value)}
+                                                        className="rounded-xl h-11 bg-muted/30 border-muted-foreground/20 focus:border-primary/50 focus:bg-background transition-all"
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="email-reg" className="text-sm font-medium ml-1">Email</Label>
+                                                <Input
+                                                    id="email-reg"
+                                                    type="email"
+                                                    placeholder="name@example.com"
+                                                    value={email}
+                                                    onChange={e => setEmail(e.target.value)}
+                                                    className="rounded-xl h-11 bg-muted/30 border-muted-foreground/20 focus:border-primary/50 focus:bg-background transition-all"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="pass-reg" className="text-sm font-medium ml-1">Password</Label>
+                                                <Input
+                                                    id="pass-reg"
+                                                    type="password"
+                                                    placeholder="••••••••"
+                                                    value={password}
+                                                    onChange={e => setPassword(e.target.value)}
+                                                    className="rounded-xl h-11 bg-muted/30 border-muted-foreground/20 focus:border-primary/50 focus:bg-background transition-all"
+                                                />
+                                            </div>
+                                            {error && (
+                                                <motion.p
+                                                    initial={{ opacity: 0 }}
+                                                    animate={{ opacity: 1 }}
+                                                    className="text-sm text-red-500 text-center font-medium bg-red-500/10 py-2 rounded-lg"
+                                                >
+                                                    {error}
+                                                </motion.p>
+                                            )}
+                                            <Button className="w-full h-11 rounded-xl text-base font-semibold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all" onClick={(e) => handleRequestOtp(e)}>
+                                                Request OTP
+                                            </Button>
+                                        </>
+                                    ) : (
+                                        <motion.div
+                                            initial={{ opacity: 0, scale: 0.95 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            className="space-y-4"
                                         >
-                                            {error}
-                                        </motion.p>
+                                            <div className="space-y-2">
+                                                <Label htmlFor="otp" className="text-sm font-medium ml-1">Enter Verification Code</Label>
+                                                <Input
+                                                    id="otp"
+                                                    type="text"
+                                                    placeholder=""
+                                                    value={otp}
+                                                    onChange={e => setOtp(e.target.value)}
+                                                    className="rounded-xl h-11 text-center tracking-widest text-lg bg-muted/30 border-muted-foreground/20 focus:border-primary/50 focus:bg-background transition-all"
+                                                    maxLength={6}
+                                                />
+                                                <div className="text-center mt-2 space-y-2">
+                                                    <p className="text-[11px] text-slate-500">We sent a 6-digit code to {email}</p>
+
+                                                    {timeLeft > 0 ? (
+                                                        <p className="text-xs font-medium text-muted-foreground">
+                                                            Resend code in <span className="text-foreground">{formatTime(timeLeft)}</span>
+                                                        </p>
+                                                    ) : (
+                                                        <button
+                                                            type="button"
+                                                            onClick={(e) => handleRequestOtp(e)}
+                                                            className="text-xs font-semibold text-primary hover:underline"
+                                                        >
+                                                            Resend Code
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            {error && (
+                                                <motion.p
+                                                    initial={{ opacity: 0 }}
+                                                    animate={{ opacity: 1 }}
+                                                    className="text-sm text-red-500 text-center font-medium bg-red-500/10 py-2 rounded-lg"
+                                                >
+                                                    {error}
+                                                </motion.p>
+                                            )}
+                                            <Button className="w-full h-11 rounded-xl text-base font-semibold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all" onClick={handleRegister}>
+                                                Create Account
+                                            </Button>
+                                            <Button variant="ghost" className="w-full text-sm text-muted-foreground" onClick={() => { setOtpSent(false); setTimeLeft(120); }}>
+                                                Back
+                                            </Button>
+                                        </motion.div>
                                     )}
-                                    <Button className="w-full h-11 rounded-xl text-base font-semibold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all" onClick={handleRegister}>
-                                        Create Account
-                                    </Button>
                                 </motion.div>
                             </TabsContent>
                         </AnimatePresence>

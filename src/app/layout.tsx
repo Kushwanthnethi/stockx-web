@@ -27,6 +27,7 @@ import { MainLayout } from "@/components/layout/main-layout";
 import { JsonLd } from "@/components/seo/json-ld";
 
 import { SocketProvider } from "@/providers/socket-provider";
+import { MarketAutoRefreshProvider } from "@/components/providers/market-auto-refresh-provider";
 
 export default function RootLayout({
     children,
@@ -48,15 +49,17 @@ export default function RootLayout({
                 >
                     <AuthProvider>
                         <SocketProvider>
-                            <GuestAuthModal />
-                            <SiteHeader />
+                            <MarketAutoRefreshProvider>
+                                <GuestAuthModal />
+                                <SiteHeader />
 
-                            <MainLayout>
-                                {children}
-                            </MainLayout>
+                                <MainLayout>
+                                    {children}
+                                </MainLayout>
 
-                            <BottomNav />
-                            <Toaster theme="system" richColors closeButton position="top-center" />
+                                <BottomNav />
+                                <Toaster theme="system" richColors closeButton position="top-center" />
+                            </MarketAutoRefreshProvider>
                         </SocketProvider>
                     </AuthProvider>
                 </ThemeProvider>

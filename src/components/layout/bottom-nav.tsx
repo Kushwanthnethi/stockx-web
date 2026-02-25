@@ -20,7 +20,7 @@ export function BottomNav() {
     const isActive = (path: string) => pathname === path;
 
     // Hide on auth pages
-    if (pathname === "/login" || pathname === "/signup") return null;
+    if (pathname === "/login" || pathname === "/signup" || pathname === "/forgot-password") return null;
 
     const navItems = [
         { label: "Home", href: "/", icon: Home },

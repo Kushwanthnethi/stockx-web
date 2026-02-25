@@ -33,7 +33,7 @@ export function PremiumGuard({ children }: { children: React.ReactNode }) {
                         Restricted Access
                     </h2>
                     <p className="text-muted-foreground text-lg leading-relaxed">
-                        This deep-dive analysis is exclusive to our members. Join StockX to unlock high-conviction ideas and expert verdicts.
+                        This deep-dive analysis is exclusive to our members. Join StocksX to unlock high-conviction ideas and expert verdicts.
                     </p>
                 </div>
 

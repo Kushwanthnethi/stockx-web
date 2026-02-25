@@ -204,7 +204,7 @@ export default function Home() {
                     </div>
 
                     {/* End of Feed Disclaimer */}
-                    <div className="mt-8 p-4 bg-yellow-50/50 dark:bg-yellow-900/10 rounded-lg border border-yellow-100 dark:border-yellow-900 text-yellow-800 dark:text-yellow-500 text-xs flex gap-2 items-start">
+                    <div className="hidden md:flex mt-8 p-4 bg-yellow-50/50 dark:bg-yellow-900/10 rounded-lg border border-yellow-100 dark:border-yellow-900 text-yellow-800 dark:text-yellow-500 text-xs gap-2 items-start">
                         <Info size={16} className="mt-0.5 flex-shrink-0" />
                         <p>
                             <strong>Disclaimer:</strong> Content on StocksX is for educational purposes only.

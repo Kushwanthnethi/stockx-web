@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { API_BASE_URL } from "@/lib/config"
 import { Button } from "@/components/ui/button"
@@ -73,7 +74,7 @@ export function LoginForm({ className }: React.HTMLAttributes<HTMLDivElement>) {
                     <div className="grid gap-2">
                         <div className="flex items-center justify-between">
                             <Label htmlFor="password">Password</Label>
-                            <a href="#" className="text-sm font-medium text-primary hover:text-primary/90 hover:underline">Forgot?</a>
+                            <Link href="/forgot-password" className="text-sm font-medium text-primary hover:text-primary/90 hover:underline">Forgot?</Link>
                         </div>
                         <PasswordInput
                             id="password"

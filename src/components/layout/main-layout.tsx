@@ -11,7 +11,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
     // Only hide sidebar on result detail pages (e.g., /results/LT), not the main listing (/results)
     const isResultDetailPage = pathname?.startsWith("/results/") && pathname !== "/results";
 
-    const isAuthPage = pathname === "/login" || pathname === "/signup";
+    const isAuthPage = pathname === "/login" || pathname === "/signup" || pathname === "/forgot-password";
     const shouldHideSidebar = isStockPage || isResultDetailPage || isAuthPage;
 
     return (

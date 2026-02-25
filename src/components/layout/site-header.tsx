@@ -35,7 +35,7 @@ import { usePathname } from "next/navigation";
 
 export function SiteHeader() {
     const pathname = usePathname();
-    const isAuthPage = pathname === "/login" || pathname === "/signup";
+    const isAuthPage = pathname === "/login" || pathname === "/signup" || pathname === "/forgot-password";
 
     if (isAuthPage) return null;
 
