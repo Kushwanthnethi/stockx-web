@@ -7,6 +7,7 @@ import { Loader2, TrendingUp, TrendingDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { API_BASE_URL } from '@/lib/config';
 import { useSocket } from '@/providers/socket-provider';
+import { useIsMobile } from '../../../hooks/use-mobile';
 
 interface StockChartProps {
     symbol: string;
@@ -38,24 +39,17 @@ function CustomTooltip({ active, payload, label, isPositive }: any) {
     }
 
     return (
-        <div
-            style={{
-                background: 'rgba(10, 10, 16, 0.95)',
-                backdropFilter: 'blur(20px)',
-                WebkitBackdropFilter: 'blur(20px)',
-                border: `1px solid ${isPositive ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)'}`,
-                borderRadius: '14px',
-                padding: '14px 18px',
-                boxShadow: `0 12px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04) inset, 0 0 20px ${isPositive ? 'rgba(34,197,94,0.08)' : 'rgba(239,68,68,0.08)'}`,
-                minWidth: '195px',
-            }}
-        >
-            <div style={{ fontSize: '10.5px', color: 'rgba(255,255,255,0.45)', marginBottom: '8px', fontWeight: 500, letterSpacing: '0.3px' }}>
+        <div className={cn(
+            "rounded-xl border p-3.5 shadow-xl min-w-[195px] backdrop-blur-xl",
+            isPositive ? "border-emerald-500/20 shadow-emerald-500/10" : "border-red-500/20 shadow-red-500/10",
+            "bg-popover/95 text-popover-foreground"
+        )}>
+            <div className="text-[10.5px] text-muted-foreground/80 mb-2 font-medium tracking-[0.3px]">
                 {formatted}
             </div>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
-                <span style={{ fontSize: '10.5px', color: 'rgba(255,255,255,0.4)', fontWeight: 500 }}>Price</span>
-                <span style={{ fontSize: '18px', fontWeight: 700, color: accentColor, letterSpacing: '-0.5px' }}>
+            <div className="flex items-baseline gap-1.5">
+                <span className="text-[10.5px] text-muted-foreground/70 font-medium">Price</span>
+                <span style={{ color: accentColor }} className="text-lg font-bold tracking-[-0.5px]">
                     ₹{(Number(price) || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
             </div>
@@ -107,6 +101,7 @@ export function StockChart({ symbol }: StockChartProps) {
     const [chartReady, setChartReady] = useState(false);
     const socket = useSocket();
     const prevRange = useRef<Range>('1d');
+    const isMobile = useIsMobile();
 
     useEffect(() => {
         const fetchHistory = async () => {
@@ -129,9 +124,26 @@ export function StockChart({ symbol }: StockChartProps) {
                                 dDate.getMonth() === lastMonth &&
                                 dDate.getFullYear() === lastYear;
                         });
-                        setData(filteredHistory);
+
+                        // Final safety: Map to ensure strictly unique times and sort to monotonic
+                        const uniqueMap = new Map();
+                        for (const d of filteredHistory) {
+                            uniqueMap.set(new Date(d.date).getTime(), d);
+                        }
+                        const finalHistory = Array.from(uniqueMap.values()).sort(
+                            (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+                        );
+
+                        setData(finalHistory);
                     } else {
-                        setData(history);
+                        const uniqueMap = new Map();
+                        for (const d of history) {
+                            uniqueMap.set(new Date(d.date).getTime(), d);
+                        }
+                        const finalHistory = Array.from(uniqueMap.values()).sort(
+                            (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+                        );
+                        setData(finalHistory);
                     }
                 }
             } catch (error) {
@@ -207,8 +219,10 @@ export function StockChart({ symbol }: StockChartProps) {
         const min = Math.min(...prices);
         const max = Math.max(...prices);
         const spread = max - min;
-        const padding = spread * 0.10 || max * 0.02;
-        return [Math.floor(min - padding), Math.ceil(max + padding)];
+        // More padding on top so it never scrapes the ceiling of the container
+        const paddingBottom = spread * 0.10 || max * 0.02;
+        const paddingTop = spread * 0.20 || max * 0.05;
+        return [Math.floor(min - paddingBottom), Math.ceil(max + paddingTop)];
     }, [data]);
 
     /* horizontal reference lines */
@@ -234,7 +248,6 @@ export function StockChart({ symbol }: StockChartProps) {
 
     /* gradient ID unique per symbol */
     const gradientId = `cg_${symbol.replace(/[^a-zA-Z0-9]/g, '_')}`;
-    const glowId = `glow_${symbol.replace(/[^a-zA-Z0-9]/g, '_')}`;
 
     const rangeLabels: Record<Range, string> = {
         '1d': '1D', '1w': '1W', '1mo': '1M', '3mo': '3M', '1y': '1Y'
@@ -281,19 +294,10 @@ export function StockChart({ symbol }: StockChartProps) {
                             className={cn(
                                 "px-2.5 sm:px-3 py-1 text-[10px] sm:text-[11px] font-bold rounded-lg transition-all duration-250 relative",
                                 range === r
-                                    ? "text-white"
+                                    ? "bg-background text-foreground shadow-sm"
                                     : "text-muted-foreground/70 hover:text-foreground/80"
                             )}
                         >
-                            {range === r && (
-                                <span
-                                    className="absolute inset-0 rounded-lg"
-                                    style={{
-                                        background: `linear-gradient(135deg, ${accentColorDim}0.2), ${accentColorDim}0.08))`,
-                                        boxShadow: `0 2px 8px ${accentColorDim}0.15)`,
-                                    }}
-                                />
-                            )}
                             <span className="relative z-10">{rangeLabels[r]}</span>
                         </button>
                     ))}
@@ -313,25 +317,17 @@ export function StockChart({ symbol }: StockChartProps) {
                     <ResponsiveContainer width="100%" height="100%" style={{ border: 'none', outline: 'none' }}>
                         <AreaChart
                             data={data}
-                            margin={{ top: 16, right: 8, left: -4, bottom: -2 }}
+                            margin={{ top: 16, right: isMobile ? 0 : 8, left: isMobile ? 0 : -4, bottom: isMobile ? 0 : -2 }}
                             style={{ border: 'none', outline: 'none' }}
                         >
                             <defs>
-                                {/* Main fill gradient — dynamic color */}
+                                {/* Main fill gradient — dynamic color, softer fade */}
                                 <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stopColor={accentColor} stopOpacity={0.30} />
-                                    <stop offset="25%" stopColor={accentColor} stopOpacity={0.15} />
-                                    <stop offset="55%" stopColor={accentColor} stopOpacity={0.06} />
+                                    <stop offset="0%" stopColor={accentColor} stopOpacity={0.25} />
+                                    <stop offset="40%" stopColor={accentColor} stopOpacity={0.10} />
+                                    <stop offset="75%" stopColor={accentColor} stopOpacity={0.02} />
                                     <stop offset="100%" stopColor={accentColor} stopOpacity={0} />
                                 </linearGradient>
-                                {/* Glow filter for the line */}
-                                <filter id={glowId} x="-20%" y="-20%" width="140%" height="140%">
-                                    <feGaussianBlur stdDeviation="3" result="blur" />
-                                    <feMerge>
-                                        <feMergeNode in="blur" />
-                                        <feMergeNode in="SourceGraphic" />
-                                    </feMerge>
-                                </filter>
                             </defs>
 
                             {/* Subtle horizontal reference lines */}
@@ -352,25 +348,27 @@ export function StockChart({ symbol }: StockChartProps) {
                                     label={{
                                         value: `Open ₹${data[0].price.toLocaleString('en-IN')}`,
                                         position: 'right',
-                                        style: { fontSize: '9px', fill: `${accentColorDim}0.45)`, fontWeight: 600 }
+                                        style: { fontSize: '9px', fill: `hsl(var(--muted-foreground))`, opacity: 0.6, fontWeight: 600 }
                                     }}
                                 />
                             )}
 
                             <XAxis
+                                hide={isMobile}
                                 dataKey="date"
                                 tickFormatter={formatXAxis}
                                 axisLine={false}
                                 tickLine={false}
-                                tick={{ fontSize: 9, fill: 'rgba(255,255,255,0.30)', fontWeight: 500 }}
+                                tick={{ fontSize: 9, fill: 'hsl(var(--muted-foreground))', fillOpacity: 0.6, fontWeight: 500 }}
                                 minTickGap={45}
                                 dy={6}
                             />
                             <YAxis
+                                hide={isMobile}
                                 domain={yDomain}
                                 axisLine={false}
                                 tickLine={false}
-                                tick={{ fontSize: 9, fill: 'rgba(255,255,255,0.30)', fontWeight: 500 }}
+                                tick={{ fontSize: 9, fill: 'hsl(var(--muted-foreground))', fillOpacity: 0.6, fontWeight: 500 }}
                                 tickFormatter={formatYAxis}
                                 width={44}
                                 dx={-2}
@@ -381,37 +379,22 @@ export function StockChart({ symbol }: StockChartProps) {
                                 isAnimationActive={false}
                             />
 
-                            {/* Glow layer (thicker, blurred duplicate) */}
-                            <Area
-                                type="monotone"
-                                dataKey="price"
-                                stroke={accentColor}
-                                strokeWidth={5}
-                                strokeOpacity={0.15}
-                                fillOpacity={0}
-                                fill="transparent"
-                                dot={false}
-                                activeDot={false}
-                                isAnimationActive={false}
-                                style={{ filter: `url(#${glowId})` }}
-                            />
-
                             {/* Main line + fill */}
                             <Area
-                                type="monotone"
+                                type="linear"
                                 dataKey="price"
                                 stroke={accentColor}
-                                strokeWidth={1.8}
+                                strokeWidth={isMobile ? 1.5 : 2}
                                 fillOpacity={1}
                                 fill={`url(#${gradientId})`}
                                 animationDuration={1000}
                                 animationEasing="ease-out"
                                 activeDot={{
-                                    r: 5,
+                                    r: 4.5,
                                     fill: accentColor,
-                                    stroke: 'rgba(255,255,255,0.9)',
-                                    strokeWidth: 2.5,
-                                    style: { filter: `drop-shadow(0 0 6px ${accentColorDim}0.6))` }
+                                    stroke: 'hsl(var(--background))',
+                                    strokeWidth: 2,
+                                    style: { filter: `drop-shadow(0 0 3px ${accentColorDim}0.3))` }
                                 }}
                                 dot={false}
                             />
