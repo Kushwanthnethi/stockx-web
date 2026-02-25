@@ -1,16 +1,19 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/providers/auth-provider";
 import { useRouter } from "next/navigation";
-import { LogOut, User, Moon, Sun, ChevronRight } from "lucide-react";
+import { LogOut, User, Moon, Sun, ChevronRight, Bell } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
+import { API_BASE_URL } from "@/lib/config";
+import { useToast } from "@/hooks/use-toast";
 
 export default function SettingsPage() {
-    const { user, logout } = useAuth();
+    const { user, logout, updateUser, token } = useAuth();
     const router = useRouter();
     const { theme, setTheme } = useTheme();
 
@@ -69,6 +72,59 @@ export default function SettingsPage() {
                                     </div>
                                     <span className="text-sm text-muted-foreground capitalize">{theme}</span>
                                 </button>
+                            </div>
+                        </Card>
+                    </section>
+
+                    {/* Notifications */}
+                    <section className="space-y-3">
+                        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Notifications</h2>
+                        <Card className="bg-card border-none shadow-sm">
+                            <div className="p-4 flex flex-col gap-4">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <Bell size={20} className="text-muted-foreground" />
+                                        <div>
+                                            <p className="font-medium text-sm">Stock of the Week Report</p>
+                                            <p className="text-xs text-muted-foreground">Monthly Excel report via email</p>
+                                        </div>
+                                    </div>
+                                    <Switch
+                                        checked={user?.receiveReport ?? false}
+                                        onCheckedChange={async (checked) => {
+                                            // Optimistic update
+                                            updateUser({ receiveReport: checked });
+                                            try {
+                                                const res = await fetch(`${API_BASE_URL}/users/me/preferences`, {
+                                                    method: "PATCH",
+                                                    headers: {
+                                                        "Content-Type": "application/json",
+                                                        Authorization: `Bearer ${token}`
+                                                    },
+                                                    body: JSON.stringify({ receiveReport: checked })
+                                                });
+                                                if (!res.ok) {
+                                                    throw new Error("Failed to update preferences");
+                                                }
+                                                const { toast } = await import("@/hooks/use-toast");
+                                                toast({
+                                                    title: "Preferences updated",
+                                                    description: checked ? "You will now receive the monthly report." : "You have unsubscribed from the monthly report.",
+                                                });
+                                            } catch (error) {
+                                                console.error(error);
+                                                // Revert on failure
+                                                updateUser({ receiveReport: !checked });
+                                                const { toast } = await import("@/hooks/use-toast");
+                                                toast({
+                                                    title: "Error",
+                                                    description: "Failed to update notification preferences.",
+                                                    variant: "destructive"
+                                                });
+                                            }
+                                        }}
+                                    />
+                                </div>
                             </div>
                         </Card>
                     </section>

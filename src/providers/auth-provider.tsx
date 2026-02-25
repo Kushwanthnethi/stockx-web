@@ -14,6 +14,7 @@ interface User {
     role?: string;
     isVerified?: boolean;
     verified?: boolean; // Legacy/Alias support
+    receiveReport?: boolean;
 }
 
 interface AuthContextType {
@@ -23,6 +24,7 @@ interface AuthContextType {
     logout: () => void;
     showLoginModal: boolean;
     setShowLoginModal: (show: boolean) => void;
+    updateUser: (data: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -32,6 +34,7 @@ const AuthContext = createContext<AuthContextType>({
     logout: () => { },
     showLoginModal: false,
     setShowLoginModal: () => { },
+    updateUser: () => { },
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -92,8 +95,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         router.push('/login');
     };
 
+    const updateUser = (data: Partial<User>) => {
+        setUser((prev) => prev ? { ...prev, ...data } : null);
+    };
+
     return (
-        <AuthContext.Provider value={{ user, token, isLoading, logout, showLoginModal, setShowLoginModal }}>
+        <AuthContext.Provider value={{ user, token, isLoading, logout, showLoginModal, setShowLoginModal, updateUser }}>
             {children}
         </AuthContext.Provider>
     );

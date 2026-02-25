@@ -141,6 +141,10 @@
         @apply bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60;
     }
 
+    .font-outfit {
+        font-family: var(--font-outfit);
+    }
+
     .scrollbar-hide {
         -ms-overflow-style: none;
         /* IE and Edge */
@@ -166,5 +170,20 @@
         100% {
             transform: translateX(100%);
         }
+    }
+
+    @keyframes shimmer {
+        0% {
+            background-position: -200% 0;
+        }
+
+        100% {
+            background-position: 200% 0;
+        }
+    }
+
+    .animate-shimmer {
+        background-size: 200% auto;
+        animation: shimmer 4s linear infinite;
     }
 }

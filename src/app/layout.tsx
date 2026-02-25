@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Toaster } from "sonner";
 
 const inter = Inter({ subsets: ["latin"] });
+const outfit = Outfit({
+    subsets: ["latin"],
+    variable: "--font-outfit",
+});
 
 export const metadata: Metadata = {
     metadataBase: new URL("https://stocksx.info"),
@@ -37,7 +41,11 @@ export default function RootLayout({
     return (
         <html lang="en" suppressHydrationWarning>
             <body
-                className={cn(inter.className, "min-h-screen bg-background font-sans antialiased")}
+                className={cn(
+                    inter.className,
+                    outfit.variable,
+                    "min-h-screen bg-background font-sans antialiased"
+                )}
                 suppressHydrationWarning
             >
                 <JsonLd />

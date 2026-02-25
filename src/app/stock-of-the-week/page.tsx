@@ -6,12 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { API_BASE_URL } from "@/lib/config";
-import { Loader2, TrendingUp, AlertTriangle, Target, DollarSign, Activity, Calendar, ArrowRight, TrendingDown } from "lucide-react";
+import { Loader2, TrendingUp, AlertTriangle, Target, DollarSign, Activity, Calendar, ArrowRight, TrendingDown, Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
 import { PremiumGuard } from "@/components/shared/premium-guard";
+import { useAuth } from "@/providers/auth-provider";
+import { Switch } from "@/components/ui/switch";
 
 // --- Helpers ---
 const formatINR = (value: number) => {
@@ -190,6 +192,7 @@ const NarrativeSection = ({ narrative, stockSymbol, stock }: { narrative: string
 };
 
 export default function StockOfTheWeekPage() {
+    const { user, updateUser, token } = useAuth();
     const [latest, setLatest] = useState<any>(null);
     const [archive, setArchive] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -252,21 +255,73 @@ export default function StockOfTheWeekPage() {
                                     Updated Sundays 12:00 PM
                                 </span>
                             </motion.div>
-                            <motion.h1
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                className="text-4xl md:text-5xl font-black tracking-tight"
-                            >
-                                Stock of the <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-500">Week</span>
-                            </motion.h1>
-                            <motion.p
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.1 }}
-                                className="text-lg text-muted-foreground/80 max-w-3xl leading-relaxed"
-                            >
-                                Our highest conviction idea. Analyzed by AI, grounded in data, built for the week ahead.
-                            </motion.p>
+                            <div className="flex flex-col md:flex-row md:items-start justify-between gap-6">
+                                <div>
+                                    <motion.h1
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className="text-4xl md:text-5xl font-black tracking-tight"
+                                    >
+                                        Stock of the <span className="text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-500">Week</span>
+                                    </motion.h1>
+                                    <motion.p
+                                        initial={{ opacity: 0, y: 10 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.1 }}
+                                        className="text-lg text-muted-foreground/80 max-w-3xl leading-relaxed mt-2"
+                                    >
+                                        Our highest conviction idea. Analyzed by AI, grounded in data, built for the week ahead.
+                                    </motion.p>
+                                </div>
+
+                                {/* Report Toggle */}
+                                <motion.div
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.2 }}
+                                    className="flex flex-col gap-2 bg-muted/20 p-4 rounded-xl border border-border/50 shrink-0"
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <Bell className="w-4 h-4 text-primary" />
+                                        <span className="text-sm font-bold uppercase tracking-wider">Monthly Report</span>
+                                    </div>
+                                    <div className="flex items-center justify-between gap-4">
+                                        <span className="text-xs text-muted-foreground mr-1">Receive Excel via email</span>
+                                        <Switch
+                                            checked={user?.receiveReport ?? false}
+                                            onCheckedChange={async (checked) => {
+                                                if (!user) return;
+                                                // Optimistic update
+                                                updateUser({ receiveReport: checked });
+                                                try {
+                                                    const res = await fetch(`${API_BASE_URL}/users/me/preferences`, {
+                                                        method: "PATCH",
+                                                        headers: {
+                                                            "Content-Type": "application/json",
+                                                            Authorization: `Bearer ${token}`
+                                                        },
+                                                        body: JSON.stringify({ receiveReport: checked })
+                                                    });
+                                                    if (!res.ok) throw new Error("Failed");
+                                                    const { toast } = await import("@/hooks/use-toast");
+                                                    toast({
+                                                        title: "Preferences updated",
+                                                        description: checked ? "You will now receive the monthly SOW report." : "You have unsubscribed from the monthly report.",
+                                                    });
+                                                } catch (error) {
+                                                    updateUser({ receiveReport: !checked });
+                                                    const { toast } = await import("@/hooks/use-toast");
+                                                    toast({
+                                                        title: "Error",
+                                                        description: "Failed to update notification preferences.",
+                                                        variant: "destructive"
+                                                    });
+                                                }
+                                            }}
+                                        />
+                                    </div>
+                                </motion.div>
+                            </div>
                         </div>
 
                         {/* Content Loading State */}

@@ -38,7 +38,6 @@ export default function StockDetailsPage() {
         if (!symbol) return;
 
         const fetchData = async () => {
-            // Only show full loading spinner on first load
             if (!data) setLoading(true);
             try {
                 const res = await fetch(`${API_BASE_URL}/stocks/${encodeURIComponent(symbol)}`);
@@ -60,13 +59,10 @@ export default function StockDetailsPage() {
         };
 
         fetchData();
-        // Poll every 10s to keep base data relatively fresh (less frequent now that we have simulation)
         const interval = setInterval(fetchData, 10000);
         return () => clearInterval(interval);
     }, [symbol]);
 
-    // Use the hook to get simulated live updates
-    // We default to data values if available, otherwise safe defaults to prevent crash
     const { price, change, changePercent, flash } = useLivePrice({
         symbol: data ? data.symbol : symbol,
         initialPrice: data?.currentPrice || 0,
@@ -74,40 +70,45 @@ export default function StockDetailsPage() {
     });
 
     return (
-        <div className="min-h-screen bg-background text-foreground">
-
-
-            <main className="container max-w-4xl mx-auto px-4 py-8">
+        <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
+            <main className="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {loading && !data ? (
                     <div className="flex flex-col items-center justify-center py-20 space-y-4">
-                        <div className="h-8 w-8 animate-spin rounded-full border-4 border-muted border-t-primary" />
-                        <p className="text-muted-foreground">Fetching market data for {symbol}...</p>
+                        <div className="h-8 w-8 animate-spin rounded-full border-4 border-muted border-t-emerald-500" />
+                        <p className="text-muted-foreground/80 font-medium tracking-wide text-sm">Loading market data...</p>
                     </div>
                 ) : error ? (
-                    <div className="text-center py-20">
-                        <div className="text-destructive font-bold mb-2">Error</div>
-                        <p>{error}</p>
+                    <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
+                        <div className="bg-destructive/10 text-destructive p-4 rounded-full">
+                            <Activity className="h-8 w-8" />
+                        </div>
+                        <div>
+                            <div className="text-xl font-bold mb-2">Data Unavailable</div>
+                            <p className="text-muted-foreground max-w-sm">{error}</p>
+                        </div>
                         <Link href="/explore">
-                            <Button variant="outline" className="mt-4">Go Back</Button>
+                            <Button variant="outline" className="mt-4">Back to Explore</Button>
                         </Link>
                     </div>
                 ) : data ? (
-                    <div className="space-y-6">
-                        {/* 1. Header Section */}
-                        <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 border-b pb-6">
-                            <div>
-                                <h1 className="text-3xl font-bold tracking-tight text-foreground">{data.companyName}</h1>
-                                <div className="flex items-center gap-2 mt-2">
-                                    <Badge variant="secondary" className="font-mono font-semibold text-sm">
+                    <div className="space-y-8">
+                        {/* 1. Premium Header Section */}
+                        <div className="flex flex-row items-start justify-between gap-4">
+                            <div className="space-y-2 flex-1 min-w-0">
+                                <h1 className="text-2xl md:text-4xl font-extrabold tracking-tight text-foreground truncate">
+                                    {data.companyName}
+                                </h1>
+                                <div className="flex items-center gap-2">
+                                    <Badge variant="outline" className="font-mono font-semibold text-[10px] md:text-xs border-primary/20 bg-primary/5 px-2 py-0.5 text-primary">
                                         {data.symbol}
                                     </Badge>
-                                    <span className="text-muted-foreground text-sm font-medium bg-muted/40 px-2 py-0.5 rounded">
+                                    <Badge variant="secondary" className="font-semibold text-[9px] md:text-[10px] tracking-wider uppercase bg-muted/50 text-muted-foreground">
                                         {data.exchange}
-                                    </span>
+                                    </Badge>
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-6">
+                            <div className="flex flex-col items-end gap-2 shrink-0">
                                 <div className="text-right">
                                     <LivePrice
                                         price={price}
@@ -120,95 +121,113 @@ export default function StockDetailsPage() {
                             </div>
                         </div>
 
-
-                        <Tabs defaultValue="overview" className="space-y-6">
-                            <div className="border-b">
-                                <TabsList className="h-10 w-full justify-start bg-transparent p-0">
-                                    <TabsTrigger value="overview" className="data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none border-b-2 border-transparent rounded-none px-4 pb-2 font-medium">Overview</TabsTrigger>
-                                    <TabsTrigger value="results" className="data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none border-b-2 border-transparent rounded-none px-4 pb-2 font-medium">Results</TabsTrigger>
-                                    <TabsTrigger value="news" className="data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none border-b-2 border-transparent rounded-none px-4 pb-2 font-medium">News</TabsTrigger>
-                                    <TabsTrigger value="community" className="data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none border-b-2 border-transparent rounded-none px-4 pb-2 font-medium">Community</TabsTrigger>
-                                </TabsList>
-                            </div>
+                        <Tabs defaultValue="overview" className="space-y-8 w-full">
+                            {/* Premium Sleek Tabs */}
+                            <TabsList className="w-full justify-start h-auto p-1.5 bg-muted/40 rounded-2xl border border-border/40 inline-flex overflow-x-auto no-scrollbar">
+                                <TabsTrigger value="overview" className="rounded-xl px-5 py-2 font-semibold text-sm transition-all data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">Overview</TabsTrigger>
+                                <TabsTrigger value="results" className="rounded-xl px-5 py-2 font-semibold text-sm transition-all data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">Results</TabsTrigger>
+                                <TabsTrigger value="news" className="rounded-xl px-5 py-2 font-semibold text-sm transition-all data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">News</TabsTrigger>
+                                <TabsTrigger value="community" className="rounded-xl px-5 py-2 font-semibold text-sm transition-all data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm">Insights</TabsTrigger>
+                            </TabsList>
 
                             {/* OVERVIEW TAB */}
-                            <TabsContent value="overview" className="space-y-8 animate-in fade-in-50 duration-500">
-                                {/* 1. Chart Section - Full Width */}
-                                <Card>
-                                    <CardContent className="p-6">
-                                        <div className="h-[450px] w-full">
-                                            <StockChart symbol={data.symbol} />
-                                        </div>
-                                    </CardContent>
-                                </Card>
+                            <TabsContent value="overview" className="space-y-8 focus-visible:outline-none">
+                                {/* 1. Chart Section - Direct render, no double boxing */}
+                                <div className="h-[400px] sm:h-[480px] w-full mt-2">
+                                    <StockChart symbol={data.symbol} />
+                                </div>
 
-                                {/* 2. Performance Section */}
-                                <Card>
-                                    <CardHeader>
-                                        <CardTitle className="text-lg">Performance</CardTitle>
-                                    </CardHeader>
-                                    <CardContent className="space-y-8">
-                                        <PerformanceRange
-                                            label="Today's Range"
-                                            low={data.lowDay || Math.min(price, data.currentPrice * 0.98)}
-                                            high={data.highDay || Math.max(price, data.currentPrice * 1.02)}
-                                            current={price}
-                                        />
-                                        <PerformanceRange
-                                            label="52W Range"
-                                            low={data.low52Week}
-                                            high={data.high52Week}
-                                            // Ensure slider doesn't go OOB if simulation pushes it
-                                            current={price}
-                                        />
-                                    </CardContent>
-                                </Card>
+                                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                    {/* Left Column: Performance & Fundamentals */}
+                                    <div className="lg:col-span-2 space-y-8">
+                                        {/* Performance Section */}
+                                        <Card className="border-border/60 shadow-sm overflow-hidden bg-card/50">
+                                            <CardHeader className="bg-muted/20 border-b border-border/40 pb-4">
+                                                <CardTitle className="text-base font-bold flex items-center gap-2">
+                                                    <Activity className="h-4 w-4 text-emerald-500" />
+                                                    Market Performance
+                                                </CardTitle>
+                                            </CardHeader>
+                                            <CardContent className="space-y-8 pt-6">
+                                                <PerformanceRange
+                                                    label="Today's Range"
+                                                    low={data.lowDay || Math.min(price, data.currentPrice * 0.98)}
+                                                    high={data.highDay || Math.max(price, data.currentPrice * 1.02)}
+                                                    current={price}
+                                                />
+                                                <PerformanceRange
+                                                    label="52W Range"
+                                                    low={data.low52Week}
+                                                    high={data.high52Week}
+                                                    current={price}
+                                                />
+                                            </CardContent>
+                                        </Card>
 
-                                {/* 3. Fundamentals Grid */}
-                                <div>
-                                    <h3 className="text-lg font-semibold mb-4">Fundamentals</h3>
-                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                        <StatBox label="Market Cap" value={data.marketCap ? `₹${(data.marketCap / 1e7).toFixed(0)}Cr` : '-'} />
-                                        <StatBox label="P/E Ratio" value={data.peRatio?.toFixed(2)} />
-                                        <StatBox label="P/B Ratio" value={data.pbRatio?.toFixed(2)} />
-                                        <StatBox label="EPS" value={data.eps ? `₹${data.eps.toFixed(2)}` : '-'} />
-                                        <StatBox label="Book Value" value={data.bookValue?.toFixed(2)} />
-                                        <StatBox label="ROE" value={data.returnOnEquity ? `${(data.returnOnEquity * 100).toFixed(2)}%` : '-'} />
-                                        <StatBox label="ROCE" value={data.returnOnCapitalEmployed ? `${(data.returnOnCapitalEmployed * 100).toFixed(2)}%` : '-'} />
-                                        <StatBox label="Div Yield" value={data.dividendYield ? `${(data.dividendYield * 100).toFixed(2)}%` : '-'} />
+                                        {/* Fundamentals Overview */}
+                                        <Card className="border-border/60 shadow-sm bg-card/50">
+                                            <CardHeader className="bg-muted/20 border-b border-border/40 pb-4">
+                                                <div className="flex items-center justify-between">
+                                                    <CardTitle className="text-base font-bold flex items-center gap-2">
+                                                        <DollarSign className="h-4 w-4 text-blue-500" />
+                                                        Fundamentals Synopsis
+                                                    </CardTitle>
+                                                </div>
+                                            </CardHeader>
+                                            <CardContent className="pt-6">
+                                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-4">
+                                                    <StatBox label="Market Cap" value={data.marketCap ? `₹${(data.marketCap / 1e7).toFixed(0)}Cr` : '-'} />
+                                                    <StatBox label="P/E Ratio" value={data.peRatio?.toFixed(2)} />
+                                                    <StatBox label="P/B Ratio" value={data.pbRatio?.toFixed(2)} />
+                                                    <StatBox label="EPS" value={data.eps ? `₹${data.eps.toFixed(2)}` : '-'} />
+                                                    <StatBox label="ROE" value={data.returnOnEquity ? `${(data.returnOnEquity * 100).toFixed(2)}%` : '-'} />
+                                                    <StatBox label="ROCE" value={data.returnOnCapitalEmployed ? `${(data.returnOnCapitalEmployed * 100).toFixed(2)}%` : '-'} />
+                                                    <StatBox label="Div Yield" value={data.dividendYield ? `${(data.dividendYield * 100).toFixed(2)}%` : '-'} />
+                                                    <StatBox label="Book Val" value={data.bookValue?.toFixed(2)} />
+                                                </div>
+                                                <FundamentalsExpanded stock={data} />
+                                            </CardContent>
+                                        </Card>
                                     </div>
-                                    <FundamentalsExpanded stock={data} />
+
+                                    {/* Right Column: Peers & Smart Money */}
+                                    <div className="space-y-6">
+                                        <div className="overflow-hidden rounded-xl border border-border/60 shadow-sm bg-card/50">
+                                            <PeerComparison symbol={data.symbol} currentStock={data} />
+                                        </div>
+                                        <div className="overflow-hidden rounded-xl border border-border/60 shadow-sm bg-card/50">
+                                            <SmartMoney stock={data} />
+                                        </div>
+                                    </div>
                                 </div>
 
-                                {/* Peer Comparison */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <PeerComparison symbol={data.symbol} />
-                                    <SmartMoney stock={data} />
-                                </div>
-
-                                {/* About Company */}
-                                <div className="prose dark:prose-invert max-w-none pt-8 border-t">
-                                    <h3 className="text-xl font-semibold mb-4">About {data.companyName}</h3>
-                                    <p className="text-muted-foreground leading-relaxed text-sm whitespace-pre-line">
-                                        {data.description ? data.description : `${data.companyName} is a publicly traded company listed on the ${data.exchange}. Track its real-time performance, key financial metrics, and community sentiment here on StockX.`}
-                                    </p>
-                                </div>
+                                {/* About Company - Full Width */}
+                                <Card className="border-border/60 shadow-sm bg-card/50 mt-8">
+                                    <CardHeader className="bg-muted/20 border-b border-border/40 pb-4">
+                                        <CardTitle className="text-base font-bold">About {data.companyName}</CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="pt-6">
+                                        <p className="text-muted-foreground leading-relaxed text-sm whitespace-pre-line">
+                                            {data.description ? data.description : `${data.companyName} is a publicly traded company listed on the ${data.exchange}. Track its real-time performance, key financial metrics, and community sentiment here on StockX.`}
+                                        </p>
+                                    </CardContent>
+                                </Card>
                             </TabsContent>
 
 
                             {/* RESULTS TAB */}
-                            <TabsContent value="results" className="space-y-8">
+                            <TabsContent value="results" className="focus-visible:outline-none">
                                 <QuarterlyResults symbol={symbol} />
                             </TabsContent>
 
                             {/* NEWS TAB */}
-                            <TabsContent value="news" className="space-y-4">
+                            <TabsContent value="news" className="focus-visible:outline-none">
                                 <StockNews symbol={data.symbol} />
                             </TabsContent>
 
                             {/* COMMUNITY TAB */}
-                            <TabsContent value="community" className="space-y-4">
-                                <div className="max-w-2xl">
+                            <TabsContent value="community" className="focus-visible:outline-none flex justify-center">
+                                <div className="w-full max-w-2xl">
                                     <StockInsights symbol={data.symbol} />
                                 </div>
                             </TabsContent>
@@ -222,9 +241,9 @@ export default function StockDetailsPage() {
 
 function StatBox({ label, value }: { label: string, value: string | number | undefined }) {
     return (
-        <div className="p-4 rounded-lg border border-border bg-card">
-            <div className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1">{label}</div>
-            <div className="font-semibold text-foreground truncate">
+        <div className="px-4 py-3 rounded-xl bg-muted/30 border border-border/40 hover:bg-muted/50 hover:border-border/60 transition-colors">
+            <div className="text-[10px] sm:text-[11px] font-bold text-muted-foreground/80 uppercase tracking-widest mb-1">{label}</div>
+            <div className="font-semibold text-foreground truncate text-sm sm:text-base">
                 {value !== undefined && value !== null ? value : '-'}
             </div>
         </div>

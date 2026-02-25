@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, BookOpen, Code2, GraduationCap, LineChart, Mail, MapPin, Send, Target, Terminal } from "lucide-react";
 import Link from "next/link";
+import * as motion from "framer-motion/client";
 
 export default function AboutPage() {
     return (
@@ -16,7 +17,15 @@ export default function AboutPage() {
                         Back to Home
                     </Link>
                     <p className="text-sm font-medium text-muted-foreground uppercase tracking-widest">About me</p>
-                    <h1 className="text-4xl font-bold tracking-tight lg:text-5xl">Nethi Kushwanth</h1>
+                    <motion.h1
+                        initial={{ opacity: 0, y: 10, filter: "blur(8px)" }}
+                        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                        whileHover={{ scale: 1.02 }}
+                        className="text-4xl font-bold tracking-tight lg:text-5xl font-outfit bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-primary/40 animate-shimmer cursor-default"
+                    >
+                        Nethi Kushwanth
+                    </motion.h1>
                     <p className="text-xl text-muted-foreground max-w-2xl">
                         Final-year B.Tech student blending technology, finance, and user experience to build professional-grade products.
                     </p>
