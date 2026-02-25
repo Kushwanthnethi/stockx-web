@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { useAuth } from "@/providers/auth-provider";
 import { useRouter } from "next/navigation";
 import {
@@ -97,7 +97,13 @@ function formatPercent(value: number) {
 // ─── LiveHoldingRow ─────────────────────────────────────────────────
 // Subscribes a single row for live price updates
 
-function LiveHoldingRow({ holding, onRemove }: { holding: Holding; onRemove: (symbol: string) => void }) {
+interface LiveHoldingRowProps {
+    holding: Holding;
+    onRemove: (symbol: string) => void;
+    onLiveValuesChange: (symbol: string, pnl: number, currentValue: number, todayPnl: number) => void;
+}
+
+function LiveHoldingRow({ holding, onRemove, onLiveValuesChange }: LiveHoldingRowProps) {
     const { price: livePrice, changePercent: liveChangePercent, flash } = useLivePrice({
         symbol: holding.stockSymbol,
         initialPrice: holding.stock.currentPrice || holding.averageBuyPrice,
@@ -109,6 +115,19 @@ function LiveHoldingRow({ holding, onRemove }: { holding: Holding; onRemove: (sy
     const pnl = currentValue - holding.investedValue;
     const pnlPercent = holding.investedValue > 0 ? (pnl / holding.investedValue) * 100 : 0;
     const isProfit = pnl >= 0;
+
+    // Today's P&L: how much this holding moved today
+    const todayChangePercent = liveChangePercent ?? holding.stock.changePercent ?? 0;
+    // Today's P&L = qty * previousClose * (changePercent/100)
+    // previousClose = currentPrice / (1 + changePercent/100)
+    const previousClose = todayChangePercent !== 0 ? currentPrice / (1 + todayChangePercent / 100) : currentPrice;
+    const todayPnl = holding.quantity * (currentPrice - previousClose);
+    const isTodayProfit = todayPnl >= 0;
+
+    // Report live values to parent for aggregation
+    useEffect(() => {
+        onLiveValuesChange(holding.stockSymbol, pnl, currentValue, todayPnl);
+    }, [pnl, currentValue, todayPnl, holding.stockSymbol]);
 
     return (
         <TableRow className="group hover:bg-muted/40 transition-colors">
@@ -161,6 +180,15 @@ function LiveHoldingRow({ holding, onRemove }: { holding: Holding; onRemove: (sy
                 </div>
                 <div className={cn("text-[10px] font-mono tabular-nums", isProfit ? "text-emerald-500/80" : "text-red-500/80")}>
                     {formatPercent(pnlPercent)}
+                </div>
+            </TableCell>
+            {/* Today's P&L Cell */}
+            <TableCell className="text-right">
+                <div className={cn("font-mono text-sm font-semibold tabular-nums", isTodayProfit ? "text-emerald-500" : "text-red-500")}>
+                    {isTodayProfit ? "+" : ""}{formatCurrency(todayPnl)}
+                </div>
+                <div className={cn("text-[10px] font-mono tabular-nums", isTodayProfit ? "text-emerald-500/80" : "text-red-500/80")}>
+                    {formatPercent(todayChangePercent)}
                 </div>
             </TableCell>
             <TableCell className="text-right">
@@ -402,6 +430,22 @@ export default function PortfolioPage() {
     const [sortAsc, setSortAsc] = useState(false);
     const [analyzing, setAnalyzing] = useState(false);
 
+    // Live P&L aggregation: each row reports its live values here
+    const livePnlMapRef = useRef<Map<string, { pnl: number; currentValue: number; todayPnl: number }>>(new Map());
+    const [liveAggregated, setLiveAggregated] = useState({ totalPnl: 0, totalCurrentValue: 0, totalTodayPnl: 0 });
+
+    const handleLiveValuesChange = useCallback((symbol: string, pnl: number, currentValue: number, todayPnl: number) => {
+        const map = livePnlMapRef.current;
+        const prev = map.get(symbol);
+        // Only update if values actually changed (avoid unnecessary re-renders)
+        if (prev && prev.pnl === pnl && prev.currentValue === currentValue && prev.todayPnl === todayPnl) return;
+        map.set(symbol, { pnl, currentValue, todayPnl });
+        // Aggregate
+        let totalPnl = 0, totalCurrentValue = 0, totalTodayPnl = 0;
+        map.forEach(v => { totalPnl += v.pnl; totalCurrentValue += v.currentValue; totalTodayPnl += v.todayPnl; });
+        setLiveAggregated({ totalPnl, totalCurrentValue, totalTodayPnl });
+    }, []);
+
     useEffect(() => {
         if (!authLoading && !user) {
             router.push("/login?redirect=/portfolio");
@@ -411,6 +455,9 @@ export default function PortfolioPage() {
     const fetchData = async () => {
         if (!user) return;
         setLoading(true);
+        // Reset live aggregation on refresh
+        livePnlMapRef.current = new Map();
+        setLiveAggregated({ totalPnl: 0, totalCurrentValue: 0, totalTodayPnl: 0 });
         try {
             const token = localStorage.getItem("accessToken");
             const res = await fetch(`${API_BASE_URL}/portfolios/holdings?_t=${Date.now()}`, {
@@ -506,7 +553,14 @@ export default function PortfolioPage() {
     if (authLoading) return null;
 
     const s = data?.summary;
-    const isProfit = (s?.totalPnl || 0) >= 0;
+    // Use live aggregated values when available, else fall back to backend values
+    const hasLiveData = livePnlMapRef.current.size > 0;
+    const effectiveTotalPnl = hasLiveData ? liveAggregated.totalPnl : (s?.totalPnl || 0);
+    const effectiveTotalCurrentValue = hasLiveData ? liveAggregated.totalCurrentValue : (s?.totalCurrentValue || 0);
+    const effectiveTotalPnlPercent = (s?.totalInvested || 0) > 0 ? (effectiveTotalPnl / s!.totalInvested) * 100 : 0;
+    const effectiveTotalTodayPnl = liveAggregated.totalTodayPnl;
+    const isProfit = effectiveTotalPnl >= 0;
+    const isTodayProfit = effectiveTotalTodayPnl >= 0;
 
     return (
         <div className="min-h-screen bg-background text-foreground font-sans">
@@ -567,7 +621,7 @@ export default function PortfolioPage() {
                 ) : (
                     <>
                         {/* ─── Summary Cards ─────────────────────────── */}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
                             {/* Invested */}
                             <Card className="p-4 md:p-5 bg-card/60 backdrop-blur-sm border-border/50 hover:shadow-md transition-shadow">
                                 <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
@@ -589,9 +643,10 @@ export default function PortfolioPage() {
                                     <span>Current Value</span>
                                 </div>
                                 <div className="text-lg md:text-xl font-bold font-mono tabular-nums">
-                                    {formatCurrency(s!.totalCurrentValue)}
+                                    {formatCurrency(effectiveTotalCurrentValue)}
                                 </div>
-                                <div className="text-[10px] text-muted-foreground mt-1">
+                                <div className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1">
+                                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
                                     Live market value
                                 </div>
                             </Card>
@@ -611,14 +666,37 @@ export default function PortfolioPage() {
                                     "text-lg md:text-xl font-bold font-mono tabular-nums",
                                     isProfit ? "text-emerald-500" : "text-red-500"
                                 )}>
-                                    {isProfit ? "+" : ""}{formatCurrency(s!.totalPnl)}
+                                    {isProfit ? "+" : ""}{formatCurrency(effectiveTotalPnl)}
                                 </div>
                                 <div className={cn(
                                     "text-xs font-mono tabular-nums mt-1 flex items-center gap-1",
                                     isProfit ? "text-emerald-500/80" : "text-red-500/80"
                                 )}>
                                     {isProfit ? <ArrowUpRight size={10} /> : <ArrowDownRight size={10} />}
-                                    {formatPercent(s!.totalPnlPercent)}
+                                    {formatPercent(effectiveTotalPnlPercent)}
+                                </div>
+                            </Card>
+
+                            {/* Today's P&L */}
+                            <Card className={cn(
+                                "p-4 md:p-5 backdrop-blur-sm border-border/50 hover:shadow-md transition-shadow",
+                                isTodayProfit
+                                    ? "bg-emerald-500/5 border-emerald-500/20"
+                                    : "bg-red-500/5 border-red-500/20"
+                            )}>
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
+                                    {isTodayProfit ? <TrendingUp size={12} className="text-emerald-500" /> : <TrendingDown size={12} className="text-red-500" />}
+                                    <span>Today{'\u0027'}s P&L</span>
+                                </div>
+                                <div className={cn(
+                                    "text-lg md:text-xl font-bold font-mono tabular-nums",
+                                    isTodayProfit ? "text-emerald-500" : "text-red-500"
+                                )}>
+                                    {isTodayProfit ? "+" : ""}{formatCurrency(effectiveTotalTodayPnl)}
+                                </div>
+                                <div className="text-[10px] text-muted-foreground mt-1 flex items-center gap-1">
+                                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                    Intraday change
                                 </div>
                             </Card>
 
@@ -716,6 +794,7 @@ export default function PortfolioPage() {
                                                             P&L <SortIcon col="pnl" />
                                                         </button>
                                                     </TableHead>
+                                                    <TableHead className="text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">Today</TableHead>
                                                     <TableHead className="text-right">
                                                         <button onClick={() => toggleSort("weightage")} className="flex items-center gap-1 ml-auto font-semibold text-xs uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors">
                                                             Weight <SortIcon col="weightage" />
@@ -726,7 +805,7 @@ export default function PortfolioPage() {
                                             </TableHeader>
                                             <TableBody>
                                                 {sortedHoldings.map((h) => (
-                                                    <LiveHoldingRow key={h.id} holding={h} onRemove={handleRemove} />
+                                                    <LiveHoldingRow key={h.id} holding={h} onRemove={handleRemove} onLiveValuesChange={handleLiveValuesChange} />
                                                 ))}
                                             </TableBody>
                                         </Table>
