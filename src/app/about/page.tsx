@@ -15,17 +15,18 @@ export default function AboutPage() {
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         Back to Home
                     </Link>
-                    <h1 className="text-4xl font-bold tracking-tight lg:text-5xl">About Me</h1>
+                    <p className="text-sm font-medium text-muted-foreground uppercase tracking-widest">About me</p>
+                    <h1 className="text-4xl font-bold tracking-tight lg:text-5xl">Nethi Kushwanth</h1>
                     <p className="text-xl text-muted-foreground max-w-2xl">
                         Final-year B.Tech student blending technology, finance, and user experience to build professional-grade products.
                     </p>
                 </div>
                 <div className="flex gap-4">
                     <Button asChild>
-                        <Link href="mailto:nethikushwanth@gmail.com">
+                        <a href="https://mail.google.com/mail/?view=cm&to=nethikushwanth@gmail.com" target="_blank" rel="noopener noreferrer">
                             <Mail className="mr-2 h-4 w-4" />
                             Contact Me
-                        </Link>
+                        </a>
                     </Button>
                     <Button variant="outline" asChild>
                         <a href="https://www.linkedin.com/in/kushwanth-nethi-ba0743281" target="_blank" rel="noopener noreferrer">
@@ -48,8 +49,8 @@ export default function AboutPage() {
                                 {/* Placeholder for avatar if none provided */}
                                 👨‍💻
                             </div>
-                            <CardTitle className="mt-4 text-2xl">Developer & Analyst</CardTitle>
-                            <CardDescription>Frontend • Backend • Finance</CardDescription>
+                            <CardTitle className="mt-4 text-2xl">Nethi Kushwanth</CardTitle>
+                            <CardDescription>Developer & Analyst • Frontend • Backend • Finance</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="flex items-center text-sm text-muted-foreground">
