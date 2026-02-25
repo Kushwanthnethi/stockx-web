@@ -187,17 +187,14 @@ export function CommandMenu() {
 
     return (
         <>
-            {/* Trigger Button - Unchanged style */}
+            {/* Search Icon Trigger */}
             <button
                 onClick={() => setOpen(true)}
-                className="relative inline-flex h-9 w-full min-w-[200px] md:w-[300px] lg:w-[400px] items-center justify-start rounded-[0.5rem] border border-input bg-muted/20 px-4 py-2 text-sm font-medium text-muted-foreground shadow-sm transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 sm:pr-12"
+                className="group relative inline-flex h-9 w-9 items-center justify-center rounded-full border border-border bg-muted/30 text-foreground shadow-sm transition-all duration-200 hover:bg-muted/50 hover:scale-105 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-label="Search stocks"
+                title="Search (⌘K)"
             >
-                <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
-                <span className="hidden lg:inline-flex">Search stocks...</span>
-                <span className="inline-flex lg:hidden">Search...</span>
-                <kbd className="pointer-events-none absolute right-[0.3rem] top-[0.3rem] hidden h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
-                    <span className="text-xs">⌘</span>K
-                </kbd>
+                <Search className="h-[18px] w-[18px]" />
             </button>
 
             <Dialog open={open} onOpenChange={setOpen}>
