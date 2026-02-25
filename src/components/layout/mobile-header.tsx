@@ -16,6 +16,7 @@ import {
 // For X style, tapping avatar usually opens a drawer.
 import { MobileSheet } from "@/components/layout/mobile-sheet"; // We can reuse or adapt this
 import { Button } from "@/components/ui/button";
+import { CommandMenu } from "@/components/shared/command-menu";
 
 export function MobileHeader() {
     const { user, logout } = useAuth();
@@ -35,8 +36,9 @@ export function MobileHeader() {
                 </Link>
             </div>
 
-            {/* Right: Profile or Login */}
-            <div className="flex items-center">
+            {/* Right: Search + Profile or Login */}
+            <div className="flex items-center gap-2">
+                <CommandMenu />
                 {user ? (
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>

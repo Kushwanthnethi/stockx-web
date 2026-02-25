@@ -51,12 +51,8 @@ export function SiteHeader() {
                 </div>
                 <div className="flex items-center gap-4 flex-1 justify-end">
                     <div className="flex items-center gap-2">
-                        <div className="hidden md:block">
-                            <CommandMenu />
-                        </div>
-                        <div className="hidden md:flex">
-                            <ModeToggle />
-                        </div>
+                        <CommandMenu />
+                        <ModeToggle />
                         <AuthButtons />
                     </div>
                 </div>
