@@ -642,6 +642,14 @@ export function FeedPost({ post }: { post: any }) {
                                 <span className="text-xs md:text-sm font-medium">{likeCount}</span>
                             </motion.button>
 
+                            <motion.button
+                                whileTap={{ scale: 0.8 }}
+                                className={cn("flex items-center gap-2 group transition-colors rounded-full px-0 md:px-2 py-1", isBookmarked ? "text-primary bg-primary/10 md:bg-transparent" : "text-muted-foreground hover:text-primary hover:bg-primary/5")}
+                                onClick={handleBookmark}
+                            >
+                                <Bookmark size={18} className={cn("transition-all", isBookmarked && "fill-current stroke-none scale-110")} />
+                            </motion.button>
+
                             <DropdownMenu modal={false}>
                                 <DropdownMenuTrigger asChild>
                                     <motion.button whileTap={{ scale: 0.9 }} className="flex items-center gap-2 text-muted-foreground hover:text-blue-500 px-0 md:px-2 py-1 rounded-full hover:bg-blue-500/5 transition-colors">
@@ -671,14 +679,6 @@ export function FeedPost({ post }: { post: any }) {
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
-
-                            <motion.button
-                                whileTap={{ scale: 0.8 }}
-                                className={cn("flex items-center gap-2 group transition-colors rounded-full px-0 md:px-2 py-1", isBookmarked ? "text-primary bg-primary/10 md:bg-transparent" : "text-muted-foreground hover:text-primary hover:bg-primary/5")}
-                                onClick={handleBookmark}
-                            >
-                                <Bookmark size={18} className={cn("transition-all", isBookmarked && "fill-current stroke-none scale-110")} />
-                            </motion.button>
                         </div>
 
                         {/* Comments Section */}
