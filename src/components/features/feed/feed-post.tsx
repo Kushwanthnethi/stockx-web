@@ -25,55 +25,91 @@ import { usePostInteraction, useUserInteraction } from "@/lib/store/interaction-
 const formatContent = (content: string) => {
     if (!content) return null;
 
-    // 1. Support Markdown Links [Text](URL)
-    // 2. Support Cashtags ($SYMBOL)
-    // 3. Support raw URLs (fallback)
+    // Split by newlines for better control over alignment
+    const lines = content.split('\n');
 
-    const parts = content.split(/(\[.*?\]\(https?:\/\/[^\s\)]+\)|\$[A-Za-z0-9]+|https?:\/\/[^\s]+)/g);
+    const parseText = (text: string) => {
+        // Regex for Markdown links [Text](URL), Cashtags $SYMBOL, URLs, and Bold **text**
+        const parts = text.split(/(\[.*?\]\(https?:\/\/[^\s\)]+\)|\$[A-Za-z0-9]+|https?:\/\/[^\s]+|\*\*.*?\*\*)/g);
 
-    return parts.map((part, i) => {
-        // Match Markdown Link: [Text](URL)
-        const mdMatch = part.match(/\[(.*?)\]\((https?:\/\/[^\s\)]+)\)/);
-        if (mdMatch) {
+        return parts.map((part, i) => {
+            // Match Markdown Link: [Text](URL)
+            const mdMatch = part.match(/\[(.*?)\]\((https?:\/\/[^\s\)]+)\)/);
+            if (mdMatch) {
+                return (
+                    <a key={i} href={mdMatch[2]} target="_blank" rel="noopener noreferrer" className="text-blue-500 font-bold hover:underline">
+                        {mdMatch[1]}
+                    </a>
+                );
+            }
+
+            // Bold: **text**
+            const boldMatch = part.match(/\*\*(.*?)\*\*/);
+            if (boldMatch) {
+                return <strong key={i} className="font-bold text-foreground">{boldMatch[1]}</strong>;
+            }
+
+            // Cashtags: $SYMBOL
+            if (part.startsWith('$')) {
+                const symbol = part.substring(1).toUpperCase();
+                return (
+                    <Link key={i} href={`/stock/${symbol}`} className="font-extrabold text-blue-600 hover:underline">
+                        {part}
+                    </Link>
+                );
+            }
+
+            // Raw URL
+            if (part.startsWith('http')) {
+                return (
+                    <a key={i} href={part} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline break-all">
+                        {part}
+                    </a>
+                );
+            }
+
+            return part;
+        });
+    };
+
+    return lines.map((line, idx) => {
+        const trimmed = line.trim();
+        if (!trimmed) {
+            // Only add height for truly empty lines, not just spaces
+            return line === "" ? <div key={idx} className="h-3" /> : null;
+        }
+
+        // Handle Bullet Points (e.g., •, -, *)
+        const bulletMatch = line.match(/^(\s*)([•\-\*])(\s+)(.*)/);
+        if (bulletMatch) {
             return (
-                <a
-                    key={i}
-                    href={mdMatch[2]}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 font-bold hover:underline"
-                >
-                    {mdMatch[1]}
-                </a>
+                <div key={idx} className="flex gap-2.5 items-start mb-1.5 group">
+                    <span className="flex-shrink-0 text-muted-foreground/80 mt-[3px] scale-125">•</span>
+                    <p className="flex-1 leading-relaxed text-foreground/90 text-justify [text-justify:inter-word]">
+                        {parseText(bulletMatch[4])}
+                    </p>
+                </div>
             );
         }
 
-        if (part.startsWith('$')) {
-            const symbol = part.substring(1).toUpperCase();
+        // Handle lines that start with bullet but no space after (common in raw data)
+        const simpleBulletMatch = line.match(/^(\s*)([•\-\*])(.*)/);
+        if (simpleBulletMatch) {
             return (
-                <Link
-                    key={i}
-                    href={`/stock/${symbol}`}
-                    className="font-bold text-blue-600 hover:underline"
-                >
-                    {part}
-                </Link>
+                <div key={idx} className="flex gap-2.5 items-start mb-1.5 group">
+                    <span className="flex-shrink-0 text-muted-foreground/80 mt-[3px] scale-125">•</span>
+                    <p className="flex-1 leading-relaxed text-foreground/90 text-justify [text-justify:inter-word]">
+                        {parseText(simpleBulletMatch[3])}
+                    </p>
+                </div>
             );
         }
-        if (part.startsWith('http')) {
-            return (
-                <a
-                    key={i}
-                    href={part}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline break-all"
-                >
-                    {part}
-                </a>
-            );
-        }
-        return part;
+
+        return (
+            <p key={idx} className="mb-2 leading-relaxed text-foreground/95 text-justify [text-justify:inter-word]">
+                {parseText(line)}
+            </p>
+        );
     });
 };
 
@@ -433,7 +469,7 @@ export function FeedPost({ post }: { post: any }) {
                     </div>
                 </CardHeader>
 
-                <CardContent className="pb-2 md:pb-3 text-sm md:text-base text-foreground whitespace-pre-line leading-snug md:leading-relaxed">
+                <CardContent className="pb-2 md:pb-3 text-sm md:text-base text-foreground leading-snug md:leading-relaxed">
                     {isEditing ? (
                         <div className="space-y-3">
                             <textarea
@@ -455,7 +491,7 @@ export function FeedPost({ post }: { post: any }) {
                                 transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
                                 className="relative overflow-hidden"
                             >
-                                <div className="text-sm md:text-base text-foreground whitespace-pre-line leading-relaxed pb-1">
+                                <div className="text-sm md:text-base text-foreground leading-relaxed pb-1">
                                     {formatContent(displayPost.content)}
                                 </div>
 
