@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Home, TrendingUp, Bell, Bookmark, Megaphone, Gavel, User, Target, Sparkles, Briefcase, LogOut } from "lucide-react";
+import { Home, TrendingUp, Bell, Bookmark, Megaphone, Gavel, User, Target, Sparkles, Briefcase, LogOut, ShieldCheck } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/providers/auth-provider";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export const SIDEBAR_GROUPS = [
     {
@@ -41,8 +42,8 @@ export function AppSidebar({ className }: { className?: string }) {
     const isActive = (path: string) => pathname === path;
 
     return (
-        <aside className={cn("hidden lg:flex flex-col space-y-6 sticky top-20 self-start py-2 h-[calc(100vh-6rem)]", className)}>
-            <div className="flex-1 overflow-y-auto pr-4 -mr-4 space-y-6 pb-20 scrollbar-hide">
+        <aside className={cn("hidden lg:flex flex-col sticky top-20 self-start py-2 h-[calc(100vh-6rem)] gap-2", className)}>
+            <div className="flex-1 overflow-y-auto pr-4 -mr-4 space-y-6 pb-2 scrollbar-hide">
                 {SIDEBAR_GROUPS.map((group, idx) => {
                     const groupItems = group.items.filter(item => !item.authRequired || user);
                     if (groupItems.length === 0) return null;
@@ -118,34 +119,54 @@ export function AppSidebar({ className }: { className?: string }) {
                 </div>
             </div>
 
-            {/* Sticky Bottom User Profile Card */}
-            <div className="absolute bottom-0 left-0 right-0 bg-background pt-4 pb-2 border-t border-border/40">
-                <div className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-muted/50 transition-colors group cursor-pointer border border-transparent hover:border-border/50">
-                    <div className="h-10 w-10 shrink-0 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 overflow-hidden shadow-sm">
-                        {user ? (
-                            <span className="text-sm font-bold text-primary">{(user.firstName || user.handle || "U")[0]}</span>
-                        ) : (
-                            <User className="h-5 w-5 text-muted-foreground" />
+            {/* Minimalist Bottom User Profile & Utilities */}
+            <div className="pt-2 relative mt-auto">
+                {/* Subtle visual separator without a hard harsh line */}
+                <div className="absolute top-0 left-2 right-6 h-[1px] bg-gradient-to-r from-transparent via-border/40 to-transparent" />
+
+                <div className="flex flex-col gap-0.5 pr-2 pt-1">
+                    {/* User Profile Match Ghost Style */}
+                    <div className="flex items-center gap-3 py-2 px-3 rounded-xl hover:bg-muted/50 transition-all cursor-pointer group">
+                        <div className="h-9 w-9 shrink-0 rounded-full bg-primary/5 group-hover:bg-primary/10 flex items-center justify-center overflow-hidden border border-primary/10 transition-colors">
+                            {user ? (
+                                <span className="text-sm font-bold text-primary">{(user.firstName || user.handle || "U")[0]}</span>
+                            ) : (
+                                <User className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                            )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <p className="text-[14px] font-medium text-foreground truncate group-hover:text-primary transition-colors">
+                                {user ? (user.firstName || user.handle) : "Guest"}
+                            </p>
+                            <p className="text-[12px] text-muted-foreground truncate opacity-70">
+                                {user ? "Pro Member" : "Sign in to interact"}
+                            </p>
+                        </div>
+                        {user && (
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={(e) => { e.preventDefault(); logout(); }}
+                                className="shrink-0 h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
+                            >
+                                <LogOut className="h-4 w-4" />
+                            </Button>
                         )}
                     </div>
-                    <div className="flex-1 min-w-0">
-                        <p className="text-[13px] font-semibold text-foreground truncate block leading-tight">
-                            {user ? (user.firstName || user.handle) : "Guest"}
-                        </p>
-                        <p className="text-[11px] text-muted-foreground truncate leading-tight mt-0.5">
-                            {user ? "Pro Member" : "Sign in to interact"}
-                        </p>
+
+                    {/* Utils Row seamlessly tucked away */}
+                    <div className="flex items-center justify-between px-3 pt-2 pb-1">
+                        <div className="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity cursor-default">
+                            <ShieldCheck className="h-3.5 w-3.5 text-primary" />
+                            <div className="flex items-baseline gap-1.5">
+                                <span className="text-[10px] font-mono font-bold tracking-wider uppercase text-foreground">STABLE</span>
+                                <span className="text-[10px] text-muted-foreground font-mono">v2.1.0</span>
+                            </div>
+                        </div>
+                        <div className="opacity-60 hover:opacity-100 transition-all scale-90 hover:scale-100 -mr-1">
+                            <ModeToggle />
+                        </div>
                     </div>
-                    {user && (
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={(e) => { e.preventDefault(); logout(); }}
-                            className="shrink-0 h-8 w-8 text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-destructive hover:bg-destructive/10 transition-all duration-300"
-                        >
-                            <LogOut className="h-4 w-4" />
-                        </Button>
-                    )}
                 </div>
             </div>
         </aside>
