@@ -360,7 +360,6 @@ export function FeedPost({ post }: { post: any }) {
 
     return (
         <motion.div
-            layout
             initial={{ opacity: 0, y: -20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
@@ -409,7 +408,7 @@ export function FeedPost({ post }: { post: any }) {
                             </motion.div>
                         )}
                     </AnimatePresence>
-                    <DropdownMenu>
+                    <DropdownMenu modal={false}>
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full hover:bg-muted transition-colors">
                                 <MoreHorizontal size={16} className="text-muted-foreground" />
@@ -489,7 +488,7 @@ export function FeedPost({ post }: { post: any }) {
                                             </motion.div>
                                         )}
                                     </AnimatePresence>
-                                    <DropdownMenu>
+                                    <DropdownMenu modal={false}>
                                         <DropdownMenuTrigger asChild>
                                             <Button variant="ghost" size="sm" className="h-8 w-8 p-0 rounded-full hover:bg-muted transition-colors text-muted-foreground">
                                                 <MoreHorizontal size={16} />
@@ -643,7 +642,7 @@ export function FeedPost({ post }: { post: any }) {
                                 <span className="text-xs md:text-sm font-medium">{likeCount}</span>
                             </motion.button>
 
-                            <DropdownMenu>
+                            <DropdownMenu modal={false}>
                                 <DropdownMenuTrigger asChild>
                                     <motion.button whileTap={{ scale: 0.9 }} className="flex items-center gap-2 text-muted-foreground hover:text-blue-500 px-0 md:px-2 py-1 rounded-full hover:bg-blue-500/5 transition-colors">
                                         <Share2 size={18} />
