@@ -119,15 +119,12 @@ export function AppSidebar({ className }: { className?: string }) {
                 </div>
             </div>
 
-            {/* Minimalist Bottom User Profile & Utilities */}
-            <div className="pt-2 relative mt-auto">
-                {/* Subtle visual separator without a hard harsh line */}
-                <div className="absolute top-0 left-2 right-6 h-[1px] bg-gradient-to-r from-transparent via-border/40 to-transparent" />
-
-                <div className="flex flex-col gap-0.5 pr-2 pt-1">
-                    {/* User Profile Match Ghost Style */}
-                    <div className="flex items-center gap-3 py-2 px-3 rounded-xl hover:bg-muted/50 transition-all cursor-pointer group">
-                        <div className="h-9 w-9 shrink-0 rounded-full bg-primary/5 group-hover:bg-primary/10 flex items-center justify-center overflow-hidden border border-primary/10 transition-colors">
+            {/* Solid Bottom Footer (Separated by border) */}
+            <div className="mt-auto border-t border-border/40 bg-background/95 backdrop-blur pt-3 pb-4 px-4 -mx-4">
+                <div className="flex flex-col gap-3">
+                    {/* User Profile */}
+                    <div className="flex items-center gap-3 p-2 -mx-2 rounded-xl hover:bg-muted/50 transition-all cursor-pointer group">
+                        <div className="h-9 w-9 shrink-0 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden border border-primary/20 transition-colors">
                             {user ? (
                                 <span className="text-sm font-bold text-primary">{(user.firstName || user.handle || "U")[0]}</span>
                             ) : (
@@ -147,23 +144,23 @@ export function AppSidebar({ className }: { className?: string }) {
                                 variant="ghost"
                                 size="icon"
                                 onClick={(e) => { e.preventDefault(); logout(); }}
-                                className="shrink-0 h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all"
+                                className="shrink-0 h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all opacity-0 group-hover:opacity-100"
                             >
                                 <LogOut className="h-4 w-4" />
                             </Button>
                         )}
                     </div>
 
-                    {/* Utils Row seamlessly tucked away */}
-                    <div className="flex items-center justify-between px-3 pt-2 pb-1">
-                        <div className="flex items-center gap-2 opacity-50 hover:opacity-100 transition-opacity cursor-default">
-                            <ShieldCheck className="h-3.5 w-3.5 text-primary" />
+                    {/* Subtle Utilities Row */}
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity cursor-default">
+                            <ShieldCheck className="h-3.5 w-3.5 text-muted-foreground" />
                             <div className="flex items-baseline gap-1.5">
-                                <span className="text-[10px] font-mono font-bold tracking-wider uppercase text-foreground">STABLE</span>
-                                <span className="text-[10px] text-muted-foreground font-mono">v2.1.0</span>
+                                <span className="text-[10px] font-mono font-bold tracking-wider uppercase text-muted-foreground">STABLE</span>
+                                <span className="text-[10px] text-muted-foreground/60 font-mono">v2.1.0</span>
                             </div>
                         </div>
-                        <div className="opacity-60 hover:opacity-100 transition-all scale-90 hover:scale-100 -mr-1">
+                        <div className="opacity-70 hover:opacity-100 transition-all scale-90 hover:scale-100 -mr-2">
                             <ModeToggle />
                         </div>
                     </div>

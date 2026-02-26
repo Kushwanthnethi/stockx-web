@@ -52,7 +52,6 @@ export function SiteHeader() {
                 <div className="flex items-center gap-4 flex-1 justify-end">
                     <div className="flex items-center gap-2">
                         <CommandMenu />
-                        <ModeToggle />
                         <AuthButtons />
                     </div>
                 </div>

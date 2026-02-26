@@ -7,17 +7,10 @@ import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { TrendingUp, Megaphone, Gavel, Bell, Bookmark, User, FileText, Target, Sparkles, LogOut, Send as SendIcon, ShieldCheck, Briefcase } from "lucide-react";
+import { TrendingUp, Megaphone, Gavel, Bell, Bookmark, User, FileText, Target, Sparkles, LogOut, ShieldCheck, Briefcase } from "lucide-react";
 import { useAuth } from "@/providers/auth-provider";
 import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
-
-// New X (formerly Twitter) icon component
-const XIcon = ({ className }: { className?: string }) => (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className={className} fill="currentColor">
-        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
-    </svg>
-);
 
 const INVESTOR_QUOTES = [
     "Patience is the key to strategic alpha.",
@@ -175,27 +168,20 @@ export function MobileSheet({ trigger, className }: { trigger?: React.ReactNode,
                                     {/* Socials & Meta */}
                                     <div className="px-2 space-y-4">
                                         <div className="flex items-center justify-between">
-                                            <div className="flex gap-4 items-center">
-                                                <Link href="https://x.com" target="_blank" className="text-muted-foreground hover:text-primary transition-colors">
-                                                    <XIcon className="h-4 w-4" />
-                                                </Link>
-                                                <Link href="https://t.me" target="_blank" className="text-muted-foreground hover:text-primary transition-colors">
-                                                    <SendIcon className="h-4 w-4" />
-                                                </Link>
-                                                <div className="h-4 w-[1px] bg-border mx-1" />
+                                            <div className="flex items-center bg-muted/50 rounded-lg p-0.5 border border-border/40 shadow-inner">
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    className="h-8 w-8 text-muted-foreground hover:text-primary"
+                                                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
                                                     onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                                                 >
-                                                    <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                                                    <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                                                    <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 text-yellow-500 dark:scale-0" />
+                                                    <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100 dark:text-slate-100" />
                                                     <span className="sr-only">Toggle theme</span>
                                                 </Button>
                                             </div>
-                                            <div className="flex items-center gap-1 opacity-50">
-                                                <ShieldCheck className="h-3 w-3" />
+                                            <div className="flex items-center gap-1.5 opacity-60">
+                                                <ShieldCheck className="h-3.5 w-3.5 text-primary" />
                                                 <span className="text-[10px] font-mono tracking-tighter">v2.1.0-STABLE</span>
                                             </div>
                                         </div>
