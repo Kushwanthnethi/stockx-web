@@ -3,11 +3,13 @@
 import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, PlusCircle, Gavel, Target, Megaphone, Sparkles, Briefcase } from "lucide-react"; // Updated icons for new layout
+import { Home, Plus, Target, Sparkles, Briefcase } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { CreatePost } from "@/components/features/feed/create-post";
+import dynamic from "next/dynamic";
+
+const CreatePost = dynamic(() => import("@/components/features/feed/create-post").then(mod => mod.CreatePost), { ssr: false });
 import { useAuth } from "@/providers/auth-provider";
 import { useRouter } from "next/navigation";
 
@@ -24,8 +26,8 @@ export function BottomNav() {
 
     const navItems = [
         { label: "Home", href: "/", icon: Home },
-        { label: "Stock of Week", href: "/stock-of-the-week", icon: Target },
-        { label: "Create", href: "#create", icon: PlusCircle, special: true }, // href is dummy now
+        { label: "Target", href: "/stock-of-the-week", icon: Target },
+        { label: "Create", href: "#create", icon: Plus, special: true }, // href is dummy now
         { label: "Strategist", href: "/strategist", icon: Sparkles },
         { label: "Portfolio", href: "/portfolio", icon: Briefcase },
     ];
@@ -45,25 +47,19 @@ export function BottomNav() {
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <div className="md:hidden fixed bottom-6 left-4 right-4 z-50 flex justify-center pointer-events-none">
-                {/* 
-                   Updated Glass Dock Style:
-                   - Stronger, darker background (bg-background/95) to prevent text bleed-through.
-                   - Higher backdrop blur (backdrop-blur-xl).
-                   - Slight border/shadow tweaks for "pop".
-                */}
-                <nav className="pointer-events-auto flex items-center justify-around px-2 h-16 rounded-2xl w-full max-w-sm bg-background/95 backdrop-blur-xl border border-white/10 shadow-2xl dark:shadow-black/50 dark:bg-[#0a0a0a]/95">
+            <div className="md:hidden fixed bottom-[calc(1.5rem+env(safe-area-inset-bottom))] left-4 right-4 z-50 flex justify-center pointer-events-none">
+                <nav className="pointer-events-auto flex items-center justify-around px-2 h-14 rounded-full w-full max-w-sm bg-black/95 backdrop-blur-xl border border-white/5 shadow-2xl">
                     {navItems.map((item) => {
                         const active = isActive(item.href);
 
                         if (item.special) {
                             return (
-                                <div key={item.label} className="-mt-6">
+                                <div key={item.label} className="flex h-full items-center justify-center">
                                     <button
                                         onClick={handleCreateClick}
-                                        className="h-14 w-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center shadow-lg transform active:scale-95 transition-transform border-4 border-background"
+                                        className="h-10 w-10 rounded-full bg-white text-black flex items-center justify-center shadow-md transform active:scale-95 transition-transform"
                                     >
-                                        <item.icon size={28} />
+                                        <item.icon size={22} strokeWidth={2.5} />
                                     </button>
                                 </div>
                             );
@@ -74,20 +70,12 @@ export function BottomNav() {
                                 key={item.href}
                                 href={item.href}
                                 className={cn(
-                                    "flex flex-col items-center justify-center w-14 h-full relative group",
-                                    active ? "text-primary" : "text-muted-foreground hover:text-foreground"
+                                    "flex flex-col items-center justify-center w-12 h-full relative group",
+                                    active ? "text-white" : "text-white/50 hover:text-white/80"
                                 )}
                             >
-                                {active && (
-                                    <motion.div
-                                        layoutId="nav-indicator"
-                                        className="absolute -top-3 h-1 w-8 bg-primary rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)]"
-                                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                                    />
-                                )}
-
                                 <item.icon
-                                    size={24}
+                                    size={22}
                                     strokeWidth={active ? 2.5 : 2}
                                     className={cn("transition-all duration-300", active && "scale-110 drop-shadow-md")}
                                 />

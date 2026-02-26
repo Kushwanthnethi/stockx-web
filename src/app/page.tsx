@@ -10,6 +10,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { StockBadge } from "@/components/shared/stock-badge";
 import { getFeedPosts, type Post } from "@/mocks/handlers";
 import { FeedPost } from "@/components/features/feed/feed-post";
+import { FeedPostSkeleton } from "@/components/features/feed/feed-post-skeleton";
 import { useAuth } from "@/providers/auth-provider";
 import { UserNav } from "@/components/layout/user-nav";
 import { NewsWidget } from "@/components/features/news/news-widget";
@@ -158,9 +159,9 @@ export default function Home() {
                     {/* Posts Feed */}
                     <AnimatePresence mode="popLayout">
                         {loading ? (
-                            <div className="space-y-4">
+                            <div className="space-y-0 md:space-y-4">
                                 {[1, 2, 3].map(i => (
-                                    <div key={i} className="h-40 rounded-lg bg-card animate-pulse border border-border" />
+                                    <FeedPostSkeleton key={i} />
                                 ))}
                             </div>
                         ) : posts.length > 0 ? (

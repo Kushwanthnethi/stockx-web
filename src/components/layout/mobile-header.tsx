@@ -2,6 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useAuth } from "@/providers/auth-provider";
 import { Settings, TrendingUp, LogOut, User } from "lucide-react";
 import {
@@ -42,11 +43,13 @@ export function MobileHeader() {
                 {user ? (
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <button className="rounded-full overflow-hidden h-8 w-8 border border-border outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring">
-                                <img
+                            <button className="relative rounded-full overflow-hidden h-8 w-8 border border-border outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring">
+                                <Image
                                     src={user.avatarUrl || "https://github.com/shadcn.png"}
                                     alt="Profile"
-                                    className="h-full w-full object-cover"
+                                    fill
+                                    className="object-cover"
+                                    sizes="32px"
                                 />
                             </button>
                         </DropdownMenuTrigger>
