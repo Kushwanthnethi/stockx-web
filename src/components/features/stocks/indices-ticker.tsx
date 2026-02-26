@@ -34,17 +34,25 @@ function IndexCard({ index, className, size = "default" }: { index: IndexData, c
                     <span className="font-bold text-xs tracking-tight truncate leading-none mb-0.5">{index.symbol}</span>
                     <div className="text-[9px] text-muted-foreground font-semibold uppercase tracking-wider opacity-80">Index</div>
                 </div>
-                <div className="text-right">
-                    <div className="text-base font-bold tabular-nums tracking-tighter leading-none">
-                        {price.toLocaleString(undefined, { maximumFractionDigits: 0, minimumFractionDigits: 0 })}
-                    </div>
-
+                <div className="flex justify-between items-end">
                     <div className={cn(
-                        "text-[9px] font-bold flex items-center justify-end gap-0.5 tabular-nums mt-0.5 leading-none",
+                        "text-[10px] font-bold tabular-nums leading-none mb-0.5",
                         change >= 0 ? "text-green-600" : "text-red-600"
                     )}>
-                        {change >= 0 ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
-                        {changePercent.toFixed(2)}%
+                        {change > 0 ? "+" : ""}{change.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 })}
+                    </div>
+                    <div className="text-right">
+                        <div className="text-base font-bold tabular-nums tracking-tighter leading-none mb-1">
+                            {price.toLocaleString(undefined, { maximumFractionDigits: 0, minimumFractionDigits: 0 })}
+                        </div>
+
+                        <div className={cn(
+                            "text-[9px] font-bold flex items-center justify-end gap-0.5 tabular-nums leading-none",
+                            change >= 0 ? "text-green-600" : "text-red-600"
+                        )}>
+                            {change >= 0 ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
+                            {Math.abs(changePercent).toFixed(2)}%
+                        </div>
                     </div>
                 </div>
             </div>
@@ -122,9 +130,12 @@ function IndicesSkeleton() {
                                 <div className="h-3 w-14 bg-muted animate-pulse rounded" />
                                 <div className="h-2 w-8 bg-muted animate-pulse rounded" />
                             </div>
-                            <div className="flex flex-col items-end space-y-1">
-                                <div className="h-4 w-16 bg-muted animate-pulse rounded" />
-                                <div className="h-2 w-10 bg-muted animate-pulse rounded" />
+                            <div className="flex justify-between items-end">
+                                <div className="h-2.5 w-10 bg-muted animate-pulse rounded mb-0.5" />
+                                <div className="flex flex-col items-end space-y-1">
+                                    <div className="h-4 w-16 bg-muted animate-pulse rounded" />
+                                    <div className="h-2 w-10 bg-muted animate-pulse rounded" />
+                                </div>
                             </div>
                         </div>
                     ))}

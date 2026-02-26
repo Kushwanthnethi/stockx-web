@@ -25,7 +25,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
         >
             {!shouldHideSidebar && <AppSidebar className="sticky top-20 w-56 shrink-0" />}
             <main className={cn(
-                "flex-1 min-w-0 w-full px-[var(--mobile-safe-padding)] lg:px-0",
+                "flex-1 min-w-0 w-full lg:px-0",
                 isAuthPage ? "pb-0" : "pb-28 lg:pb-0"
             )}>
                 {children}

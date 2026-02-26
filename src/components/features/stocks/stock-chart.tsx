@@ -247,7 +247,7 @@ export function StockChart({ symbol }: StockChartProps) {
     }, []);
 
     /* gradient ID unique per symbol */
-    const gradientId = `cg_${symbol.replace(/[^a-zA-Z0-9]/g, '_')}`;
+    const gradientId = `cg_${(symbol || '').replace(/[^a-zA-Z0-9]/g, '_')}`;
 
     const rangeLabels: Record<Range, string> = {
         '1d': '1D', '1w': '1W', '1mo': '1M', '3mo': '3M', '1y': '1Y'
