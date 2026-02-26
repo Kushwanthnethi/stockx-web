@@ -41,7 +41,7 @@ export function SiteHeader() {
 
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-background/80 backdrop-blur-sm supports-[backdrop-filter]:bg-background/60">
-            <div className="flex h-20 md:h-14 items-center justify-between px-1.5 lg:container max-w-7xl mx-auto">
+            <div className="flex h-20 md:h-14 items-center justify-between px-4 md:px-8 max-w-[1440px] mx-auto w-full">
                 <div className="flex items-center gap-0.5 md:gap-1">
                     <MobileSheet />
                     <Link href="/" className="font-bold text-xl md:text-xl tracking-tighter flex items-center gap-1.5 md:gap-1">

@@ -133,9 +133,6 @@ export function MobileSheet({ trigger, className }: { trigger?: React.ReactNode,
                                             >
                                                 <item.icon size={18} className="shrink-0" />
                                                 <span>{item.label}</span>
-                                                {(item as any).isNew && (
-                                                    <span className="ml-auto text-[10px] font-bold bg-primary/20 text-primary px-1.5 py-0.5 rounded-sm shrink-0">NEW</span>
-                                                )}
                                             </Button>
                                         </Link>
                                     ))}

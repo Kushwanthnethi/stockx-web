@@ -34,7 +34,32 @@ export function WatchlistWidget() {
 
     if (!user) return null;
 
-    if (loading) return <div className="h-32 animate-pulse bg-muted rounded-lg" />;
+    if (loading) return (
+        <Card>
+            <CardHeader className="pb-3">
+                <CardTitle className="text-base flex items-center justify-between">
+                    Your Watchlist
+                    <span className="text-xs text-muted-foreground opacity-50">View All</span>
+                </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <div className="space-y-3">
+                    {[1, 2, 3].map((i) => (
+                        <div key={i} className="flex items-center justify-between">
+                            <div className="flex flex-col space-y-1.5 w-1/2">
+                                <div className="h-4 w-16 bg-muted animate-pulse rounded" />
+                                <div className="h-3 w-24 bg-muted animate-pulse rounded opacity-50" />
+                            </div>
+                            <div className="flex flex-col items-end space-y-1.5 w-1/3">
+                                <div className="h-4 w-12 bg-muted animate-pulse rounded" />
+                                <div className="h-3 w-10 bg-muted animate-pulse rounded opacity-50" />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </CardContent>
+        </Card>
+    );
 
     return (
         <Card>

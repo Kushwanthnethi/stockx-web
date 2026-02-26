@@ -39,6 +39,7 @@ function TrendingRow({ stock }: { stock: any }) {
 
 export function TrendingWidget() {
     const [trending, setTrending] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchTrending = async () => {
@@ -56,6 +57,8 @@ export function TrendingWidget() {
                 }
             } catch (error) {
                 console.error("Failed to fetch trending stocks", error);
+            } finally {
+                setIsLoading(false);
             }
         };
         fetchTrending();
@@ -75,16 +78,35 @@ export function TrendingWidget() {
                 </CardTitle>
             </CardHeader>
             <CardContent className="px-4 pb-4 space-y-4">
-                <div className="space-y-3">
-                    {trending.map((stock) => (
-                        <TrendingRow key={stock.rawSymbol} stock={stock} />
-                    ))}
-                </div>
-                <Link href="/explore">
-                    <Button variant="ghost" className="w-full text-xs text-muted-foreground hover:text-primary mt-2">
-                        View All Stocks <ArrowRight className="ml-1 h-3 w-3" />
-                    </Button>
-                </Link>
+                {isLoading ? (
+                    <div className="space-y-4">
+                        {[1, 2, 3, 4].map((i) => (
+                            <div key={i} className="flex items-center justify-between py-0.5">
+                                <div className="flex flex-col space-y-2 w-1/2">
+                                    <div className="h-4 w-16 bg-muted animate-pulse rounded" />
+                                    <div className="h-3 w-28 bg-muted animate-pulse rounded opacity-50" />
+                                </div>
+                                <div className="flex flex-col items-end space-y-2 w-1/3">
+                                    <div className="h-4 w-16 bg-muted animate-pulse rounded" />
+                                    <div className="h-3 w-10 bg-muted animate-pulse rounded opacity-50" />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <>
+                        <div className="space-y-3">
+                            {trending.map((stock) => (
+                                <TrendingRow key={stock.rawSymbol} stock={stock} />
+                            ))}
+                        </div>
+                        <Link href="/explore">
+                            <Button variant="ghost" className="w-full text-xs text-muted-foreground hover:text-primary mt-2">
+                                View All Stocks <ArrowRight className="ml-1 h-3 w-3" />
+                            </Button>
+                        </Link>
+                    </>
+                )}
             </CardContent>
         </Card>
     );

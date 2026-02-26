@@ -47,17 +47,7 @@ export function GuestAuthModal() {
         setOpen(showLoginModal);
     }, [showLoginModal]);
 
-    // Mandatory Login Trigger for Unauthenticated Users
-    useEffect(() => {
-        if (!isLoading && !user && !showLoginModal && !hasTriggeredRef.current) {
-            // Small delay to allow initial load/hydration stability
-            const timer = setTimeout(() => {
-                setShowLoginModal(true);
-                hasTriggeredRef.current = true;
-            }, 1500);
-            return () => clearTimeout(timer);
-        }
-    }, [isLoading, user, showLoginModal, setShowLoginModal]);
+
 
     const handleOpenChange = (newOpen: boolean) => {
         setOpen(newOpen);

@@ -82,11 +82,64 @@ function IndexCard({ index, className, size = "default" }: { index: IndexData, c
     );
 }
 
+function IndicesSkeleton() {
+    return (
+        <div className="mb-6">
+            {/* Status Header Skeleton */}
+            <div className="flex items-center justify-between mb-3 px-1 mt-2">
+                <div className="flex items-center gap-2">
+                    <div className="h-3 w-3 rounded-full bg-muted animate-pulse" />
+                    <div className="h-4 w-32 bg-muted rounded animate-pulse" />
+                </div>
+            </div>
+
+            {/* Desktop View Skeleton */}
+            <div className="hidden md:flex flex-col gap-4">
+                <div className="grid grid-cols-2 gap-4">
+                    {[1, 2].map((i) => (
+                        <Card key={i} className="bg-card border-l-4 border-l-muted shadow-sm">
+                            <CardContent className="p-4 flex items-center justify-between">
+                                <div className="space-y-2">
+                                    <div className="h-6 w-20 bg-muted animate-pulse rounded" />
+                                    <div className="h-3 w-16 bg-muted animate-pulse rounded" />
+                                </div>
+                                <div className="flex flex-col items-end space-y-2">
+                                    <div className="h-7 w-24 bg-muted animate-pulse rounded" />
+                                    <div className="h-4 w-16 bg-muted animate-pulse rounded" />
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ))}
+                </div>
+            </div>
+
+            {/* Mobile View Skeleton */}
+            <div className="md:hidden flex flex-col gap-2 px-1">
+                <div className="grid grid-cols-2 gap-2">
+                    {[1, 2].map((i) => (
+                        <div key={i} className="bg-card border-l-[3px] border-l-muted rounded-lg p-2.5 flex flex-col justify-between shadow-sm border border-border/50 h-[72px]">
+                            <div className="flex flex-col space-y-1 mb-1">
+                                <div className="h-3 w-14 bg-muted animate-pulse rounded" />
+                                <div className="h-2 w-8 bg-muted animate-pulse rounded" />
+                            </div>
+                            <div className="flex flex-col items-end space-y-1">
+                                <div className="h-4 w-16 bg-muted animate-pulse rounded" />
+                                <div className="h-2 w-10 bg-muted animate-pulse rounded" />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+}
+
 export function IndicesTicker() {
     const [indices, setIndices] = useState<IndexData[]>([]);
     const [marketSession, setMarketSession] = useState<MarketSession>(MarketSession.CLOSED);
     const [statusText, setStatusText] = useState("");
     const [isExpanded, setIsExpanded] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const session = getMarketSession();
@@ -102,6 +155,8 @@ export function IndicesTicker() {
                 }
             } catch (error) {
                 console.error("Failed to fetch indices", error);
+            } finally {
+                setIsLoading(false);
             }
         };
 
@@ -113,7 +168,8 @@ export function IndicesTicker() {
         };
     }, []);
 
-    if (indices.length === 0) return null;
+    if (isLoading) return <IndicesSkeleton />;
+    if (!isLoading && indices.length === 0) return null;
 
     // Separate primary and secondary indices
     // We assume NIFTY 50 and SENSEX are primary
