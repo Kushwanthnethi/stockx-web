@@ -16,7 +16,7 @@ import dynamic from "next/dynamic";
 
 const StockChart = dynamic(() => import("@/components/features/stocks/stock-chart").then(mod => mod.StockChart), {
     ssr: false,
-    loading: () => <div className="h-[400px] sm:h-[480px] w-full flex flex-col items-center justify-center bg-card/30 animate-pulse rounded-xl border border-border/40 gap-3"><div className="h-8 w-8 border-4 border-emerald-500/50 border-t-transparent animate-spin rounded-full"></div><span className="text-muted-foreground/60 font-medium text-sm tracking-widest uppercase">Loading Chart...</span></div>
+    loading: () => <div className="h-[400px] sm:h-[480px] w-full flex flex-col items-center justify-center gap-3"><div className="h-8 w-8 border-4 border-emerald-500/50 border-t-transparent animate-spin rounded-full"></div><span className="text-muted-foreground/60 font-medium text-sm tracking-widest uppercase">Loading Chart...</span></div>
 });
 
 import { StockInsights } from "@/components/features/stocks/stock-insights";

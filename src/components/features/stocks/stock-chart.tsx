@@ -254,7 +254,7 @@ export function StockChart({ symbol }: StockChartProps) {
     };
 
     return (
-        <div className="w-full h-full bg-card rounded-xl flex flex-col overflow-hidden">
+        <div className="w-full h-full flex flex-col overflow-hidden">
             {/* ─── Header ─────────────────────────────────────── */}
             <div className="flex items-start justify-between p-3 sm:p-4 pb-0 gap-2">
                 <div className="flex flex-col gap-1">
@@ -412,12 +412,16 @@ export function StockChart({ symbol }: StockChartProps) {
                 .recharts-cartesian-grid-vertical { 
                     stroke: none !important; 
                 }
-                .recharts-wrapper, 
+                .recharts-wrapper,
+                .recharts-wrapper *,
                 .recharts-surface,
                 .recharts-container,
-                svg { 
-                    outline: none !important; 
-                    border: none !important; 
+                .recharts-wrapper [role="application"],
+                .recharts-wrapper [tabindex],
+                .recharts-wrapper div,
+                .recharts-wrapper svg {
+                    outline: none !important;
+                    border: none !important;
                     box-shadow: none !important;
                     -webkit-tap-highlight-color: transparent !important;
                     user-select: none !important;
@@ -426,11 +430,16 @@ export function StockChart({ symbol }: StockChartProps) {
                 .recharts-wrapper:active,
                 .recharts-wrapper:focus-within,
                 .recharts-wrapper:focus-visible,
+                .recharts-wrapper *:focus,
+                .recharts-wrapper *:active,
+                .recharts-wrapper *:focus-within,
+                .recharts-wrapper *:focus-visible,
                 .recharts-surface:focus,
                 .recharts-surface:active,
                 .recharts-surface:focus-visible,
                 svg:focus,
-                svg:active {
+                svg:active,
+                svg:focus-visible {
                     outline: none !important;
                     border: none !important;
                     box-shadow: none !important;
