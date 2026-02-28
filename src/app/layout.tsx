@@ -23,6 +23,7 @@ export const metadata: Metadata = {
 import { AuthProvider } from "@/providers/auth-provider";
 import { GuestAuthModal } from "@/components/shared/guest-auth-modal";
 import { SebiDisclaimerModal } from "@/components/shared/sebi-disclaimer-modal";
+import { MaintenancePopup } from "@/components/shared/maintenance-popup";
 import { SiteHeader } from "@/components/layout/site-header";
 
 import { ThemeProvider } from "@/components/theme-provider";
@@ -59,6 +60,7 @@ export default function RootLayout({
                     <AuthProvider>
                         <SocketProvider>
                             <MarketAutoRefreshProvider>
+                                <MaintenancePopup />
                                 <GuestAuthModal />
                                 <SebiDisclaimerModal />
                                 <SiteHeader />
