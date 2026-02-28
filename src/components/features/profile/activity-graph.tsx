@@ -33,19 +33,12 @@ export function ActivityGraph({ data = [] }: ActivityGraphProps) {
             for (let d = 0; d < 7; d++) {
                 const date = new Date(gridStartDate);
                 date.setDate(gridStartDate.getDate() + (w * 7) + d);
-
-                if (date > today) {
-                    week.push(null);
-                } else if (date < startDate) {
-                    week.push(null);
-                } else {
-                    week.push(date);
-                }
+                week.push(date);
             }
             weeksArray.push(week);
         }
         return weeksArray;
-    }, [startDate, today]);
+    }, [startDate]);
 
     const getColor = (count: number) => {
         if (count === 0) return "bg-muted/30";
@@ -77,10 +70,13 @@ export function ActivityGraph({ data = [] }: ActivityGraphProps) {
                 {weeks.map((week, wIndex) => (
                     <div key={wIndex} className="flex flex-col gap-[3px]">
                         {week.map((date, dIndex) => {
-                            if (!date) return <div key={dIndex} className="w-3 h-3 rounded-[2px] bg-muted/10 opacity-20" />;
+                            if (date < startDate) {
+                                return <div key={dIndex} className="w-3 h-3 rounded-[2px] bg-transparent" />;
+                            }
 
                             const dateStr = date.toISOString().split('T')[0];
-                            const count = normalizedData.get(dateStr) || 0;
+                            const isFuture = date > today;
+                            const count = isFuture ? 0 : (normalizedData.get(dateStr) || 0);
 
                             return (
                                 <TooltipProvider key={dIndex}>
@@ -89,13 +85,14 @@ export function ActivityGraph({ data = [] }: ActivityGraphProps) {
                                             <div
                                                 className={cn(
                                                     "w-3 h-3 rounded-[2px] transition-all duration-300 hover:ring-2 hover:ring-ring/50",
-                                                    getColor(count)
+                                                    getColor(count),
+                                                    isFuture && "opacity-40"
                                                 )}
                                             />
                                         </TooltipTrigger>
                                         <TooltipContent side="top">
                                             <p className="text-xs font-medium">
-                                                {count === 0 ? "No" : count} visits on {date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                                {isFuture ? "Future date" : `${count === 0 ? "No" : count} visits`} on {date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                             </p>
                                         </TooltipContent>
                                     </Tooltip>

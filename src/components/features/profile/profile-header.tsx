@@ -56,7 +56,7 @@ export function ProfileHeader({
                 <div className="relative -mt-20 flex flex-col items-start gap-4 pb-4">
 
                     {/* Top Row: Avatar and Actions */}
-                    <div className="w-full flex flex-col md:flex-row items-end justify-between gap-4">
+                    <div className="w-full flex flex-col md:flex-row items-start md:items-end justify-between gap-4 md:gap-0">
                         <Avatar className="w-32 h-32 md:w-40 md:h-40 border-4 border-background shadow-xl rounded-2xl">
                             <AvatarImage src={profile.avatarUrl} alt={profile.handle} className="object-cover" />
                             <AvatarFallback className="text-4xl bg-muted">{profile.firstName?.[0]}</AvatarFallback>

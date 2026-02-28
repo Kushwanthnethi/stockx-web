@@ -157,14 +157,14 @@ export default function StockDetailsPage() {
                                             <CardContent className="space-y-8 pt-6">
                                                 <PerformanceRange
                                                     label="Today's Range"
-                                                    low={data.lowDay || Math.min(price, data.currentPrice * 0.98)}
-                                                    high={data.highDay || Math.max(price, data.currentPrice * 1.02)}
+                                                    low={Math.min(price, data.lowDay || data.currentPrice * 0.98)}
+                                                    high={Math.max(price, data.highDay || data.currentPrice * 1.02)}
                                                     current={price}
                                                 />
                                                 <PerformanceRange
                                                     label="52W Range"
-                                                    low={data.low52Week}
-                                                    high={data.high52Week}
+                                                    low={Math.min(price, data.low52Week || data.currentPrice * 0.5)}
+                                                    high={Math.max(price, data.high52Week || data.currentPrice * 1.5)}
                                                     current={price}
                                                 />
                                             </CardContent>

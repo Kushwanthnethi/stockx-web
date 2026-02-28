@@ -146,16 +146,16 @@ export default function ProfilePage() {
                             Posts
                         </TabsTrigger>
                         <TabsTrigger
-                            value="replies"
+                            value="watchlist"
                             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-6 py-3 font-medium transition-all"
                         >
-                            Replies
+                            Watchlist
                         </TabsTrigger>
                         <TabsTrigger
-                            value="media"
+                            value="portfolio"
                             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-6 py-3 font-medium transition-all"
                         >
-                            Media
+                            Portfolio
                         </TabsTrigger>
                     </TabsList>
 
@@ -195,18 +195,28 @@ export default function ProfilePage() {
                         )}
                     </TabsContent>
 
-                    <TabsContent value="replies" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <TabsContent value="watchlist" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                         <div className="text-center py-20 text-muted-foreground border border-dashed rounded-xl">
-                            Replies will appear here.
+                            <div className="flex flex-col items-center justify-center space-y-3">
+                                <div className="p-4 bg-muted/30 rounded-full">
+                                    {/* Placeholder icon */}
+                                    <svg className="w-8 h-8 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" /></svg>
+                                </div>
+                                <h3 className="text-lg font-semibold text-foreground">Watchlist is private</h3>
+                                <p className="text-sm">Only {profile.firstName} can see their watchlist items.</p>
+                            </div>
                         </div>
                     </TabsContent>
 
-                    <TabsContent value="media" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        <div className="grid grid-cols-3 gap-4">
-                            {/* Placeholder for media grid */}
-                            <div className="aspect-square bg-muted rounded-lg animate-pulse" />
-                            <div className="aspect-square bg-muted rounded-lg animate-pulse delay-75" />
-                            <div className="aspect-square bg-muted rounded-lg animate-pulse delay-150" />
+                    <TabsContent value="portfolio" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        <div className="text-center py-20 text-muted-foreground border border-dashed rounded-xl">
+                            <div className="flex flex-col items-center justify-center space-y-3">
+                                <div className="p-4 bg-muted/30 rounded-full">
+                                    <svg className="w-8 h-8 opacity-50" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                </div>
+                                <h3 className="text-lg font-semibold text-foreground">Portfolio is private</h3>
+                                <p className="text-sm">Public portfolios are coming soon to StockX.</p>
+                            </div>
                         </div>
                     </TabsContent>
                 </Tabs>
