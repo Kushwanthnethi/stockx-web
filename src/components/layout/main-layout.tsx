@@ -20,7 +20,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
                 "flex items-start mx-auto w-full",
                 isAuthPage ? "min-h-screen" : "min-h-[calc(100vh-3.5rem)]",
                 // Mobile: Full width without stacked padding. Desktop: Constrained max-width container.
-                !isAuthPage && "max-w-[1440px] px-4 md:px-8 lg:py-8 lg:gap-8"
+                !isAuthPage && "max-w-[1440px] px-4 md:px-8 lg:pt-2 lg:pb-8 lg:gap-8"
             )}
         >
             {!shouldHideSidebar && <AppSidebar className="sticky top-20 w-56 shrink-0" />}

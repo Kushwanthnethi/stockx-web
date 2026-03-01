@@ -19,6 +19,7 @@ import { ProfileWidget } from "@/components/features/profile/profile-widget";
 import { ModeToggle } from "@/components/mode-toggle";
 import { TrendingWidget } from "@/components/features/stocks/trending-widget";
 import { IndicesTicker } from "@/components/features/stocks/indices-ticker";
+import { MarqueeIndexTicker } from "@/components/features/stocks/marquee-index-ticker";
 import { WatchlistWidget } from "@/components/features/stocks/watchlist-widget";
 import { CreatePost } from "@/components/features/feed/create-post";
 import { API_BASE_URL } from "@/lib/config";
@@ -128,6 +129,9 @@ export default function Home() {
 
                 {/* Center Feed */}
                 <div className="lg:col-span-7">
+                    {/* Scrolling Index Marquee */}
+                    <MarqueeIndexTicker />
+
                     <h1 className="hidden md:block text-lg md:text-2xl font-bold mb-4 text-foreground">
                         Indian Stock Market Analysis & Investor Insights
                     </h1>
