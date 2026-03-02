@@ -24,11 +24,11 @@ export default function ResultsPage() {
                             <Badge className="mb-4 bg-primary/20 text-primary hover:bg-primary/30 border-none px-3 py-1 text-[10px] uppercase tracking-wider font-bold">
                                 Live Updates
                             </Badge>
-                            <h1 className="text-3xl font-bold tracking-tight mb-2 flex items-center gap-3">
-                                <Megaphone className="w-8 h-8 text-primary" />
+                            <h1 className="text-3xl font-black tracking-tight mb-2 flex items-center gap-3 text-transparent bg-clip-text bg-gradient-to-r from-white to-blue-500 pb-1">
+                                <Megaphone className="w-8 h-8 text-blue-500" />
                                 Result Corner
                             </h1>
-                            <p className="text-muted-foreground max-w-2xl text-lg">
+                            <p className="text-muted-foreground max-w-2xl text-lg mt-2">
                                 Track financial result announcements from top NSE & BSE companies. Stay ahead of market movements with real-time updates.
                             </p>
                         </div>

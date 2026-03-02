@@ -146,7 +146,7 @@ export default function VerdictPage() {
                                     NIFTY 50 INTELLIGENCE
                                 </span>
                             </div>
-                            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground">
+                            <h1 className="text-4xl md:text-5xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-blue-500 pb-1">
                                 The Verdict
                             </h1>
                             <p className="text-muted-foreground text-lg max-w-2xl font-light leading-relaxed">
