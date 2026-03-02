@@ -1,10 +1,9 @@
 "use client";
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { TrendingUp, TrendingDown, Minus, Info, RefreshCw, AlertCircle, Zap, ShieldCheck, Activity, Landmark, Target, Gauge } from "lucide-react";
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { TrendingUp, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
-import ReactMarkdown from 'react-markdown';
 
 interface VerdictCardProps {
     stock: {
@@ -18,7 +17,6 @@ interface VerdictCardProps {
             signal: string;
             score: number;
             summary: string;
-            syntheticRationale?: string;
         };
         institutional?: {
             verdict: string;
@@ -37,143 +35,168 @@ interface VerdictCardProps {
             generatedAt: string;
         } | null;
     };
-    isThrottled?: boolean;
 }
 
-export function VerdictCard({ stock, isThrottled }: VerdictCardProps) {
-    const { verdict, technical, institutional } = stock;
-    const isGeneratingAi = !verdict;
-    const displayRationale = verdict?.rationale || technical?.syntheticRationale || "";
+export function VerdictCard({ stock }: VerdictCardProps) {
+    const [expanded, setExpanded] = useState(false);
+    const { verdict, institutional } = stock;
 
-    const getVerdictColor = (v?: string) => {
-        switch (v) {
-            case "BUY": return "text-emerald-500 border-emerald-500/20 bg-emerald-500/5";
-            case "SELL": return "text-rose-500 border-rose-500/20 bg-rose-500/5";
-            case "HOLD": return "text-amber-500 border-amber-500/20 bg-amber-500/5";
-            default: return "text-muted-foreground border-border bg-muted/5";
-        }
-    };
+    const displayVerdict = verdict?.verdict || institutional?.verdict || "HOLD";
+    const confidence = verdict?.confidence || institutional?.confidence || 50;
+    const rawRationale = verdict?.rationale || "";
 
-    const getStatusColor = (v?: string | number) => {
-        if (v === 'BULLISH' || v === 'BUY' || v === 'BEAT' || (typeof v === 'number' && v < 2.5)) return "text-emerald-500";
-        if (v === 'BEARISH' || v === 'SELL' || v === 'MISS' || (typeof v === 'number' && v > 3.5)) return "text-rose-500";
-        return "text-amber-500";
-    };
-
-    // Parsing logic for delimited rationales
+    // Parse rationale — strip markdown ** and extract sections
+    const sanitize = (text: string) => text.replace(/\*\*/g, "").replace(/\*/g, "");
     const parseRationale = (raw: string) => {
         const headlineMatch = raw.match(/\[HEADLINE\]([\s\S]*?)(\[|$)/);
-        const triggersMatch = raw.match(/\[TRIGGERS\]([\s\S]*?)(\[|$)/);
         const contentMatch = raw.match(/\[CONTENT\]([\s\S]*)$/);
-
         return {
-            headline: headlineMatch ? headlineMatch[1].trim() : "",
-            triggers: triggersMatch ? triggersMatch[1].trim().split('|').map(t => t.trim()) : [],
-            content: contentMatch ? contentMatch[1].trim() : raw.replace(/\[.*?\]/g, "").trim()
+            headline: headlineMatch ? sanitize(headlineMatch[1].trim()) : "",
+            content: contentMatch
+                ? sanitize(contentMatch[1].trim())
+                : sanitize(raw.replace(/\[.*?\]/g, "").trim()),
         };
     };
 
-    const parsed = parseRationale(displayRationale);
+    const parsed = parseRationale(rawRationale);
+    const headline = parsed.headline ||
+        (displayVerdict === "BUY"
+            ? `${stock.symbol.split(".")[0]} shows strong fundamentals`
+            : displayVerdict === "SELL"
+                ? `${stock.symbol.split(".")[0]} faces headwinds`
+                : `${stock.symbol.split(".")[0]} remains range-bound`);
+
+    const displaySymbol = stock.symbol?.split(".")[0] || stock.symbol;
+
+    // Color helpers
+    const verdictColor = {
+        BUY: { text: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20", bar: "bg-emerald-500" },
+        SELL: { text: "text-rose-400", bg: "bg-rose-500/10", border: "border-rose-500/20", bar: "bg-rose-500" },
+        HOLD: { text: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20", bar: "bg-amber-500" },
+    }[displayVerdict] || { text: "text-muted-foreground", bg: "bg-muted/10", border: "border-border", bar: "bg-muted-foreground" };
+
+    const getStatusColor = (v?: string | number) => {
+        if (v === "BULLISH" || v === "BUY" || v === "BEAT" || (typeof v === "number" && v < 2.5)) return "text-emerald-400";
+        if (v === "BEARISH" || v === "SELL" || v === "MISS" || (typeof v === "number" && v > 3.5)) return "text-rose-400";
+        return "text-amber-400";
+    };
 
     return (
-        <Card className="overflow-hidden border-border/40 bg-card/40 backdrop-blur-2xl transition-all hover:border-primary/40 hover:shadow-xl group flex flex-col relative min-h-[440px] border-t-4 border-t-transparent w-full">
-            {/* Top Identity Section */}
-            <div className="p-5 pb-3 flex items-start justify-between">
-                <div className="flex flex-col gap-1">
+        <Card className="overflow-hidden border-border/30 bg-card/30 backdrop-blur-sm transition-all hover:border-primary/30 hover:shadow-lg group flex flex-col rounded-xl">
+            {/* Header: Symbol + Price + Badge */}
+            <div className="p-4 pb-3 flex items-start justify-between">
+                <div className="flex flex-col gap-0.5">
                     <div className="flex items-center gap-2">
-                        <span className="text-xl font-bold tracking-tight text-foreground">${stock.symbol.split('.')[0]}</span>
-                        <span className="text-[11px] text-muted-foreground font-medium mt-0.5">• {stock.companyName}</span>
+                        <span className="text-base font-bold tracking-tight text-foreground">{displaySymbol}</span>
+                        <span className="text-[10px] text-muted-foreground/60 font-medium truncate max-w-[140px]">
+                            {stock.companyName}
+                        </span>
                     </div>
                     <div className="flex items-baseline gap-2">
-                        <span className="text-lg font-bold text-foreground">₹{stock.currentPrice?.toLocaleString('en-IN')}</span>
+                        <span className="text-sm font-semibold text-foreground">
+                            ₹{stock.currentPrice?.toLocaleString("en-IN")}
+                        </span>
                         <span className={cn(
-                            "text-xs font-bold",
-                            stock.changePercent >= 0 ? "text-emerald-500" : "text-rose-500"
+                            "text-[11px] font-semibold",
+                            stock.changePercent >= 0 ? "text-emerald-400" : "text-rose-400"
                         )}>
-                            {stock.changePercent >= 0 ? '+' : ''}{stock.changePercent?.toFixed(2)}
+                            {stock.changePercent >= 0 ? "+" : ""}{stock.changePercent?.toFixed(2)}%
                         </span>
                     </div>
                 </div>
-                {institutional && (
-                    <Badge className={cn(
-                        "text-[10px] font-bold px-2.5 py-1 uppercase tracking-wide border",
-                        institutional.verdict === 'BUY' ? "border-emerald-500/30 text-emerald-500 bg-emerald-500/5" :
-                            institutional.verdict === 'SELL' ? "border-rose-500/30 text-rose-500 bg-rose-500/5" :
-                                "border-blue-500/30 text-blue-500 bg-blue-500/5"
-                    )}>
-                        {institutional.verdict === 'BUY' ? 'STRONG BUY' : institutional.verdict === 'SELL' ? 'DISTRIBUTE' : 'HOLD TIGHT'}
-                    </Badge>
-                )}
+
+                {/* Verdict Badge */}
+                <div className={cn(
+                    "px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wide border",
+                    verdictColor.text, verdictColor.bg, verdictColor.border
+                )}>
+                    {displayVerdict}
+                </div>
             </div>
 
-            <div className="px-5 flex-grow flex flex-col gap-4">
+            {/* Confidence Bar */}
+            <div className="px-4 pb-2">
+                <div className="flex items-center justify-between mb-1">
+                    <span className="text-[9px] text-muted-foreground/60 uppercase tracking-wider font-medium">Confidence</span>
+                    <span className={cn("text-[10px] font-bold", verdictColor.text)}>{confidence}%</span>
+                </div>
+                <div className="h-1 bg-muted/20 rounded-full overflow-hidden">
+                    <div
+                        className={cn("h-full rounded-full transition-all duration-700", verdictColor.bar)}
+                        style={{ width: `${Math.min(confidence, 100)}%` }}
+                    />
+                </div>
+            </div>
 
-                {/* RESTORED: Institutional Intelligence Breakdown */}
-                <div className="grid grid-cols-3 gap-2 py-2 border-y border-border/10 bg-muted/5 rounded-lg px-2">
-                    <div className="flex flex-col items-center gap-1">
-                        <span className="text-[9px] text-muted-foreground uppercase tracking-wider font-semibold">Analysts</span>
-                        <div className="flex items-center gap-1">
-                            <Landmark size={10} className="text-muted-foreground/50" />
-                            <span className={cn("text-[10px] font-bold", getStatusColor(institutional?.breakdown.analysts))}>
-                                {typeof institutional?.breakdown.analysts === 'number'
-                                    ? institutional.breakdown.analysts.toFixed(1)
-                                    : institutional?.breakdown.analysts}
-                            </span>
-                        </div>
+            {/* Metrics Row */}
+            {institutional && (
+                <div className="mx-4 mb-3 grid grid-cols-3 gap-px bg-border/10 rounded-lg overflow-hidden">
+                    <div className="bg-card/60 px-2 py-2 flex flex-col items-center gap-0.5">
+                        <span className="text-[8px] text-muted-foreground/50 uppercase tracking-wider">Analysts</span>
+                        <span className={cn("text-[10px] font-bold", getStatusColor(institutional.breakdown.analysts))}>
+                            {typeof institutional.breakdown.analysts === "number"
+                                ? institutional.breakdown.analysts.toFixed(1)
+                                : institutional.breakdown.analysts}
+                        </span>
                     </div>
-                    <div className="flex flex-col items-center gap-1 border-l border-border/10">
-                        <span className="text-[9px] text-muted-foreground uppercase tracking-wider font-semibold">Earnings</span>
-                        <div className="flex items-center gap-1">
-                            <Target size={10} className="text-muted-foreground/50" />
-                            <span className={cn("text-[10px] font-bold", getStatusColor(institutional?.breakdown.earnings))}>
-                                {institutional?.breakdown.earnings}
-                            </span>
-                        </div>
+                    <div className="bg-card/60 px-2 py-2 flex flex-col items-center gap-0.5">
+                        <span className="text-[8px] text-muted-foreground/50 uppercase tracking-wider">Earnings</span>
+                        <span className={cn("text-[10px] font-bold", getStatusColor(institutional.breakdown.earnings))}>
+                            {institutional.breakdown.earnings}
+                        </span>
                     </div>
-                    <div className="flex flex-col items-center gap-1 border-l border-border/10">
-                        <span className="text-[9px] text-muted-foreground uppercase tracking-wider font-semibold">Momentum</span>
-                        <div className="flex items-center gap-1">
-                            <Gauge size={10} className="text-muted-foreground/50" />
-                            <span className={cn("text-[10px] font-bold", getStatusColor(institutional?.breakdown.tech))}>
-                                {institutional?.breakdown.tech}
-                            </span>
-                        </div>
+                    <div className="bg-card/60 px-2 py-2 flex flex-col items-center gap-0.5">
+                        <span className="text-[8px] text-muted-foreground/50 uppercase tracking-wider">Momentum</span>
+                        <span className={cn("text-[10px] font-bold", getStatusColor(institutional.breakdown.tech))}>
+                            {institutional.breakdown.tech}
+                        </span>
                     </div>
                 </div>
+            )}
 
-                {/* TRIGGERS Section - Slightly Reduced */}
-                <div className="space-y-1">
-                    <div className="flex items-center gap-2 text-[10px] font-bold tracking-wide text-muted-foreground/60">
-                        <div className="h-1.5 w-1.5 bg-primary/70 rounded-full" />
-                        TRIGGERS: {parsed.triggers.length > 0 ? parsed.triggers.join(' & ').toUpperCase() : 'MARKET VOLATILITY'}
-                    </div>
-                </div>
-
-                {/* Main Headline - Use standard font */}
-                <h4 className="text-lg font-bold tracking-tight text-foreground leading-snug group-hover:text-primary transition-colors duration-300">
-                    {parsed.headline || (institutional?.verdict === 'BUY' ? "Strategic capital accumulation indicated by core metrics." : "Balanced market outlook suggests tactical holding.")}
+            {/* Headline */}
+            <div className="px-4 pb-2">
+                <h4 className="text-[13px] font-semibold text-foreground/90 leading-snug line-clamp-2">
+                    {headline}
                 </h4>
-
-                {/* Rationale Quote Box - Remove italics */}
-                <div className="bg-muted/10 border border-border/20 rounded-xl p-4 relative">
-                    <div className="text-[11px] font-medium text-muted-foreground/90 leading-relaxed">
-                        <span className="text-foreground font-bold text-[11px] block mb-1">The Verdict:</span>
-                        "{parsed.content?.slice(0, 220)}..."
-                    </div>
-                </div>
             </div>
+
+            {/* Rationale — expandable */}
+            {parsed.content && (
+                <div className="px-4 pb-3 flex-grow">
+                    <p className={cn(
+                        "text-[11px] text-muted-foreground/70 leading-relaxed",
+                        expanded ? "" : "line-clamp-3"
+                    )}>
+                        {parsed.content}
+                    </p>
+                    {parsed.content.length > 150 && (
+                        <button
+                            onClick={() => setExpanded(!expanded)}
+                            className="text-[10px] text-primary font-medium mt-1 flex items-center gap-0.5 hover:underline"
+                        >
+                            {expanded ? (
+                                <><ChevronUp size={10} /> Show less</>
+                            ) : (
+                                <><ChevronDown size={10} /> Read more</>
+                            )}
+                        </button>
+                    )}
+                </div>
+            )}
 
             {/* Footer */}
-            <div className="p-5 pt-6 mt-auto flex items-center justify-between border-t border-border/10">
-                <span className="text-[10px] font-semibold text-muted-foreground/40 uppercase tracking-wide">
-                    {new Date(verdict?.generatedAt || Date.now()).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+            <div className="p-4 pt-2 mt-auto flex items-center justify-between border-t border-border/10">
+                <span className="text-[10px] text-muted-foreground/40 font-medium">
+                    {verdict?.generatedAt
+                        ? new Date(verdict.generatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+                        : "Pending"}
                 </span>
                 <a
                     href={`/stock/${stock.symbol}`}
-                    className="text-[10px] font-bold text-primary uppercase tracking-wide hover:underline flex items-center gap-1"
+                    className="text-[10px] font-semibold text-primary hover:underline flex items-center gap-1"
                 >
-                    Deep Dive
-                    <TrendingUp size={12} className="rotate-45" />
+                    Deep Dive <TrendingUp size={10} className="rotate-45" />
                 </a>
             </div>
         </Card>
