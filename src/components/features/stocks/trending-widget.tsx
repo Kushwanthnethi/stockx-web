@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { API_BASE_URL } from "@/lib/config";
 import { useLivePrice } from "@/hooks/use-live-price";
 import { cn } from "@/lib/utils";
-import { LineChart, Line, ResponsiveContainer } from "recharts";
+import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 
 // ─── Types ──────────────────────────────────────────────────────────────
 interface MoverStock {
@@ -43,6 +43,7 @@ function MiniSparkline({ data, color }: { data: number[]; color: string }) {
         <div className="w-[56px] h-[24px] flex-shrink-0">
             <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData}>
+                    <YAxis domain={["dataMin", "dataMax"]} hide />
                     <Line
                         type="monotone"
                         dataKey="v"
