@@ -31,45 +31,62 @@ export function HolidayCard() {
     };
 
     return (
-        <Card className="mb-6 relative overflow-hidden bg-card text-card-foreground border shadow-sm">
-            <div className="p-5 flex flex-col md:flex-row gap-6 items-start justify-between min-h-[140px]">
-                <div className="space-y-3 z-10 flex-1 py-1">
-                    <h2 className="text-xl font-semibold text-foreground tracking-tight">
+        <Card className="mb-6 relative overflow-hidden border-0 shadow-lg group">
+            {/* Base gradient background - responds to light/dark mode */}
+            <div className="absolute inset-0 bg-gradient-to-br from-indigo-50/90 via-white/90 to-fuchsia-50/90 dark:from-indigo-950/40 dark:via-background dark:to-fuchsia-950/40 z-0 transition-colors duration-500" />
+
+            {/* Animated Background Orbs for 'holi' theme */}
+            {activeHoliday.imageType === 'holi' && (
+                <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-60 dark:opacity-40 mix-blend-multiply dark:mix-blend-screen transition-opacity duration-700">
+                    <div className="absolute -top-[20%] -right-[10%] w-[50%] h-[150%] bg-gradient-to-bl from-pink-400/40 to-fuchsia-500/0 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '8s' }} />
+                    <div className="absolute -bottom-[40%] right-[10%] w-[40%] h-[120%] bg-gradient-to-tl from-violet-500/40 to-indigo-500/0 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '12s', animationDelay: '1s' }} />
+                    <div className="absolute top-[10%] right-[30%] w-[30%] h-[80%] bg-gradient-to-b from-amber-400/30 to-orange-500/0 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '10s', animationDelay: '2s' }} />
+                </div>
+            )}
+
+            {/* Glassmorphism content wrapper */}
+            <div className="relative z-10 p-6 flex flex-col md:flex-row gap-6 items-center justify-between min-h-[140px] backdrop-blur-[2px] bg-white/10 dark:bg-black/10">
+                <div className="space-y-3 flex-1 w-full relative z-10">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 dark:bg-indigo-400/10 text-indigo-700 dark:text-indigo-300 text-xs font-semibold tracking-wide uppercase border border-indigo-200/50 dark:border-indigo-800/50 mb-1">
+                        <Sparkles className="w-3.5 h-3.5" />
+                        Market Holiday
+                    </div>
+                    <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 dark:text-white">
                         {activeHoliday.title}
                     </h2>
-                    <p className="text-sm text-muted-foreground leading-relaxed md:max-w-md">
+                    <p className="text-base text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl font-medium">
                         {activeHoliday.message}
                     </p>
                 </div>
 
-                {/* Decorative Element mimicking the image */}
-                <div className="hidden sm:flex items-center justify-center w-40 h-full absolute right-12 top-0 z-0">
-                    {activeHoliday.imageType === 'holi' ? (
-                        <div className="relative w-full h-full flex items-center justify-center">
-                            {/* Simplified Splash effect */}
-                            <div className="absolute top-1/4 right-0 w-2 h-2 rounded-full bg-blue-400" />
-                            <div className="absolute top-1/3 right-4 w-3 h-3 rounded-full bg-green-400" />
-                            <div className="absolute top-1/2 right-2 w-1.5 h-1.5 rounded-full bg-yellow-400" />
-                            <div className="absolute bottom-1/3 right-6 w-2.5 h-2.5 rounded-full bg-pink-400" />
-
-                            {/* Sparkles conveying celebration */}
-                            <div className="relative text-emerald-500 rounded-full bg-emerald-50 dark:bg-emerald-500/10 p-4 transform rotate-12">
-                                <Sparkles className="w-8 h-8 opacity-80" />
+                {/* Decorative Icon Graphic */}
+                <div className="hidden sm:flex items-center justify-center w-32 h-full flex-shrink-0 relative z-10 mr-8">
+                    {activeHoliday.imageType === 'holi' && (
+                        <div className="relative w-20 h-20 flex items-center justify-center">
+                            {/* Colorful rings */}
+                            <div className="absolute inset-0 rounded-full border-4 border-pink-400/30 animate-[spin_8s_linear_infinite]" />
+                            <div className="absolute inset-2 rounded-full border-4 border-t-violet-400/60 border-r-transparent border-b-amber-400/60 border-l-transparent animate-[spin_12s_linear_infinite_reverse]" />
+                            <div className="absolute inset-4 rounded-full bg-gradient-to-tr from-indigo-500 to-fuchsia-500 shadow-lg shadow-fuchsia-500/20 flex items-center justify-center transform group-hover:scale-110 transition-transform duration-500">
+                                <Sparkles className="w-6 h-6 text-white animate-pulse" />
                             </div>
                         </div>
-                    ) : null}
+                    )}
                 </div>
             </div>
 
+            {/* Dismiss Button */}
             <Button
                 variant="ghost"
                 size="icon"
-                className="absolute top-3 right-3 text-muted-foreground hover:text-foreground h-8 w-8 z-20 rounded-full"
+                className="absolute top-4 right-4 text-slate-400 hover:text-slate-700 hover:bg-slate-200/50 dark:text-slate-500 dark:hover:text-slate-200 dark:hover:bg-slate-800/50 h-8 w-8 z-20 rounded-full transition-colors"
                 onClick={handleDismiss}
                 aria-label="Dismiss message"
             >
                 <X className="h-4 w-4" />
             </Button>
+
+            {/* Bottom highlight border */}
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 via-fuchsia-500 to-amber-500 opacity-80" />
         </Card>
     );
 }
