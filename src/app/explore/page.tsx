@@ -112,7 +112,7 @@ export default function ExplorePage() {
     }, []);
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-background text-foreground font-sans selection:bg-primary/30">
+        <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/30">
             {/* Ambient Background Effects - Visible in dark mode only */}
             <div className="fixed inset-0 z-0 pointer-events-none opacity-0 dark:opacity-100 transition-opacity duration-500">
                 <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-500/5 rounded-full blur-[120px]" />
@@ -137,8 +137,8 @@ export default function ExplorePage() {
                                     MARKET INTELLIGENCE
                                 </span>
                             </div>
-                            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground">
-                                Market Screener
+                            <h1 className="text-4xl md:text-5xl font-black tracking-tight text-foreground">
+                                Market <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-500">Screener</span>
                             </h1>
                             <p className="text-muted-foreground text-lg max-w-2xl font-light leading-relaxed">
                                 Deep fundamental analysis of top Indian stocks powered by real-time metrics.

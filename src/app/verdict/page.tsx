@@ -99,7 +99,7 @@ export default function VerdictPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-slate-50 dark:bg-background text-foreground font-sans">
+            <div className="min-h-screen bg-background text-foreground font-sans">
                 <div className="relative z-10 w-full space-y-8 py-6 px-4 sm:px-6">
                     <div className="flex flex-col gap-3">
                         <Skeleton className="h-6 w-40 rounded-full bg-primary/5" />
@@ -122,7 +122,7 @@ export default function VerdictPage() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-background text-foreground font-sans selection:bg-primary/30">
+        <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/30">
             {/* Ambient Background Effects — dark mode only, matching explore page */}
             <div className="fixed inset-0 z-0 pointer-events-none opacity-0 dark:opacity-100 transition-opacity duration-500">
                 <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-indigo-500/5 rounded-full blur-[120px]" />
@@ -146,8 +146,8 @@ export default function VerdictPage() {
                                     NIFTY 50 INTELLIGENCE
                                 </span>
                             </div>
-                            <h1 className="text-4xl md:text-5xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white to-blue-500 pb-1">
-                                The Verdict
+                            <h1 className="text-4xl md:text-5xl font-black tracking-tight text-foreground pb-1">
+                                The <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-500">Verdict</span>
                             </h1>
                             <p className="text-muted-foreground text-lg max-w-2xl font-light leading-relaxed">
                                 AI-powered verdicts for India's top 50 stocks — blending technical, fundamental, and institutional signals.

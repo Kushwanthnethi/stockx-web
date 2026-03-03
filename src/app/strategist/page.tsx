@@ -256,7 +256,7 @@ export default function StrategistPage() {
                                     )}
                                     <div className="flex items-center gap-2">
                                         <Sparkles size={18} className="text-amber-500" />
-                                        <h1 className="text-xl lg:text-2xl font-black tracking-tight">CIO Investment Desk</h1>
+                                        <h1 className="text-xl lg:text-2xl font-black tracking-tight text-foreground">CIO Investment <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-500">Desk</span></h1>
                                     </div>
                                     <Badge className="bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20 text-[10px] font-black uppercase tracking-wider">
                                         Long-Only Capital
