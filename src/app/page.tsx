@@ -136,8 +136,8 @@ export default function Home() {
 
                     <HolidayCard />
 
-                    <h1 className="hidden md:block text-lg md:text-2xl font-bold mb-4 text-foreground">
-                        Indian Stock Market Analysis & Investor Insights
+                    <h1 className="hidden md:block text-lg md:text-2xl font-black mb-4 text-foreground">
+                        Indian Stock Market Analysis & <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-500">Investor Insights</span>
                     </h1>
 
                     {/* Live Indices Ticker */}
