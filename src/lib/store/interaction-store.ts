@@ -6,6 +6,7 @@ interface PostState {
     isLiked: boolean;
     likeCount: number;
     isBookmarked: boolean;
+    isReshared: boolean;
     reshareCount: number;
     // We can add comment count if we want to sync that too
     commentCount?: number;
@@ -24,7 +25,8 @@ interface InteractionStore {
     // Actions
     toggleLike: (postId: string, current: boolean, currentCount: number) => Promise<void>;
     toggleBookmark: (postId: string, current: boolean) => Promise<void>;
-    toggleReshare: (postId: string, currentCount: number) => Promise<void>;
+    toggleReshare: (postId: string, isReshared: boolean, currentCount: number) => Promise<void>;
+    quoteRepost: (postId: string, content: string, currentCount: number) => Promise<void>;
     toggleFollow: (userId: string, current: boolean) => Promise<void>;
     toggleBlock: (userId: string) => Promise<void>;
 
@@ -113,14 +115,18 @@ export const useInteractionStore = create<InteractionStore>((set, get) => ({
         }
     },
 
-    toggleReshare: async (postId, currentCount) => {
-        // Optimistic
+    toggleReshare: async (postId, isReshared, currentCount) => {
+        // Optimistic toggle
+        const nextReshared = !isReshared;
+        const nextCount = nextReshared ? currentCount + 1 : Math.max(0, currentCount - 1);
+
         set((state) => ({
             posts: {
                 ...state.posts,
                 [postId]: {
                     ...state.posts[postId],
-                    reshareCount: currentCount + 1
+                    isReshared: nextReshared,
+                    reshareCount: nextCount
                 }
             }
         }));
@@ -141,6 +147,48 @@ export const useInteractionStore = create<InteractionStore>((set, get) => ({
                     ...state.posts,
                     [postId]: {
                         ...state.posts[postId],
+                        isReshared: isReshared,
+                        reshareCount: currentCount
+                    }
+                }
+            }));
+        }
+    },
+
+    quoteRepost: async (postId, content, currentCount) => {
+        // Optimistic: increment count
+        set((state) => ({
+            posts: {
+                ...state.posts,
+                [postId]: {
+                    ...state.posts[postId],
+                    isReshared: true,
+                    reshareCount: currentCount + 1
+                }
+            }
+        }));
+
+        const token = localStorage.getItem('accessToken');
+        if (!token) return;
+
+        try {
+            await fetch(`${API_BASE_URL}/posts/${postId}/reshare`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ content })
+            });
+        } catch (e) {
+            console.error(e);
+            // Revert
+            set((state) => ({
+                posts: {
+                    ...state.posts,
+                    [postId]: {
+                        ...state.posts[postId],
+                        isReshared: false,
                         reshareCount: currentCount
                     }
                 }
@@ -219,6 +267,7 @@ export const useInteractionStore = create<InteractionStore>((set, get) => ({
                         isLiked: false,
                         likeCount: 0,
                         isBookmarked: false,
+                        isReshared: false,
                         reshareCount: 0,
                         ...initialState
                     }
@@ -262,16 +311,19 @@ export const usePostInteraction = (postId: string, initialProps: Partial<PostSta
     const isLiked = postState?.isLiked ?? initialProps.isLiked ?? false;
     const likeCount = postState?.likeCount ?? initialProps.likeCount ?? 0;
     const isBookmarked = postState?.isBookmarked ?? initialProps.isBookmarked ?? false;
+    const isReshared = postState?.isReshared ?? initialProps.isReshared ?? false;
     const reshareCount = postState?.reshareCount ?? initialProps.reshareCount ?? 0;
 
     return {
         isLiked,
         likeCount,
         isBookmarked,
+        isReshared,
         reshareCount,
         toggleLike: () => store.toggleLike(postId, isLiked, likeCount),
         toggleBookmark: () => store.toggleBookmark(postId, isBookmarked),
-        toggleReshare: () => store.toggleReshare(postId, reshareCount),
+        toggleReshare: () => store.toggleReshare(postId, isReshared, reshareCount),
+        quoteRepost: (content: string) => store.quoteRepost(postId, content, reshareCount),
     };
 };
 

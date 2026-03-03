@@ -109,6 +109,27 @@ export default function Home() {
         fetchPosts(1);
     }, []);
 
+    // Listen for repost events to update feed in real-time
+    useEffect(() => {
+        // Quote repost created — refresh feed to show it
+        const handleQuoteRepost = () => {
+            fetchPosts(1, true);
+        };
+        // Repost undone — remove the reshare post from feed immediately
+        const handleUndoRepost = (e: any) => {
+            const { postId } = e.detail;
+            if (postId) {
+                setPosts(prev => prev.filter(p => p.id !== postId));
+            }
+        };
+        window.addEventListener('quote-repost-created', handleQuoteRepost);
+        window.addEventListener('repost-undone', handleUndoRepost);
+        return () => {
+            window.removeEventListener('quote-repost-created', handleQuoteRepost);
+            window.removeEventListener('repost-undone', handleUndoRepost);
+        };
+    }, []);
+
     // Infinite Scroll Hook
     useIntersectionObserver({
         target: loadMoreRef,
