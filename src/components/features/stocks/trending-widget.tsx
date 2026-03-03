@@ -2,72 +2,160 @@
 
 import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { TrendingUp, TrendingDown, ArrowRight } from "lucide-react";
+import { TrendingUp, TrendingDown, Activity, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { isMarketOpen } from "@/lib/market-time";
 import { API_BASE_URL } from "@/lib/config";
 import { useLivePrice } from "@/hooks/use-live-price";
 import { cn } from "@/lib/utils";
+import { LineChart, Line, ResponsiveContainer } from "recharts";
 
-function TrendingRow({ stock }: { stock: any }) {
-    const { price, changePercent, flash } = useLivePrice({
-        symbol: stock.rawSymbol,
-        initialPrice: stock.price,
-        initialChangePercent: stock.change
-    });
+// ─── Types ──────────────────────────────────────────────────────────────
+interface MoverStock {
+    symbol: string;
+    companyName: string;
+    currentPrice: number;
+    changePercent: number;
+    sparkline: number[];
+}
+
+interface MarketMoversData {
+    gainers: MoverStock[];
+    losers: MoverStock[];
+    active: MoverStock[];
+}
+
+type TabKey = "gainers" | "losers" | "active";
+
+const TAB_CONFIG: { key: TabKey; label: string; icon: React.ReactNode }[] = [
+    { key: "gainers", label: "Gainers", icon: <TrendingUp size={12} /> },
+    { key: "losers", label: "Losers", icon: <TrendingDown size={12} /> },
+    { key: "active", label: "Active", icon: <Activity size={12} /> },
+];
+
+// ─── Sparkline Component ────────────────────────────────────────────────
+function MiniSparkline({ data, color }: { data: number[]; color: string }) {
+    if (!data || data.length < 2) return <div className="w-[56px] h-[24px]" />;
+
+    const chartData = data.map((v, i) => ({ v, i }));
 
     return (
-        <Link href={`/stock/${stock.symbol}`} className="flex items-center justify-between group">
-            <div className="flex flex-col">
-                <span className="font-semibold text-sm group-hover:text-primary transition-colors">${stock.symbol}</span>
-                <span className="text-xs text-muted-foreground truncate max-w-[120px]">{stock.name}</span>
+        <div className="w-[56px] h-[24px] flex-shrink-0">
+            <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={chartData}>
+                    <Line
+                        type="monotone"
+                        dataKey="v"
+                        stroke={color}
+                        strokeWidth={1.5}
+                        dot={false}
+                        isAnimationActive={false}
+                    />
+                </LineChart>
+            </ResponsiveContainer>
+        </div>
+    );
+}
+
+// ─── Stock Row ──────────────────────────────────────────────────────────
+function MoverRow({ stock, tab }: { stock: MoverStock; tab: TabKey }) {
+    const displaySymbol = stock.symbol.replace(".NS", "").replace(".BO", "");
+
+    const { price, changePercent, flash } = useLivePrice({
+        symbol: stock.symbol,
+        initialPrice: stock.currentPrice,
+        initialChangePercent: stock.changePercent,
+    });
+
+    const isPositive = changePercent >= 0;
+
+    // Decide sparkline color based on tab context
+    const sparkColor =
+        tab === "gainers"
+            ? "#22c55e"
+            : tab === "losers"
+                ? "#ef4444"
+                : isPositive
+                    ? "#22c55e"
+                    : "#ef4444";
+
+    return (
+        <Link
+            href={`/stock/${displaySymbol}`}
+            className="flex items-center gap-2 group px-2 py-1.5 -mx-2 rounded-md hover:bg-muted/50 transition-colors"
+        >
+            {/* Left: Symbol + Name */}
+            <div className="flex flex-col min-w-0 flex-1">
+                <span className="font-semibold text-sm group-hover:text-primary transition-colors truncate">
+                    ${displaySymbol}
+                </span>
+                <span className="text-[10px] text-muted-foreground truncate max-w-[110px] leading-tight">
+                    {stock.companyName}
+                </span>
             </div>
-            <div className="text-right">
-                <div className={cn(
-                    "text-sm font-medium tabular-nums transition-colors duration-300 px-1 rounded",
-                    flash === "up" ? "bg-green-500/20 text-green-700 dark:text-green-400" : flash === "down" ? "bg-red-500/20 text-red-700 dark:text-red-400" : ""
-                )}>₹{(price || 0).toFixed(2)}</div>
-                <div className={`text-xs font-semibold ${changePercent >= 0 ? 'text-green-500' : 'text-red-500'} flex items-center justify-end gap-1 tabular-nums`}>
-                    {changePercent >= 0 ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
-                    {changePercent > 0 ? '+' : ''}{changePercent.toFixed(2)}%
+
+            {/* Center: Sparkline */}
+            <MiniSparkline data={stock.sparkline} color={sparkColor} />
+
+            {/* Right: Price + Change */}
+            <div className="text-right flex-shrink-0 min-w-[72px]">
+                <div
+                    className={cn(
+                        "text-sm font-medium tabular-nums transition-colors duration-300 px-1 rounded",
+                        flash === "up"
+                            ? "bg-green-500/20 text-green-700 dark:text-green-400"
+                            : flash === "down"
+                                ? "bg-red-500/20 text-red-700 dark:text-red-400"
+                                : ""
+                    )}
+                >
+                    ₹{(price || 0).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </div>
+                <div
+                    className={cn(
+                        "text-xs font-semibold tabular-nums flex items-center justify-end gap-0.5",
+                        isPositive ? "text-green-500" : "text-red-500"
+                    )}
+                >
+                    {isPositive ? (
+                        <TrendingUp size={10} />
+                    ) : (
+                        <TrendingDown size={10} />
+                    )}
+                    {isPositive ? "+" : ""}
+                    {changePercent.toFixed(2)}%
                 </div>
             </div>
         </Link>
     );
 }
 
+// ─── Main Widget ────────────────────────────────────────────────────────
 export function TrendingWidget() {
-    const [trending, setTrending] = useState<any[]>([]);
+    const [data, setData] = useState<MarketMoversData | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState<TabKey>("gainers");
 
     useEffect(() => {
-        const fetchTrending = async () => {
+        const fetchMovers = async () => {
             try {
-                const res = await fetch(`${API_BASE_URL}/stocks/trending`);
+                const res = await fetch(`${API_BASE_URL}/stocks/market-movers`);
                 if (res.ok) {
-                    const data = await res.json();
-                    setTrending(data.map((stock: any) => ({
-                        rawSymbol: stock.symbol,
-                        symbol: stock.symbol.replace('.NS', ''), // Clean up symbol for display
-                        name: stock.companyName,
-                        price: stock.currentPrice,
-                        change: stock.changePercent ? parseFloat(stock.changePercent.toFixed(2)) : 0
-                    })));
+                    const json = await res.json();
+                    setData(json);
                 }
             } catch (error) {
-                console.error("Failed to fetch trending stocks", error);
+                console.error("Failed to fetch market movers", error);
             } finally {
                 setIsLoading(false);
             }
         };
-        fetchTrending();
-        const baseInterval = setInterval(fetchTrending, 60000);
-
-        return () => {
-            clearInterval(baseInterval);
-        };
+        fetchMovers();
+        const interval = setInterval(fetchMovers, 60000);
+        return () => clearInterval(interval);
     }, []);
+
+    const stocks = data?.[activeTab] ?? [];
 
     return (
         <Card className="bg-card border-none shadow-none">
@@ -77,32 +165,66 @@ export function TrendingWidget() {
                     Market Movers
                 </CardTitle>
             </CardHeader>
-            <CardContent className="px-4 pb-4 space-y-4">
+
+            <CardContent className="px-4 pb-4 space-y-3">
+                {/* Tabs */}
+                <div className="flex gap-1 p-0.5 bg-muted/50 rounded-lg">
+                    {TAB_CONFIG.map(({ key, label, icon }) => (
+                        <button
+                            key={key}
+                            onClick={() => setActiveTab(key)}
+                            className={cn(
+                                "flex-1 flex items-center justify-center gap-1 text-xs font-medium py-1.5 rounded-md transition-all duration-200",
+                                activeTab === key
+                                    ? "bg-background text-foreground shadow-sm"
+                                    : "text-muted-foreground hover:text-foreground"
+                            )}
+                        >
+                            {icon}
+                            {label}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Content */}
                 {isLoading ? (
-                    <div className="space-y-4">
-                        {[1, 2, 3, 4].map((i) => (
-                            <div key={i} className="flex items-center justify-between py-0.5">
-                                <div className="flex flex-col space-y-2 w-1/2">
+                    <div className="space-y-3">
+                        {[1, 2, 3, 4, 5].map((i) => (
+                            <div key={i} className="flex items-center gap-2 py-0.5">
+                                <div className="flex flex-col space-y-1.5 flex-1">
                                     <div className="h-4 w-16 bg-muted animate-pulse rounded" />
-                                    <div className="h-3 w-28 bg-muted animate-pulse rounded opacity-50" />
+                                    <div className="h-3 w-24 bg-muted animate-pulse rounded opacity-50" />
                                 </div>
-                                <div className="flex flex-col items-end space-y-2 w-1/3">
+                                <div className="w-[56px] h-[24px] bg-muted animate-pulse rounded" />
+                                <div className="flex flex-col items-end space-y-1.5 min-w-[72px]">
                                     <div className="h-4 w-16 bg-muted animate-pulse rounded" />
                                     <div className="h-3 w-10 bg-muted animate-pulse rounded opacity-50" />
                                 </div>
                             </div>
                         ))}
                     </div>
+                ) : stocks.length === 0 ? (
+                    <p className="text-sm text-muted-foreground text-center py-4">
+                        No data available
+                    </p>
                 ) : (
                     <>
-                        <div className="space-y-3">
-                            {trending.map((stock) => (
-                                <TrendingRow key={stock.rawSymbol} stock={stock} />
+                        <div className="flex flex-col">
+                            {stocks.map((stock) => (
+                                <MoverRow
+                                    key={stock.symbol}
+                                    stock={stock}
+                                    tab={activeTab}
+                                />
                             ))}
                         </div>
                         <Link href="/explore">
-                            <Button variant="ghost" className="w-full text-xs text-muted-foreground hover:text-primary mt-2">
-                                View All Stocks <ArrowRight className="ml-1 h-3 w-3" />
+                            <Button
+                                variant="ghost"
+                                className="w-full text-xs text-muted-foreground hover:text-primary mt-1"
+                            >
+                                View All Stocks{" "}
+                                <ArrowRight className="ml-1 h-3 w-3" />
                             </Button>
                         </Link>
                     </>

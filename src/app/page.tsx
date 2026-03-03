@@ -26,6 +26,7 @@ import { API_BASE_URL } from "@/lib/config";
 import { HolidayCard } from "@/components/shared/holiday-card";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { AnimatePresence } from "framer-motion";
+import { PageTransition } from "@/components/shared/page-transition";
 
 function FeedSidebar() {
     return (
@@ -122,7 +123,7 @@ export default function Home() {
     });
 
     return (
-        <div className="min-h-screen bg-background text-foreground font-sans">
+        <PageTransition className="min-h-screen bg-background text-foreground font-sans">
 
 
             {/* Main Content Layout */}
@@ -229,6 +230,6 @@ export default function Home() {
                 </div>
 
             </main>
-        </div>
+        </PageTransition>
     );
 }

@@ -153,11 +153,11 @@ export function AppSidebar({ className }: { className?: string }) {
 
                     {/* Subtle Utilities Row */}
                     <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity cursor-default">
+                        <div className="flex items-center gap-2 opacity-70 hover:opacity-100 transition-opacity cursor-default">
                             <ShieldCheck className="h-3.5 w-3.5 text-muted-foreground" />
                             <div className="flex items-baseline gap-1.5">
                                 <span className="text-[10px] font-mono font-bold tracking-wider uppercase text-muted-foreground">STABLE</span>
-                                <span className="text-[10px] text-muted-foreground/60 font-mono">v2.1.0</span>
+                                <span className="text-[10px] text-muted-foreground/80 font-mono">v2.1.0</span>
                             </div>
                         </div>
                         <div className="opacity-70 hover:opacity-100 transition-all scale-90 hover:scale-100 -mr-2">

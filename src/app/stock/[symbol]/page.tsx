@@ -32,6 +32,7 @@ import { QuarterlyResults } from "@/components/features/stocks/quarterly-results
 import { ManagementCommentary } from "@/components/features/stocks/management-commentary";
 import { FinancialTable } from "@/components/features/stocks/financial-table";
 import { API_BASE_URL } from "@/lib/config";
+import { PageTransition } from "@/components/shared/page-transition";
 
 export default function StockDetailsPage() {
     const params = useParams();
@@ -76,7 +77,7 @@ export default function StockDetailsPage() {
     });
 
     return (
-        <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
+        <PageTransition className="min-h-screen bg-background text-foreground overflow-x-hidden">
             <main className="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {loading && !data ? (
                     <div className="flex flex-col items-center justify-center py-20 space-y-4">
@@ -241,7 +242,7 @@ export default function StockDetailsPage() {
                     </div>
                 ) : null}
             </main>
-        </div>
+        </PageTransition>
     );
 }
 

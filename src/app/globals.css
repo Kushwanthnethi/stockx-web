@@ -50,22 +50,22 @@
         --background: 0 0% 3.9%;
         --foreground: 0 0% 98%;
 
-        --card: 0 0% 3.9%;
+        --card: 0 0% 6%;
         --card-foreground: 0 0% 98%;
 
-        --popover: 0 0% 3.9%;
+        --popover: 0 0% 6%;
         --popover-foreground: 0 0% 98%;
 
         --primary: 0 0% 98%;
         --primary-foreground: 0 0% 9%;
 
-        --secondary: 0 0% 14.9%;
+        --secondary: 0 0% 12%;
         --secondary-foreground: 0 0% 98%;
 
-        --muted: 0 0% 14.9%;
-        --muted-foreground: 0 0% 63.9%;
+        --muted: 0 0% 12%;
+        --muted-foreground: 0 0% 68%;
 
-        --accent: 0 0% 14.9%;
+        --accent: 0 0% 12%;
         --accent-foreground: 0 0% 98%;
 
         --destructive: 0 62.8% 30.6%;
@@ -90,6 +90,15 @@
     body {
         @apply bg-background text-foreground antialiased;
         font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    }
+
+    /* Smooth theme color transitions */
+    *,
+    *::before,
+    *::after {
+        transition-property: background-color, border-color;
+        transition-duration: 200ms;
+        transition-timing-function: ease-out;
     }
 
     /* Mobile Typography Scaling */
@@ -139,6 +148,16 @@
 
     .glass {
         @apply bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60;
+    }
+
+    /* Interactive card hover effect */
+    .card-hover {
+        @apply transition-all duration-200 ease-out;
+    }
+
+    .card-hover:hover {
+        @apply shadow-md;
+        transform: translateY(-1px);
     }
 
     .font-outfit {

@@ -69,7 +69,7 @@ export function NewsWidget() {
                             href={item.link}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="block group py-1 md:py-2 first:pt-0 border-b border-border/50 last:border-0"
+                            className="block group py-1 md:py-2 first:pt-0 border-b border-border/50 last:border-0 pl-2 border-l-2 border-l-transparent hover:border-l-primary/60 transition-all duration-200"
                         >
                             <h4 className="text-xs md:text-sm font-medium text-foreground group-hover:text-primary line-clamp-2 leading-snug mb-1">
                                 {item.title}
