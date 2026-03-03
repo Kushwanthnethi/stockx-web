@@ -23,6 +23,7 @@ import { MarqueeIndexTicker } from "@/components/features/stocks/marquee-index-t
 import { WatchlistWidget } from "@/components/features/stocks/watchlist-widget";
 import { CreatePost } from "@/components/features/feed/create-post";
 import { API_BASE_URL } from "@/lib/config";
+import { HolidayCard } from "@/components/shared/holiday-card";
 import { useIntersectionObserver } from "@/hooks/use-intersection-observer";
 import { AnimatePresence } from "framer-motion";
 
@@ -131,6 +132,8 @@ export default function Home() {
                 <div className="lg:col-span-7">
                     {/* Scrolling Index Marquee */}
                     <MarqueeIndexTicker />
+
+                    <HolidayCard />
 
                     <h1 className="hidden md:block text-lg md:text-2xl font-bold mb-4 text-foreground">
                         Indian Stock Market Analysis & Investor Insights
