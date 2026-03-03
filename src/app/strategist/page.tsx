@@ -184,7 +184,7 @@ export default function StrategistPage() {
     };
 
     return (
-        <div className="relative flex flex-col h-[calc(100svh-3.5rem)] md:h-[calc(100vh-5rem)] w-full overflow-hidden bg-white dark:bg-background text-slate-900 dark:text-slate-50 transition-colors duration-500">
+        <div className="relative flex flex-col h-[calc(100svh-3.5rem)] md:h-[calc(100vh-5rem)] w-full overflow-hidden rounded-[2rem] border border-black/[0.04] dark:border-white/[0.04] shadow-sm bg-white dark:bg-background text-slate-900 dark:text-slate-50 transition-colors duration-500">
             <PremiumGuard>
                 {/* Background */}
                 <div className="absolute inset-0 pointer-events-none overflow-hidden">

@@ -42,8 +42,8 @@ function MiniSparkline({ data, color }: { data: number[]; color: string }) {
     return (
         <div className="w-[56px] h-[24px] flex-shrink-0">
             <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData}>
-                    <YAxis domain={["dataMin", "dataMax"]} hide />
+                <LineChart data={chartData} margin={{ top: 2, bottom: 2 }}>
+                    <YAxis type="number" domain={["dataMin", "dataMax"]} hide />
                     <Line
                         type="monotone"
                         dataKey="v"
