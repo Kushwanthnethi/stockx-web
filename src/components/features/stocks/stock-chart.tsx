@@ -219,10 +219,27 @@ export function StockChart({ symbol }: StockChartProps) {
         const min = Math.min(...prices);
         const max = Math.max(...prices);
         const spread = max - min;
-        // More padding on top so it never scrapes the ceiling of the container
-        const paddingBottom = spread * 0.10 || max * 0.02;
-        const paddingTop = spread * 0.20 || max * 0.05;
-        return [Math.floor(min - paddingBottom), Math.ceil(max + paddingTop)];
+
+        // Use a much tighter padding for stock prices to avoid the "flat line" appearance
+        // If the spread is tiny (less than 0.5%), we use a fixed 2% padding
+        const percentSpread = spread / min;
+
+        // If the price is extremely stable (less than 0.1% move), 
+        // we use a very tight 0.5% padding to show the micro-movements.
+        // If it's more volatile, we use a standard 5% padding of the spread.
+        let padding;
+        if (percentSpread < 0.001) {
+            padding = min * 0.005; // 0.5% zoom
+        } else if (percentSpread < 0.01) {
+            padding = spread * 0.2; // 20% of spread for small moves
+        } else {
+            padding = spread * 0.05; // 5% of spread for normal moves
+        }
+
+        const finalMin = Math.max(0, min - padding);
+        const finalMax = max + padding;
+
+        return [finalMin, finalMax];
     }, [data]);
 
     /* horizontal reference lines */
@@ -387,6 +404,7 @@ export function StockChart({ symbol }: StockChartProps) {
                                 strokeWidth={isMobile ? 1.5 : 2}
                                 fillOpacity={1}
                                 fill={`url(#${gradientId})`}
+                                connectNulls={true}
                                 animationDuration={1000}
                                 animationEasing="ease-out"
                                 activeDot={{

@@ -17,8 +17,9 @@ export function MaintenancePopup() {
     useEffect(() => {
         const checkMaintenanceTime = () => {
             const now = new Date();
-            // Maintenance until Monday, March 9, 2026, 12:00 PM IST (06:30 UTC)
-            const maintenanceEnd = new Date("2026-03-09T12:00:00+05:30");
+            // Set a future date here to enable the maintenance popup
+            // Disabled by default (past date = never shows)
+            const maintenanceEnd = new Date("2026-01-01T00:00:00+05:30");
 
             if (now < maintenanceEnd) {
                 setOpen(true);
@@ -67,7 +68,7 @@ export function MaintenancePopup() {
                                 Scheduled Maintenance
                             </DialogTitle>
                             <DialogDescription className="text-base text-muted-foreground/90 leading-relaxed">
-                                We're performing a scheduled migration from Fyers to Angel One Smart API infrastructure.
+                                We're performing scheduled maintenance to improve our infrastructure and services.
                             </DialogDescription>
                         </div>
                     </DialogHeader>
@@ -85,7 +86,7 @@ export function MaintenancePopup() {
                             </div>
                             <div className="text-sm">
                                 <p className="font-semibold text-foreground">Downtime Window</p>
-                                <p className="text-muted-foreground">March 6-8 — Back online by Mon, March 9, 12:00 PM</p>
+                                <p className="text-muted-foreground">We'll be back online shortly</p>
                             </div>
                         </motion.div>
 
@@ -100,7 +101,7 @@ export function MaintenancePopup() {
                             </div>
                             <div className="text-sm">
                                 <p className="font-semibold text-foreground">What's happening?</p>
-                                <p className="text-muted-foreground">Migrating backend APIs for more reliable market data syncing</p>
+                                <p className="text-muted-foreground">Infrastructure upgrades for faster and more reliable market data</p>
                             </div>
                         </motion.div>
                     </div>

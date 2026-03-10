@@ -69,9 +69,10 @@ export function GoogleOneTap() {
             window.google.accounts.id.initialize({
                 client_id: clientId,
                 callback: handleCredentialResponse,
-                auto_select: false, // Don't auto-sign-in, let user choose
-                cancel_on_tap_outside: false,
-                itp_support: true,
+                auto_select: false,
+                cancel_on_tap_outside: true, // Allow tapping outside to dismiss
+                itp_support: false, // Disable ITP support on localhost to reduce extra checks
+                use_fedcm_for_prompt: false, // Keep disabled to avoid FedCM NetworkErrors on localhost
             });
 
             // Show the prompt

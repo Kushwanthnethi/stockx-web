@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { API_BASE_URL } from "@/lib/config";
+import { useSocket } from "@/providers/socket-provider";
 
 interface IndexData {
     symbol: string;
@@ -49,6 +50,8 @@ export function MarqueeIndexTicker() {
     const [indices, setIndices] = useState<IndexData[]>([]);
     const [loading, setLoading] = useState(true);
 
+    const socket = useSocket();
+
     useEffect(() => {
         const fetchIndices = async () => {
             try {
@@ -65,10 +68,42 @@ export function MarqueeIndexTicker() {
         };
 
         fetchIndices();
-        // Refresh every 60s
-        const interval = setInterval(fetchIndices, 60000);
-        return () => clearInterval(interval);
     }, []);
+
+    // WebSocket Integration for Zero Latency
+    useEffect(() => {
+        if (!socket || indices.length === 0) return;
+
+        // Subscribe to each index symbol
+        indices.forEach(idx => {
+            socket.emit('subscribeStock', idx.symbol);
+        });
+
+        const handlePriceUpdate = (data: { symbol: string; price: number; change: number; changePercent: number }) => {
+            setIndices(prev => prev.map(idx => {
+                if (idx.symbol === data.symbol) {
+                    // Update only if values actually changed to prevent unnecessary re-renders
+                    if (idx.price === data.price && idx.changePercent === data.changePercent) return idx;
+                    return {
+                        ...idx,
+                        price: data.price,
+                        change: data.change,
+                        changePercent: data.changePercent
+                    };
+                }
+                return idx;
+            }));
+        };
+
+        socket.on('priceUpdate', handlePriceUpdate);
+
+        return () => {
+            indices.forEach(idx => {
+                socket.emit('unsubscribeStock', idx.symbol);
+            });
+            socket.off('priceUpdate', handlePriceUpdate);
+        };
+    }, [socket, indices.length === 0]); // Re-run once symbols are loaded
 
     if (loading) {
         return (

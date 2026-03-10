@@ -55,8 +55,13 @@ export function useLivePrice({ symbol, initialPrice, initialChangePercent }: Use
                     }
                     return data.price;
                 });
-                setDiff(data.change || 0);
-                setDiffPercent(data.changePercent || 0);
+                // Only update change values if WebSocket provides non-zero values
+                // Angel One may not include close_price for all instruments,
+                // resulting in change=0 that would overwrite correct initial data
+                if (data.changePercent !== 0 || data.change !== 0) {
+                    setDiff(data.change || 0);
+                    setDiffPercent(data.changePercent || 0);
+                }
             }
         };
 

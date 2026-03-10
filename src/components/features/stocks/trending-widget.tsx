@@ -152,7 +152,7 @@ export function TrendingWidget() {
             }
         };
         fetchMovers();
-        const interval = setInterval(fetchMovers, 60000);
+        const interval = setInterval(fetchMovers, 15000); // Refresh list every 15s (values are real-time via useLivePrice)
         return () => clearInterval(interval);
     }, []);
 
