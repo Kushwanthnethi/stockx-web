@@ -108,21 +108,23 @@ export function StockChart({ symbol }: StockChartProps) {
             setLoading(true);
             setChartReady(false);
             try {
-                const res = await fetch(`${API_BASE_URL}/stocks/${symbol}/history?range=${range}`);
+                const res = await fetch(`${API_BASE_URL}/stocks/${encodeURIComponent(symbol)}/history?range=${range}`);
                 if (res.ok) {
                     const history = await res.json();
 
                     if (range === '1d' && history.length > 0) {
+                        // FIX: We must filter by the Indian trading day (IST: UTC+5:30), 
+                        // not the user's local timezone (which might be a day behind for the first half of the Indian session).
+                        const getISTDateStr = (date: Date) => {
+                            return new Date(date.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' })).toDateString();
+                        };
+
                         const lastDate = new Date(history[history.length - 1].date);
-                        const lastDay = lastDate.getDate();
-                        const lastMonth = lastDate.getMonth();
-                        const lastYear = lastDate.getFullYear();
+                        const targetISTStr = getISTDateStr(lastDate);
 
                         const filteredHistory = history.filter((d: ChartData) => {
                             const dDate = new Date(d.date);
-                            return dDate.getDate() === lastDay &&
-                                dDate.getMonth() === lastMonth &&
-                                dDate.getFullYear() === lastYear;
+                            return getISTDateStr(dDate) === targetISTStr;
                         });
 
                         // Final safety: Map to ensure strictly unique times and sort to monotonic
