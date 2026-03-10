@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { API_BASE_URL } from '@/lib/config';
 
 const SocketContext = createContext<Socket | null>(null);
 
@@ -11,8 +12,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const [socket, setSocket] = useState<Socket | null>(null);
 
     useEffect(() => {
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3334';
-        const newSocket = io(apiUrl, {
+        const newSocket = io(API_BASE_URL, {
             withCredentials: true,
         });
 
