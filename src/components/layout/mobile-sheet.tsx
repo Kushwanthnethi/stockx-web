@@ -11,6 +11,7 @@ import { TrendingUp, Megaphone, Gavel, Bell, Bookmark, User, FileText, Target, S
 import { useAuth } from "@/providers/auth-provider";
 import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
+import { Logo } from "@/components/shared/logo";
 
 const INVESTOR_QUOTES = [
     "Patience is the key to strategic alpha.",
