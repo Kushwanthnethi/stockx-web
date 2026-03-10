@@ -1,13 +1,22 @@
 import type { Metadata } from "next";
-import { Inter, Outfit } from "next/font/google";
+import { Inter, Outfit, JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Toaster } from "sonner";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({
     subsets: ["latin"],
     variable: "--font-outfit",
+});
+const jetbrains = JetBrains_Mono({
+    subsets: ["latin"],
+    variable: "--font-mono",
+});
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+    subsets: ["latin"],
+    variable: "--font-plus-jakarta-sans",
 });
 
 export const metadata: Metadata = {
@@ -46,7 +55,10 @@ export default function RootLayout({
             <body
                 className={cn(
                     inter.className,
+                    inter.variable,
                     outfit.variable,
+                    jetbrains.variable,
+                    plusJakartaSans.variable,
                     "min-h-screen bg-background font-sans antialiased"
                 )}
                 suppressHydrationWarning

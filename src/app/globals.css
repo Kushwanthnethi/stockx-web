@@ -164,6 +164,19 @@
         font-family: var(--font-outfit);
     }
 
+    .font-inter {
+        font-family: var(--font-inter);
+        font-variant-numeric: tabular-nums;
+        -moz-font-feature-settings: "tnum";
+        -webkit-font-feature-settings: "tnum";
+        font-feature-settings: "tnum";
+    }
+
+    .font-numbers {
+        font-family: var(--font-mono);
+        font-variant-numeric: tabular-nums;
+    }
+
     .scrollbar-hide {
         -ms-overflow-style: none;
         /* IE and Edge */
