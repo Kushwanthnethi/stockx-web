@@ -40,6 +40,12 @@ export default function StockDetailsPage() {
     const [data, setData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [rangeStats, setRangeStats] = useState<{
+        dayLow?: number;
+        dayHigh?: number;
+        yearLow?: number;
+        yearHigh?: number;
+    }>({});
 
     useEffect(() => {
         if (!symbol) return;
@@ -67,6 +73,53 @@ export default function StockDetailsPage() {
 
         fetchData();
         const interval = setInterval(fetchData, 10000);
+        return () => clearInterval(interval);
+    }, [symbol]);
+
+    useEffect(() => {
+        if (!symbol) return;
+
+        const computeRange = (rows: any[]) => {
+            const highs = rows
+                .map((r: any) => Number(r?.high ?? r?.close))
+                .filter((v: number) => Number.isFinite(v) && v > 0);
+            const lows = rows
+                .map((r: any) => Number(r?.low ?? r?.close))
+                .filter((v: number) => Number.isFinite(v) && v > 0);
+
+            if (!highs.length || !lows.length) return null;
+            return {
+                high: Math.max(...highs),
+                low: Math.min(...lows),
+            };
+        };
+
+        const fetchRangeStats = async () => {
+            try {
+                const [dayRes, yearRes] = await Promise.all([
+                    fetch(`${API_BASE_URL}/stocks/${encodeURIComponent(symbol)}/history?range=1d`),
+                    fetch(`${API_BASE_URL}/stocks/${encodeURIComponent(symbol)}/history?range=1y`),
+                ]);
+
+                const dayRows = dayRes.ok ? await dayRes.json() : [];
+                const yearRows = yearRes.ok ? await yearRes.json() : [];
+
+                const dayRange = computeRange(dayRows);
+                const yearRange = computeRange(yearRows);
+
+                setRangeStats({
+                    dayLow: dayRange?.low,
+                    dayHigh: dayRange?.high,
+                    yearLow: yearRange?.low,
+                    yearHigh: yearRange?.high,
+                });
+            } catch {
+                // Keep UI fallback behavior if range fetch fails.
+            }
+        };
+
+        fetchRangeStats();
+        const interval = setInterval(fetchRangeStats, 30000);
         return () => clearInterval(interval);
     }, [symbol]);
 
@@ -158,14 +211,14 @@ export default function StockDetailsPage() {
                                             <CardContent className="space-y-8 pt-6">
                                                 <PerformanceRange
                                                     label="Today's Range"
-                                                    low={Math.min(price, data.lowDay || data.currentPrice * 0.98)}
-                                                    high={Math.max(price, data.highDay || data.currentPrice * 1.02)}
+                                                    low={Math.min(price, rangeStats.dayLow || data.lowDay || data.currentPrice * 0.98)}
+                                                    high={Math.max(price, rangeStats.dayHigh || data.highDay || data.currentPrice * 1.02)}
                                                     current={price}
                                                 />
                                                 <PerformanceRange
                                                     label="52W Range"
-                                                    low={Math.min(price, data.low52Week || data.currentPrice * 0.5)}
-                                                    high={Math.max(price, data.high52Week || data.currentPrice * 1.5)}
+                                                    low={Math.min(price, rangeStats.yearLow || data.low52Week || data.currentPrice * 0.5)}
+                                                    high={Math.max(price, rangeStats.yearHigh || data.high52Week || data.currentPrice * 1.5)}
                                                     current={price}
                                                 />
                                             </CardContent>

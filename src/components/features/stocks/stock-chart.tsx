@@ -326,7 +326,7 @@ export function StockChart({ symbol }: StockChartProps) {
             {/* ─── Chart ──────────────────────────────────────── */}
             <div
                 className={cn(
-                    "flex-1 min-h-[300px] sm:min-h-0 px-0 sm:px-1 pb-1 sm:pb-2 transition-opacity duration-500 focus:outline-none focus-within:outline-none",
+                    "flex-1 min-h-[300px] sm:min-h-0 px-0 pb-0 transition-opacity duration-500 focus:outline-none focus-within:outline-none",
                     chartReady ? "opacity-100" : "opacity-0"
                 )}
             >
@@ -336,7 +336,7 @@ export function StockChart({ symbol }: StockChartProps) {
                     <ResponsiveContainer width="100%" height="100%" style={{ border: 'none', outline: 'none' }}>
                         <AreaChart
                             data={data}
-                            margin={{ top: 16, right: isMobile ? 0 : 8, left: isMobile ? 0 : -4, bottom: isMobile ? 0 : -2 }}
+                            margin={{ top: 8, right: 0, left: 0, bottom: 0 }}
                             style={{ border: 'none', outline: 'none' }}
                         >
                             <defs>
@@ -379,6 +379,9 @@ export function StockChart({ symbol }: StockChartProps) {
                                 axisLine={false}
                                 tickLine={false}
                                 tick={{ fontSize: 9, fill: 'hsl(var(--muted-foreground))', fillOpacity: 0.6, fontWeight: 500 }}
+                                interval="preserveStartEnd"
+                                allowDuplicatedCategory={false}
+                                padding={{ left: 0, right: 0 }}
                                 minTickGap={45}
                                 dy={6}
                             />
@@ -400,13 +403,16 @@ export function StockChart({ symbol }: StockChartProps) {
 
                             {/* Main line + fill */}
                             <Area
-                                type="linear"
+                                type="monotone"
                                 dataKey="price"
                                 stroke={accentColor}
-                                strokeWidth={isMobile ? 1.5 : 2}
+                                strokeWidth={isMobile ? 2 : 2.5}
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
                                 fillOpacity={1}
                                 fill={`url(#${gradientId})`}
                                 connectNulls={true}
+                                baseValue="dataMin"
                                 animationDuration={1000}
                                 animationEasing="ease-out"
                                 activeDot={{
