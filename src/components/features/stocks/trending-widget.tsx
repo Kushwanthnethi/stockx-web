@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { API_BASE_URL } from "@/lib/config";
 import { useLivePrice } from "@/hooks/use-live-price";
 import { cn } from "@/lib/utils";
-import { LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
+import { AreaChart, Area, LineChart, Line, ResponsiveContainer, YAxis } from "recharts";
 
 // ─── Types ──────────────────────────────────────────────────────────────
 interface MoverStock {
@@ -38,21 +38,48 @@ function MiniSparkline({ data, color }: { data: number[]; color: string }) {
     if (!data || data.length < 2) return <div className="w-[56px] h-[24px]" />;
 
     const chartData = data.map((v, i) => ({ v, i }));
+    const gradientId = `mv_${color.replace('#', '')}`;
 
     return (
-        <div className="w-[56px] h-[24px] flex-shrink-0">
+        <div className="w-[72px] h-[28px] flex-shrink-0">
             <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={chartData} margin={{ top: 2, bottom: 2 }}>
+                <AreaChart data={chartData} margin={{ top: 2, bottom: 2, left: 0, right: 0 }}>
+                    <defs>
+                        <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor={color} stopOpacity={0.28} />
+                            <stop offset="100%" stopColor={color} stopOpacity={0} />
+                        </linearGradient>
+                    </defs>
                     <YAxis type="number" domain={["dataMin", "dataMax"]} hide />
+                    <Area
+                        type="linear"
+                        dataKey="v"
+                        stroke="none"
+                        fill={`url(#${gradientId})`}
+                        isAnimationActive={false}
+                    />
                     <Line
-                        type="monotone"
+                        type="linear"
                         dataKey="v"
                         stroke={color}
-                        strokeWidth={1.5}
+                        strokeWidth={1.8}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                         dot={false}
                         isAnimationActive={false}
                     />
-                </LineChart>
+                    <Line
+                        type="linear"
+                        dataKey="v"
+                        stroke="transparent"
+                        dot={(props: any) => {
+                            const isLast = props.index === chartData.length - 1;
+                            if (!isLast) return <g />;
+                            return <circle cx={props.cx} cy={props.cy} r={1.8} fill={color} />;
+                        }}
+                        isAnimationActive={false}
+                    />
+                </AreaChart>
             </ResponsiveContainer>
         </div>
     );
@@ -196,7 +223,7 @@ export function TrendingWidget() {
                                     <div className="h-4 w-16 bg-muted animate-pulse rounded" />
                                     <div className="h-3 w-24 bg-muted animate-pulse rounded opacity-50" />
                                 </div>
-                                <div className="w-[56px] h-[24px] bg-muted animate-pulse rounded" />
+                                <div className="w-[72px] h-[28px] bg-muted animate-pulse rounded" />
                                 <div className="flex flex-col items-end space-y-1.5 min-w-[72px]">
                                     <div className="h-4 w-16 bg-muted animate-pulse rounded" />
                                     <div className="h-3 w-10 bg-muted animate-pulse rounded opacity-50" />
