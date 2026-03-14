@@ -94,6 +94,10 @@ function formatPercent(value: number) {
     return `${value >= 0 ? "+" : ""}${value.toFixed(2)}%`;
 }
 
+function toDisplaySymbol(symbol: string) {
+    return symbol.replace(/\.(NS|BO)$/i, '');
+}
+
 // ─── LiveHoldingRow ─────────────────────────────────────────────────
 // Subscribes a single row for live price updates
 
@@ -135,12 +139,12 @@ function LiveHoldingRow({ holding, onRemove, onLiveValuesChange }: LiveHoldingRo
                 <Link href={`/stock/${holding.stockSymbol}`} className="flex items-center gap-3 group/link">
                     <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/10 flex items-center justify-center shrink-0">
                         <span className="text-xs font-bold text-primary">
-                            {holding.stockSymbol.replace('.NS', '').substring(0, 3)}
+                            {toDisplaySymbol(holding.stockSymbol).substring(0, 3)}
                         </span>
                     </div>
                     <div className="min-w-0">
                         <div className="font-semibold text-sm text-foreground group-hover/link:text-primary transition-colors flex items-center gap-1">
-                            {holding.stockSymbol.replace('.NS', '')}
+                            {toDisplaySymbol(holding.stockSymbol)}
                             <ArrowUpRight size={12} className="opacity-0 group-hover/link:opacity-100 transition-opacity" />
                         </div>
                         <div className="text-xs text-muted-foreground truncate max-w-[140px]">
@@ -310,13 +314,18 @@ function AddStockDialog({ onAdd }: { onAdd: (symbol: string, qty: number, avg: n
     const handleSubmit = async () => {
         if (!symbol || !quantity || !avgPrice) return;
         setLoading(true);
-        await onAdd(symbol, parseFloat(quantity), parseFloat(avgPrice));
-        setLoading(false);
-        setSymbol("");
-        setQuantity("");
-        setAvgPrice("");
-        setSearchResults([]);
-        setOpen(false);
+        try {
+            await onAdd(symbol, parseFloat(quantity), parseFloat(avgPrice));
+            setSymbol("");
+            setQuantity("");
+            setAvgPrice("");
+            setSearchResults([]);
+            setOpen(false);
+        } catch (error: any) {
+            alert(error?.message || "Unable to add stock. Please try again.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -346,7 +355,7 @@ function AddStockDialog({ onAdd }: { onAdd: (symbol: string, qty: number, avg: n
                         <Input
                             placeholder="Search stock (e.g. RELIANCE)"
                             className="pl-9 bg-muted/50"
-                            value={symbol.replace('.NS', '')}
+                            value={toDisplaySymbol(symbol)}
                             onChange={(e) => {
                                 const val = e.target.value.toUpperCase();
                                 setSymbol(val);
@@ -362,7 +371,7 @@ function AddStockDialog({ onAdd }: { onAdd: (symbol: string, qty: number, avg: n
                                         onClick={() => { setSymbol(s.symbol); setSearchResults([]); }}
                                     >
                                         <div>
-                                            <div className="font-medium text-sm">{s.symbol.replace('.NS', '')}</div>
+                                            <div className="font-medium text-sm">{toDisplaySymbol(s.symbol)}</div>
                                             <div className="text-xs text-muted-foreground truncate max-w-[200px]">{s.companyName}</div>
                                         </div>
                                         <span className="text-xs text-muted-foreground font-mono">
@@ -479,12 +488,16 @@ export default function PortfolioPage() {
 
     const handleAdd = async (symbol: string, qty: number, avg: number) => {
         const token = localStorage.getItem("accessToken");
-        const sym = symbol.endsWith('.NS') ? symbol : symbol + '.NS';
-        await fetch(`${API_BASE_URL}/portfolios/holdings`, {
+        const normalized = symbol.trim().toUpperCase();
+        const response = await fetch(`${API_BASE_URL}/portfolios/holdings`, {
             method: "POST",
             headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-            body: JSON.stringify({ symbol: sym, quantity: qty, averageBuyPrice: avg }),
+            body: JSON.stringify({ symbol: normalized, quantity: qty, averageBuyPrice: avg }),
         });
+        if (!response.ok) {
+            const message = await response.text();
+            throw new Error(message || "Failed to add stock to portfolio");
+        }
         await fetchData();
     };
 

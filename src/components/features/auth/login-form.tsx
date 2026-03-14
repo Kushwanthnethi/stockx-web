@@ -12,11 +12,13 @@ import { Separator } from "@/components/ui/separator"
 import { Loader2 } from "lucide-react"
 
 export function LoginForm({ className }: React.HTMLAttributes<HTMLDivElement>) {
-    const [isLoading, setIsLoading] = React.useState<boolean>(false)
+    const [isEmailLoading, setIsEmailLoading] = React.useState<boolean>(false)
+    const [isGoogleLoading, setIsGoogleLoading] = React.useState<boolean>(false)
+    const isAnyLoading = isEmailLoading || isGoogleLoading
 
     async function onSubmit(event: React.SyntheticEvent) {
         event.preventDefault()
-        setIsLoading(true)
+        setIsEmailLoading(true)
 
         // Get email from form
         const target = event.target as typeof event.target & {
@@ -51,8 +53,13 @@ export function LoginForm({ className }: React.HTMLAttributes<HTMLDivElement>) {
             console.error(error);
             alert('Login error');
         } finally {
-            setIsLoading(false)
+            setIsEmailLoading(false)
         }
+    }
+
+    function onGoogleSignIn() {
+        setIsGoogleLoading(true)
+        window.location.href = `${API_BASE_URL}/auth/google`
     }
 
     return (
@@ -68,7 +75,7 @@ export function LoginForm({ className }: React.HTMLAttributes<HTMLDivElement>) {
                             autoCapitalize="none"
                             autoComplete="email"
                             autoCorrect="off"
-                            disabled={isLoading}
+                            disabled={isAnyLoading}
                         />
                     </div>
                     <div className="grid gap-2">
@@ -81,11 +88,11 @@ export function LoginForm({ className }: React.HTMLAttributes<HTMLDivElement>) {
                             placeholder="••••••••"
                             autoCapitalize="none"
                             autoComplete="current-password"
-                            disabled={isLoading}
+                            disabled={isAnyLoading}
                         />
                     </div>
-                    <Button disabled={isLoading}>
-                        {isLoading && (
+                    <Button disabled={isAnyLoading}>
+                        {isEmailLoading && (
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         )}
                         Sign In with Email
@@ -104,8 +111,8 @@ export function LoginForm({ className }: React.HTMLAttributes<HTMLDivElement>) {
                 </div>
             </div>
 
-            <Button variant="outline" type="button" disabled={isLoading} className="gap-2" onClick={() => window.location.href = `${API_BASE_URL}/auth/google`}>
-                {isLoading ? (
+            <Button variant="outline" type="button" disabled={isAnyLoading} className="gap-2" onClick={onGoogleSignIn}>
+                {isGoogleLoading ? (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
                     <svg className="h-4 w-4" aria-hidden="true" focusable="false" data-prefix="fab" data-icon="google" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
