@@ -70,7 +70,28 @@ interface PortfolioData {
     analysis: {
         healthScore: number;
         riskLevel: string;
-        insights: any;
+        insights: {
+            summary?: string;
+            strengths?: string[];
+            weaknesses?: string[];
+            recommendation?: string;
+            scoringBreakdown?: {
+                baselineScore: number;
+                aiScore: number;
+                finalScore: number;
+                weights: {
+                    quantitative: number;
+                    ai: number;
+                };
+                factors: {
+                    holdingsCount: number;
+                    sectorCount: number;
+                    maxWeightage: number;
+                    top3Weightage: number;
+                    totalPnlPercent: number;
+                };
+            };
+        };
     } | null;
 }
 
@@ -574,6 +595,7 @@ export default function PortfolioPage() {
     const effectiveTotalTodayPnl = liveAggregated.totalTodayPnl;
     const isProfit = effectiveTotalPnl >= 0;
     const isTodayProfit = effectiveTotalTodayPnl >= 0;
+    const scoreBreakdown = data?.analysis?.insights?.scoringBreakdown;
 
     return (
         <div className="min-h-screen bg-background text-foreground font-sans">
@@ -735,6 +757,16 @@ export default function PortfolioPage() {
                                                     {data.analysis.riskLevel} RISK
                                                 </Badge>
                                             </div>
+                                            {scoreBreakdown && (
+                                                <div className="mt-1.5 space-y-1 text-[10px] text-muted-foreground">
+                                                    <div className="font-mono tabular-nums">
+                                                        Base {scoreBreakdown.baselineScore} | AI {scoreBreakdown.aiScore} | Final {scoreBreakdown.finalScore}
+                                                    </div>
+                                                    <div>
+                                                        {scoreBreakdown.factors.holdingsCount} holdings, {scoreBreakdown.factors.sectorCount} sectors, Top3 {scoreBreakdown.factors.top3Weightage.toFixed(1)}%
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
                                         <Button
                                             variant="outline"
