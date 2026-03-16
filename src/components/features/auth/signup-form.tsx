@@ -29,11 +29,13 @@ export function SignupForm({ className }: React.HTMLAttributes<HTMLDivElement>) 
     const [name, setName] = React.useState<string>('');
     const [email, setEmail] = React.useState<string>('');
     const [password, setPassword] = React.useState<string>('');
+    const [requestOtpError, setRequestOtpError] = React.useState<string>('');
 
     const router = useRouter()
 
     async function handleRequestOtp(event?: React.SyntheticEvent) {
         if (event) event.preventDefault()
+        setRequestOtpError('')
 
         const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
         if (!PASSWORD_REGEX.test(password)) {
@@ -53,10 +55,10 @@ export function SignupForm({ className }: React.HTMLAttributes<HTMLDivElement>) 
                 setTimeLeft(120); // Reset timer on new request
             } else {
                 const data = await res.json().catch(() => ({}));
-                alert(data.message || "Failed to send OTP (User already exists?)");
+                setRequestOtpError(data.message || "Failed to send OTP");
             }
         } catch (e) {
-            alert("Failed to send OTP");
+            setRequestOtpError("Failed to send OTP");
         } finally {
             setIsLoading(false)
         }
@@ -151,10 +153,16 @@ export function SignupForm({ className }: React.HTMLAttributes<HTMLDivElement>) 
                                 autoComplete="new-password"
                                 disabled={isLoading}
                                 value={password}
-                                onChange={(e) => setPassword(e.target.value)}
+                                onChange={(e) => {
+                                    setPassword(e.target.value)
+                                    if (requestOtpError) setRequestOtpError('')
+                                }}
                                 required
                             />
                             <p className="text-[11px] text-slate-500">Must be at least 8 characters, 1 uppercase, 1 lowercase, 1 number, and 1 special character</p>
+                            {requestOtpError && (
+                                <p className="text-[11px] text-red-500">{requestOtpError}</p>
+                            )}
                         </div>
 
                         <div className="flex items-start gap-2 mt-2">

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useCallback, useMemo, useRef } from 'react';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, BarChart, Bar, Brush } from 'recharts';
 import { format } from 'date-fns';
 import { Loader2, TrendingUp, TrendingDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -18,6 +18,7 @@ type Range = '1d' | '1w' | '1mo' | '3mo' | '1y';
 interface ChartData {
     date: string;
     price: number;
+    volume?: number;
 }
 
 interface PriceUpdate {
@@ -204,6 +205,11 @@ export function StockChart({ symbol }: StockChartProps) {
 
     const accentColor = isPositive ? '#22c55e' : '#ef4444';
     const accentColorDim = isPositive ? 'rgba(34,197,94,' : 'rgba(239,68,68,';
+    const showBrush = range === '3mo' || range === '1y';
+
+    const hasVolume = useMemo(() => {
+        return data.some((d) => Number.isFinite(d.volume) && Number(d.volume) > 0);
+    }, [data]);
 
     const formatXAxis = useCallback((tickItem: string) => {
         const date = new Date(tickItem);
@@ -263,6 +269,13 @@ export function StockChart({ symbol }: StockChartProps) {
         if (value >= 100000) return `${(value / 100000).toFixed(1)}L`;
         if (value >= 10000) return `${(value / 1000).toFixed(1)}K`;
         return value.toLocaleString('en-IN');
+    }, []);
+
+    const formatVolume = useCallback((value: number) => {
+        if (value >= 10000000) return `${(value / 10000000).toFixed(1)}Cr`;
+        if (value >= 100000) return `${(value / 100000).toFixed(1)}L`;
+        if (value >= 1000) return `${(value / 1000).toFixed(1)}K`;
+        return String(Math.round(value));
     }, []);
 
     /* gradient ID unique per symbol */
@@ -333,99 +346,155 @@ export function StockChart({ symbol }: StockChartProps) {
                 {loading ? (
                     <ChartSkeleton />
                 ) : data.length > 0 ? (
-                    <ResponsiveContainer width="100%" height="100%" style={{ border: 'none', outline: 'none' }}>
-                        <AreaChart
-                            data={data}
-                            margin={{ top: 8, right: 0, left: 0, bottom: 0 }}
-                            style={{ border: 'none', outline: 'none' }}
-                        >
-                            <defs>
-                                {/* Main fill gradient — dynamic color, softer fade */}
-                                <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="0%" stopColor={accentColor} stopOpacity={0.25} />
-                                    <stop offset="40%" stopColor={accentColor} stopOpacity={0.10} />
-                                    <stop offset="75%" stopColor={accentColor} stopOpacity={0.02} />
-                                    <stop offset="100%" stopColor={accentColor} stopOpacity={0} />
-                                </linearGradient>
-                            </defs>
+                    <div className="h-full w-full flex flex-col">
+                        <div className={cn("w-full", hasVolume ? "h-[72%]" : "h-full")}>
+                            <ResponsiveContainer width="100%" height="100%" style={{ border: 'none', outline: 'none' }}>
+                                <AreaChart
+                                    data={data}
+                                    syncId="stock-price-sync"
+                                    margin={{ top: 8, right: 0, left: 0, bottom: hasVolume ? 2 : 0 }}
+                                    style={{ border: 'none', outline: 'none' }}
+                                >
+                                    <defs>
+                                        {/* Main fill gradient — dynamic color, softer fade */}
+                                        <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="0%" stopColor={accentColor} stopOpacity={0.25} />
+                                            <stop offset="40%" stopColor={accentColor} stopOpacity={0.10} />
+                                            <stop offset="75%" stopColor={accentColor} stopOpacity={0.02} />
+                                            <stop offset="100%" stopColor={accentColor} stopOpacity={0} />
+                                        </linearGradient>
+                                    </defs>
 
-                            {/* Subtle horizontal reference lines */}
-                            {refLines.map((val) => (
-                                <ReferenceLine
-                                    key={val}
-                                    y={val}
-                                    stroke="transparent"
-                                />
-                            ))}
+                                    {/* Subtle horizontal reference lines */}
+                                    {refLines.map((val) => (
+                                        <ReferenceLine
+                                            key={val}
+                                            y={val}
+                                            stroke="transparent"
+                                        />
+                                    ))}
 
-                            {/* Opening price reference line  */}
-                            {data.length > 0 && range === '1d' && (
-                                <ReferenceLine
-                                    y={data[0].price}
-                                    stroke={`${accentColorDim}0.18)`}
-                                    strokeDasharray="6 4"
-                                    label={{
-                                        value: `Open ₹${data[0].price.toLocaleString('en-IN')}`,
-                                        position: 'right',
-                                        style: { fontSize: '9px', fill: `hsl(var(--muted-foreground))`, opacity: 0.6, fontWeight: 600 }
-                                    }}
-                                />
-                            )}
+                                    {/* Opening price reference line  */}
+                                    {data.length > 0 && range === '1d' && (
+                                        <ReferenceLine
+                                            y={data[0].price}
+                                            stroke={`${accentColorDim}0.18)`}
+                                            strokeDasharray="6 4"
+                                            label={{
+                                                value: `Open ₹${data[0].price.toLocaleString('en-IN')}`,
+                                                position: 'right',
+                                                style: { fontSize: '9px', fill: `hsl(var(--muted-foreground))`, opacity: 0.6, fontWeight: 600 }
+                                            }}
+                                        />
+                                    )}
 
-                            <XAxis
-                                hide={isMobile}
-                                dataKey="date"
-                                tickFormatter={formatXAxis}
-                                axisLine={false}
-                                tickLine={false}
-                                tick={{ fontSize: 9, fill: 'hsl(var(--muted-foreground))', fillOpacity: 0.6, fontWeight: 500 }}
-                                interval="preserveStartEnd"
-                                allowDuplicatedCategory={false}
-                                padding={{ left: 0, right: 0 }}
-                                minTickGap={45}
-                                dy={6}
-                            />
-                            <YAxis
-                                hide={isMobile}
-                                domain={yDomain}
-                                axisLine={false}
-                                tickLine={false}
-                                tick={{ fontSize: 9, fill: 'hsl(var(--muted-foreground))', fillOpacity: 0.6, fontWeight: 500 }}
-                                tickFormatter={formatYAxis}
-                                width={44}
-                                dx={-2}
-                            />
-                            <Tooltip
-                                content={<CustomTooltip isPositive={isPositive} />}
-                                cursor={<CustomCursor isPositive={isPositive} />}
-                                isAnimationActive={false}
-                            />
+                                    <XAxis
+                                        hide={isMobile || hasVolume}
+                                        dataKey="date"
+                                        tickFormatter={formatXAxis}
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fontSize: 9, fill: 'hsl(var(--muted-foreground))', fillOpacity: 0.6, fontWeight: 500 }}
+                                        interval="preserveStartEnd"
+                                        allowDuplicatedCategory={false}
+                                        padding={{ left: 0, right: 0 }}
+                                        minTickGap={45}
+                                        dy={6}
+                                    />
+                                    <YAxis
+                                        hide={isMobile}
+                                        domain={yDomain}
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fontSize: 9, fill: 'hsl(var(--muted-foreground))', fillOpacity: 0.6, fontWeight: 500 }}
+                                        tickFormatter={formatYAxis}
+                                        width={44}
+                                        dx={-2}
+                                    />
+                                    <Tooltip
+                                        content={<CustomTooltip isPositive={isPositive} />}
+                                        cursor={<CustomCursor isPositive={isPositive} />}
+                                        isAnimationActive={false}
+                                    />
 
-                            {/* Main line + fill */}
-                            <Area
-                                type="monotone"
-                                dataKey="price"
-                                stroke={accentColor}
-                                strokeWidth={isMobile ? 2 : 2.5}
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                fillOpacity={1}
-                                fill={`url(#${gradientId})`}
-                                connectNulls={true}
-                                baseValue="dataMin"
-                                animationDuration={1000}
-                                animationEasing="ease-out"
-                                activeDot={{
-                                    r: 4.5,
-                                    fill: accentColor,
-                                    stroke: 'hsl(var(--background))',
-                                    strokeWidth: 2,
-                                    style: { filter: `drop-shadow(0 0 3px ${accentColorDim}0.3))` }
-                                }}
-                                dot={false}
-                            />
-                        </AreaChart>
-                    </ResponsiveContainer>
+                                    {/* Main line + fill */}
+                                    <Area
+                                        type="monotone"
+                                        dataKey="price"
+                                        stroke={accentColor}
+                                        strokeWidth={isMobile ? 2 : 2.5}
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        fillOpacity={1}
+                                        fill={`url(#${gradientId})`}
+                                        connectNulls={true}
+                                        baseValue="dataMin"
+                                        animationDuration={1000}
+                                        animationEasing="ease-out"
+                                        activeDot={{
+                                            r: 4.5,
+                                            fill: accentColor,
+                                            stroke: 'hsl(var(--background))',
+                                            strokeWidth: 2,
+                                            style: { filter: `drop-shadow(0 0 3px ${accentColorDim}0.3))` }
+                                        }}
+                                        dot={false}
+                                    />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        </div>
+
+                        {hasVolume && (
+                            <div className="w-full h-[28%] pt-1">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <BarChart
+                                        data={data}
+                                        syncId="stock-price-sync"
+                                        margin={{ top: 2, right: 0, left: 0, bottom: 0 }}
+                                    >
+                                        <XAxis
+                                            hide={isMobile}
+                                            dataKey="date"
+                                            tickFormatter={formatXAxis}
+                                            axisLine={false}
+                                            tickLine={false}
+                                            tick={{ fontSize: 9, fill: 'hsl(var(--muted-foreground))', fillOpacity: 0.55, fontWeight: 500 }}
+                                            interval="preserveStartEnd"
+                                            allowDuplicatedCategory={false}
+                                            minTickGap={45}
+                                            dy={6}
+                                        />
+                                        <YAxis hide />
+                                        <Tooltip
+                                            formatter={(value: number) => [formatVolume(value), 'Volume']}
+                                            labelFormatter={(label) => format(new Date(label), "MMMM do, yyyy hh:mm a")}
+                                            contentStyle={{
+                                                borderRadius: '12px',
+                                                border: '1px solid hsl(var(--border))',
+                                                background: 'hsl(var(--popover))',
+                                                fontSize: '12px'
+                                            }}
+                                        />
+                                        <Bar
+                                            dataKey="volume"
+                                            fill={isPositive ? 'rgba(34,197,94,0.42)' : 'rgba(239,68,68,0.42)'}
+                                            radius={[2, 2, 0, 0]}
+                                            isAnimationActive={false}
+                                        />
+                                        {showBrush && data.length > 24 && (
+                                            <Brush
+                                                dataKey="date"
+                                                height={22}
+                                                stroke={accentColor}
+                                                travellerWidth={8}
+                                                tickFormatter={formatXAxis}
+                                            />
+                                        )}
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </div>
+                        )}
+                    </div>
                 ) : (
                     <div className="h-full flex items-center justify-center text-muted-foreground/60 text-sm">
                         No chart data available
