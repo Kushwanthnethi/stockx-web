@@ -52,6 +52,8 @@ function FeedSidebar() {
                         <Link href="/legal/privacy" className="hover:underline hover:text-foreground transition-colors">Privacy Policy</Link>
                         <span>·</span>
                         <Link href="/legal/cookies" className="hover:underline hover:text-foreground transition-colors">Cookies</Link>
+                        <span>·</span>
+                        <Link href="/contact" className="hover:underline hover:text-foreground transition-colors">Contact</Link>
                     </div>
                     <p>© 2026 StocksX Inc.</p>
                 </div>
