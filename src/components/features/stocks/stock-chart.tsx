@@ -466,7 +466,7 @@ export function StockChart({ symbol }: StockChartProps) {
                                         />
                                         <YAxis hide />
                                         <Tooltip
-                                            formatter={(value: number) => [formatVolume(value), 'Volume']}
+                                            formatter={(value: number | undefined) => [formatVolume(value ?? 0), 'Volume']}
                                             labelFormatter={(label) => format(new Date(label), "MMMM do, yyyy hh:mm a")}
                                             contentStyle={{
                                                 borderRadius: '12px',
