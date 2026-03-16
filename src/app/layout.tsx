@@ -22,7 +22,7 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
     metadataBase: new URL("https://stocksx.info"),
     title: "StocksX – Indian Stock Market Analysis & Insights",
-    description: "Where Indian investors share insights, not tips.",
+    description: "StocksX is an Indian stock market analysis and investor community platform with portfolio tracking, AI verdicts, result calendars, and actionable market insights.",
 
     alternates: {
         canonical: "/",
