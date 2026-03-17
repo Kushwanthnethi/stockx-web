@@ -226,6 +226,7 @@ function groupNewsByStory(items: PortfolioNewsItem[]): NewsGroup[] {
         const group: NewsGroup = { id: item.uuid || item.link, primary: item, others: [] };
         items.forEach((other, j) => {
             if (j === i || assigned.has(j)) return;
+            if (other.symbol !== item.symbol) return;
             const shared = getTitleTokens(other.title).filter(t => tokensA.has(t)).length;
             if (shared >= 3) {
                 group.others.push(other);
@@ -737,11 +738,66 @@ export default function PortfolioPage() {
                 }
             }
 
-            const deduped = [...dedupedMap.values()]
-                .sort((a, b) => (getNewsTimestampMs(b.providerPublishTime) || 0) - (getNewsTimestampMs(a.providerPublishTime) || 0))
-                .slice(0, 12);
+            const sortedNews = [...dedupedMap.values()]
+                .sort((a, b) => (getNewsTimestampMs(b.providerPublishTime) || 0) - (getNewsTimestampMs(a.providerPublishTime) || 0));
 
-            setPortfolioNews(deduped);
+            // Balance feed so one stock cannot dominate the entire first page.
+            const MAX_TOTAL = 12;
+            const MAX_PER_SYMBOL_FIRST_PASS = 3;
+            const bySymbol = new Map<string, PortfolioNewsItem[]>();
+            for (const item of sortedNews) {
+                const arr = bySymbol.get(item.symbol) || [];
+                arr.push(item);
+                bySymbol.set(item.symbol, arr);
+            }
+
+            const symbolOrder = [...bySymbol.entries()]
+                .sort((a, b) => {
+                    const tsA = getNewsTimestampMs(a[1][0]?.providerPublishTime) || 0;
+                    const tsB = getNewsTimestampMs(b[1][0]?.providerPublishTime) || 0;
+                    return tsB - tsA;
+                })
+                .map(([symbol]) => symbol);
+
+            const balanced: PortfolioNewsItem[] = [];
+            const symbolCounts = new Map<string, number>();
+            const symbolCursor = new Map<string, number>();
+            const chosenKeys = new Set<string>();
+
+            while (balanced.length < MAX_TOTAL) {
+                let addedInRound = false;
+                for (const symbol of symbolOrder) {
+                    if (balanced.length >= MAX_TOTAL) break;
+                    const count = symbolCounts.get(symbol) || 0;
+                    if (count >= MAX_PER_SYMBOL_FIRST_PASS) continue;
+
+                    const idx = symbolCursor.get(symbol) || 0;
+                    const list = bySymbol.get(symbol) || [];
+                    if (idx >= list.length) continue;
+
+                    const nextItem = list[idx];
+                    const key = nextItem.uuid || nextItem.link;
+                    symbolCursor.set(symbol, idx + 1);
+                    if (chosenKeys.has(key)) continue;
+
+                    balanced.push(nextItem);
+                    symbolCounts.set(symbol, count + 1);
+                    chosenKeys.add(key);
+                    addedInRound = true;
+                }
+                if (!addedInRound) break;
+            }
+
+            // Backfill with freshest remaining stories if some symbols have limited/no news.
+            for (const item of sortedNews) {
+                if (balanced.length >= MAX_TOTAL) break;
+                const key = item.uuid || item.link;
+                if (chosenKeys.has(key)) continue;
+                balanced.push(item);
+                chosenKeys.add(key);
+            }
+
+            setPortfolioNews(balanced);
             setNewsLastUpdated(new Date());
         } catch (error) {
             console.error("Failed to fetch portfolio news", error);
