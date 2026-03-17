@@ -3,11 +3,12 @@
 import React, { useEffect, useState, useMemo, useCallback, useRef } from "react";
 import { useAuth } from "@/providers/auth-provider";
 import { useRouter } from "next/navigation";
+import { formatDistanceToNow } from "date-fns";
 import {
     Briefcase, TrendingUp, TrendingDown, Plus, Upload, ArrowUpRight,
     ArrowDownRight, Trash2, Loader2, PieChart, Shield, Search, X,
     ChevronUp, ChevronDown, AlertTriangle, Sparkles, IndianRupee,
-    BarChart3, Target, RefreshCw
+    BarChart3, Target, RefreshCw, Newspaper, ExternalLink
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -95,6 +96,15 @@ interface PortfolioData {
     } | null;
 }
 
+interface PortfolioNewsItem {
+    uuid?: string;
+    title: string;
+    publisher?: string;
+    link: string;
+    providerPublishTime?: number | string | null;
+    symbol: string;
+}
+
 // ─── Color palette for sector chart ─────────────────────────────────
 
 const SECTOR_COLORS = [
@@ -117,6 +127,115 @@ function formatPercent(value: number) {
 
 function toDisplaySymbol(symbol: string) {
     return symbol.replace(/\.(NS|BO)$/i, '');
+}
+
+function getNewsTimestampMs(providerPublishTime: unknown): number | null {
+    const ts = typeof providerPublishTime === "string"
+        ? Number(providerPublishTime)
+        : typeof providerPublishTime === "number"
+            ? providerPublishTime
+            : NaN;
+
+    if (!Number.isFinite(ts) || ts <= 0) return null;
+    return ts > 1000000000000 ? ts : ts * 1000;
+}
+
+function formatNewsTimeAgo(providerPublishTime: unknown): string | null {
+    const timestampMs = getNewsTimestampMs(providerPublishTime);
+    if (!timestampMs) return null;
+
+    const date = new Date(timestampMs);
+    if (Number.isNaN(date.getTime())) return null;
+
+    try {
+        return formatDistanceToNow(date, { addSuffix: true });
+    } catch {
+        return null;
+    }
+}
+
+// ─── Content & Relevance helpers ──────────────────────────────────
+
+type NewsSentiment = "bullish" | "bearish" | "neutral";
+
+const BULLISH_KW = [
+    "surge", "surges", "rally", "rallies", "gain", "gains", "rise", "rises",
+    "jump", "jumps", "soar", "soars", "beat", "beats", "profit", "upgrade",
+    "upgraded", "target raised", "record high", "strong", "breakout",
+    "outperform", "accumulate", "growth", "expansion", "exceeds", "robust",
+    "bullish", "upside", "momentum", "dividend", "order win", "new order",
+    "contract win", "buy", "positive",
+];
+const BEARISH_KW = [
+    "fall", "falls", "drop", "drops", "decline", "declines", "crash",
+    "plunge", "plunges", "loss", "losses", "downgrade", "downgraded",
+    "target cut", "weak", "miss", "misses", "below", "concern", "risk",
+    "debt", "default", "penalty", "fine", "lawsuit", "investigation",
+    "underperform", "sell", "negative", "bearish", "warning", "recall",
+    "scandal", "fraud", "disappoints", "probe", "arbitration", "notice",
+    "dispute", "slump", "slumps",
+];
+
+function getSentiment(title: string): NewsSentiment {
+    const lower = title.toLowerCase();
+    let b = 0, r = 0;
+    for (const kw of BULLISH_KW) if (lower.includes(kw)) b++;
+    for (const kw of BEARISH_KW) if (lower.includes(kw)) r++;
+    if (b > r) return "bullish";
+    if (r > b) return "bearish";
+    return "neutral";
+}
+
+function isBreakingNews(providerPublishTime: unknown): boolean {
+    const tsMs = getNewsTimestampMs(providerPublishTime);
+    if (!tsMs) return false;
+    return Date.now() - tsMs < 30 * 60 * 1000;
+}
+
+const NEWS_STOP_WORDS = new Set([
+    "about", "above", "after", "ahead", "amid", "among", "around", "before",
+    "below", "between", "despite", "during", "following", "given", "their",
+    "there", "these", "those", "through", "under", "until", "using", "where",
+    "which", "while", "within", "without", "would", "could", "should", "since",
+    "still", "than", "also", "just", "more", "most", "over", "down", "will",
+    "have", "been", "were", "that", "from", "they", "said", "says", "share",
+    "shares", "stock", "stocks",
+]);
+
+function getTitleTokens(title: string): string[] {
+    return title
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, "")
+        .split(/\s+/)
+        .filter(w => w.length > 4 && !NEWS_STOP_WORDS.has(w))
+        .slice(0, 8);
+}
+
+interface NewsGroup {
+    id: string;
+    primary: PortfolioNewsItem;
+    others: PortfolioNewsItem[];
+}
+
+function groupNewsByStory(items: PortfolioNewsItem[]): NewsGroup[] {
+    const groups: NewsGroup[] = [];
+    const assigned = new Set<number>();
+    items.forEach((item, i) => {
+        if (assigned.has(i)) return;
+        const tokensA = new Set(getTitleTokens(item.title));
+        const group: NewsGroup = { id: item.uuid || item.link, primary: item, others: [] };
+        items.forEach((other, j) => {
+            if (j === i || assigned.has(j)) return;
+            const shared = getTitleTokens(other.title).filter(t => tokensA.has(t)).length;
+            if (shared >= 3) {
+                group.others.push(other);
+                assigned.add(j);
+            }
+        });
+        assigned.add(i);
+        groups.push(group);
+    });
+    return groups;
 }
 
 // ─── LiveHoldingRow ─────────────────────────────────────────────────
@@ -459,6 +578,20 @@ export default function PortfolioPage() {
     const [sortKey, setSortKey] = useState<string>("weightage");
     const [sortAsc, setSortAsc] = useState(false);
     const [analyzing, setAnalyzing] = useState(false);
+    const [portfolioNews, setPortfolioNews] = useState<PortfolioNewsItem[]>([]);
+    const [newsLoading, setNewsLoading] = useState(false);
+    const [newsError, setNewsError] = useState<string | null>(null);
+    const [newsLastUpdated, setNewsLastUpdated] = useState<Date | null>(null);
+    const [newsFilter, setNewsFilter] = useState<string | null>(null);
+    const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
+
+    const toggleNewsGroup = (id: string) => {
+        setExpandedGroups(prev => {
+            const next = new Set(prev);
+            if (next.has(id)) next.delete(id); else next.add(id);
+            return next;
+        });
+    };
 
     // Live P&L aggregation: each row reports its live values here
     const livePnlMapRef = useRef<Map<string, { pnl: number; currentValue: number; todayPnl: number }>>(new Map());
@@ -555,6 +688,76 @@ export default function PortfolioPage() {
         setAnalyzing(false);
     };
 
+    const fetchPortfolioNews = useCallback(async (holdings: Holding[]) => {
+        if (!holdings.length) {
+            setPortfolioNews([]);
+            setNewsError(null);
+            return;
+        }
+
+        const symbols = [...holdings]
+            .sort((a, b) => b.weightage - a.weightage)
+            .slice(0, 8)
+            .map((h) => h.stockSymbol);
+
+        setNewsLoading(true);
+        setNewsError(null);
+        try {
+            const responses = await Promise.allSettled(
+                symbols.map((symbol) => fetch(`${API_BASE_URL}/stocks/${encodeURIComponent(symbol)}/news`))
+            );
+
+            const merged: PortfolioNewsItem[] = [];
+
+            for (let i = 0; i < responses.length; i++) {
+                const res = responses[i];
+                if (res.status !== "fulfilled" || !res.value.ok) continue;
+                const raw = await res.value.json();
+                if (!Array.isArray(raw)) continue;
+
+                const symbol = toDisplaySymbol(symbols[i]);
+                for (const item of raw) {
+                    if (!item?.title || !item?.link) continue;
+                    merged.push({
+                        uuid: item.uuid,
+                        title: item.title,
+                        publisher: item.publisher,
+                        link: item.link,
+                        providerPublishTime: item.providerPublishTime,
+                        symbol,
+                    });
+                }
+            }
+
+            const dedupedMap = new Map<string, PortfolioNewsItem>();
+            for (const item of merged) {
+                const key = item.uuid || item.link;
+                if (!dedupedMap.has(key)) {
+                    dedupedMap.set(key, item);
+                }
+            }
+
+            const deduped = [...dedupedMap.values()]
+                .sort((a, b) => (getNewsTimestampMs(b.providerPublishTime) || 0) - (getNewsTimestampMs(a.providerPublishTime) || 0))
+                .slice(0, 12);
+
+            setPortfolioNews(deduped);
+            setNewsLastUpdated(new Date());
+        } catch (error) {
+            console.error("Failed to fetch portfolio news", error);
+            setNewsError("Unable to load portfolio news right now.");
+        } finally {
+            setNewsLoading(false);
+        }
+    }, []);
+
+    const groupedNews = useMemo(() => {
+        const filtered = newsFilter
+            ? portfolioNews.filter(n => n.symbol === newsFilter)
+            : portfolioNews;
+        return groupNewsByStory(filtered).slice(0, newsFilter ? 20 : 12);
+    }, [portfolioNews, newsFilter]);
+
     const sortedHoldings = useMemo(() => {
         if (!data) return [];
         const sorted = [...data.holdings].sort((a, b) => {
@@ -583,6 +786,20 @@ export default function PortfolioPage() {
     const SortIcon = ({ col }: { col: string }) => (
         sortKey === col ? (sortAsc ? <ChevronUp size={12} /> : <ChevronDown size={12} />) : null
     );
+
+    useEffect(() => {
+        if (!data?.holdings?.length) {
+            setPortfolioNews([]);
+            return;
+        }
+
+        fetchPortfolioNews(data.holdings);
+        const refreshId = setInterval(() => {
+            fetchPortfolioNews(data.holdings);
+        }, 2 * 60 * 1000);
+
+        return () => clearInterval(refreshId);
+    }, [data?.holdings, fetchPortfolioNews]);
 
     if (authLoading) return null;
 
@@ -938,6 +1155,194 @@ export default function PortfolioPage() {
                                 )}
                             </div>
                         </div>
+
+                        {/* ─── Portfolio News (Full Width) ─────────── */}
+                        <Card className="overflow-hidden border-border/50 bg-card/60 backdrop-blur-sm">
+                            <div className="p-4 border-b border-border/50">
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                    <div className="flex items-center gap-2">
+                                        <Newspaper size={16} className="text-primary" />
+                                        <h2 className="font-semibold">Portfolio News</h2>
+                                        <span className="text-xs text-muted-foreground hidden sm:inline">· Latest updates for your holdings</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        {newsLastUpdated && (
+                                            <span className="text-[11px] text-muted-foreground">
+                                                Updated {newsLastUpdated.toLocaleTimeString()}
+                                            </span>
+                                        )}
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="h-7 w-7 p-0"
+                                            onClick={() => fetchPortfolioNews(data.holdings)}
+                                            disabled={newsLoading}
+                                        >
+                                            {newsLoading ? <Loader2 size={13} className="animate-spin" /> : <RefreshCw size={13} />}
+                                        </Button>
+                                    </div>
+                                </div>
+                                {portfolioNews.length > 0 && (
+                                    <div className="flex flex-wrap gap-1.5 mt-3">
+                                        <button
+                                            onClick={() => setNewsFilter(null)}
+                                            className={cn(
+                                                "px-2.5 py-0.5 rounded-full text-[11px] font-medium border transition-colors",
+                                                newsFilter === null
+                                                    ? "bg-primary text-primary-foreground border-primary"
+                                                    : "bg-transparent text-muted-foreground border-border hover:bg-muted/60"
+                                            )}
+                                        >
+                                            All
+                                        </button>
+                                        {Array.from(new Set(portfolioNews.map(n => n.symbol))).map(sym => (
+                                            <button
+                                                key={sym}
+                                                onClick={() => setNewsFilter(newsFilter === sym ? null : sym)}
+                                                className={cn(
+                                                    "px-2.5 py-0.5 rounded-full text-[11px] font-mono font-medium border transition-colors",
+                                                    newsFilter === sym
+                                                        ? "bg-primary text-primary-foreground border-primary"
+                                                        : "bg-transparent text-muted-foreground border-border hover:bg-muted/60"
+                                                )}
+                                            >
+                                                {sym.replace('.NS', '')}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                            <div className="p-4">
+                                {newsLoading ? (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                                        {[1, 2, 3, 4, 5, 6].map((i) => (
+                                            <div key={i} className="rounded-xl border border-border/40 p-3 space-y-2">
+                                                <Skeleton className="h-3 w-1/2" />
+                                                <Skeleton className="h-3 w-full" />
+                                                <Skeleton className="h-3 w-4/5" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : newsError ? (
+                                    <div className="text-xs text-red-500 bg-red-500/10 border border-red-500/20 rounded-lg p-3">
+                                        {newsError}
+                                    </div>
+                                ) : portfolioNews.length === 0 ? (
+                                    <p className="text-sm text-muted-foreground py-6 text-center">No recent portfolio-specific news available.</p>
+                                ) : (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                                        {groupedNews.map((group) => {
+                                            const item = group.primary;
+                                            const sentiment = getSentiment(item.title);
+                                            const breaking = isBreakingNews(item.providerPublishTime);
+                                            const isExpanded = expandedGroups.has(group.id);
+                                            return (
+                                                <div
+                                                    key={group.id}
+                                                    className="flex flex-col rounded-xl border border-border/40 bg-muted/20 hover:border-primary/30 transition-all"
+                                                >
+                                                    <a
+                                                        href={item.link}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="group flex flex-col p-3 flex-1"
+                                                    >
+                                                        <div className="flex flex-wrap items-center gap-1.5 mb-2">
+                                                            <Badge variant="outline" className="h-5 text-[10px] px-1.5 font-mono shrink-0">
+                                                                {item.symbol.replace('.NS', '').replace('.BO', '')}
+                                                            </Badge>
+                                                            {/* Sentiment tag */}
+                                                            {sentiment === "bullish" && (
+                                                                <span className="flex items-center gap-0.5 text-[10px] font-medium text-emerald-500">
+                                                                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
+                                                                    Bullish
+                                                                </span>
+                                                            )}
+                                                            {sentiment === "bearish" && (
+                                                                <span className="flex items-center gap-0.5 text-[10px] font-medium text-red-500">
+                                                                    <span className="h-1.5 w-1.5 rounded-full bg-red-500 shrink-0" />
+                                                                    Bearish
+                                                                </span>
+                                                            )}
+                                                            {sentiment === "neutral" && (
+                                                                <span className="flex items-center gap-0.5 text-[10px] text-muted-foreground">
+                                                                    <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 shrink-0" />
+                                                                    Neutral
+                                                                </span>
+                                                            )}
+                                                            {/* Breaking badge */}
+                                                            {breaking && (
+                                                                <span className="flex items-center gap-0.5 text-[10px] font-bold text-amber-500">
+                                                                    <span className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse shrink-0" />
+                                                                    NEW
+                                                                </span>
+                                                            )}
+                                                            <span className="text-[10px] text-muted-foreground truncate flex-1">
+                                                                {item.publisher || "Market News"}
+                                                            </span>
+                                                            {(() => {
+                                                                const timeAgo = formatNewsTimeAgo(item.providerPublishTime);
+                                                                if (!timeAgo) return null;
+                                                                return (
+                                                                    <span className="text-[10px] text-muted-foreground shrink-0">
+                                                                        {timeAgo}
+                                                                    </span>
+                                                                );
+                                                            })()}
+                                                        </div>
+                                                        <p className="text-xs font-medium leading-snug line-clamp-3 flex-1 group-hover:text-primary transition-colors">
+                                                            {item.title}
+                                                        </p>
+                                                        <div className="mt-2.5 flex items-center gap-1 text-[10px] text-primary font-medium">
+                                                            Read more
+                                                            <ExternalLink size={9} />
+                                                        </div>
+                                                    </a>
+                                                    {/* Same-story grouped articles */}
+                                                    {group.others.length > 0 && (
+                                                        <div className="border-t border-border/30">
+                                                            <button
+                                                                onClick={() => toggleNewsGroup(group.id)}
+                                                                className="w-full flex items-center gap-1 px-3 py-1.5 text-[10px] text-muted-foreground hover:text-foreground transition-colors"
+                                                            >
+                                                                {isExpanded
+                                                                    ? <ChevronUp size={10} />
+                                                                    : <ChevronDown size={10} />}
+                                                                {isExpanded
+                                                                    ? "Show less"
+                                                                    : `+${group.others.length} more source${group.others.length > 1 ? "s" : ""} covering this story`}
+                                                            </button>
+                                                            {isExpanded && (
+                                                                <div className="px-3 pb-2 space-y-1 border-t border-border/20">
+                                                                    {group.others.map((o, oi) => {
+                                                                        const oSentiment = getSentiment(o.title);
+                                                                        return (
+                                                                            <a
+                                                                                key={oi}
+                                                                                href={o.link}
+                                                                                target="_blank"
+                                                                                rel="noopener noreferrer"
+                                                                                className="flex items-center gap-2 py-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors"
+                                                                            >
+                                                                                {oSentiment === "bullish" && <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />}
+                                                                                {oSentiment === "bearish" && <span className="h-1.5 w-1.5 rounded-full bg-red-500 shrink-0" />}
+                                                                                {oSentiment === "neutral" && <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/40 shrink-0" />}
+                                                                                <span className="truncate flex-1">{o.publisher || "Market News"}</span>
+                                                                                <ExternalLink size={9} className="shrink-0" />
+                                                                            </a>
+                                                                        );
+                                                                    })}
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </div>
+                        </Card>
                     </>
                 )}
             </main>
