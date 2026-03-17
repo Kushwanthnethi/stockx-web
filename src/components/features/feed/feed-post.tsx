@@ -16,11 +16,40 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
+import Image from "next/image";
 import { useAuth } from "@/providers/auth-provider";
 import { Users, UserPlus } from "lucide-react";
 import { API_BASE_URL } from "@/lib/config";
 import { formatDistanceToNow } from "date-fns";
 import { usePostInteraction, useUserInteraction } from "@/lib/store/interaction-store";
+
+function AvatarImage({ src, alt, size = 40 }: { src?: string; alt?: string; size?: number }) {
+    return (
+        <Image
+            src={src || "https://github.com/shadcn.png"}
+            alt={alt || "User avatar"}
+            width={size}
+            height={size}
+            className="h-full w-full object-cover"
+            unoptimized
+        />
+    );
+}
+
+function PostImage({ src, onError, contain = false }: { src: string; onError?: () => void; contain?: boolean }) {
+    return (
+        <Image
+            src={src}
+            alt="Post content image"
+            width={1280}
+            height={960}
+            className={contain ? "w-full h-full object-contain" : "w-full max-h-64 object-cover"}
+            sizes="(max-width: 768px) 100vw, 720px"
+            onError={onError}
+            unoptimized
+        />
+    );
+}
 
 const formatContent = (content: string) => {
     if (!content) return null;
@@ -408,7 +437,7 @@ export function FeedPost({ post }: { post: any }) {
                     {/* Mobile-only Left Column Avatar */}
                     <div className="md:hidden flex-shrink-0 pt-0.5">
                         <Link href={`/u/${headerUser?.handle}`} className="block h-10 w-10 rounded-full bg-muted overflow-hidden hover:opacity-80 transition-opacity">
-                            <img src={headerUser?.avatarUrl || "https://github.com/shadcn.png"} alt={headerUser?.handle} className="h-full w-full object-cover" />
+                            <AvatarImage src={headerUser?.avatarUrl} alt={headerUser?.handle} />
                         </Link>
                     </div>
 
@@ -464,7 +493,7 @@ export function FeedPost({ post }: { post: any }) {
                         <CardHeader className="flex flex-row items-start space-y-0 p-0 md:p-6 md:pb-3 md:pt-5 gap-0 md:gap-3 pr-0 md:pr-12">
                             {/* Desktop Avatar */}
                             <Link href={`/u/${headerUser?.handle}`} className="hidden md:block h-10 w-10 rounded-full bg-muted overflow-hidden flex-shrink-0 hover:opacity-80 transition-opacity">
-                                <img src={headerUser?.avatarUrl || "https://github.com/shadcn.png"} alt={headerUser?.handle} className="h-full w-full object-cover" />
+                                <AvatarImage src={headerUser?.avatarUrl} alt={headerUser?.handle} />
                             </Link>
 
                             {/* Header Info */}
@@ -580,7 +609,7 @@ export function FeedPost({ post }: { post: any }) {
                                         <div className="p-3 pb-2">
                                             <div className="flex items-center gap-2">
                                                 <Link href={`/u/${displayPost.user?.handle}`} className="h-5 w-5 rounded-full bg-muted overflow-hidden flex-shrink-0 hover:opacity-80 transition-opacity">
-                                                    <img src={displayPost.user?.avatarUrl || "https://github.com/shadcn.png"} alt={displayPost.user?.handle} className="h-full w-full object-cover" />
+                                                        <AvatarImage src={displayPost.user?.avatarUrl} alt={displayPost.user?.handle} size={20} />
                                                 </Link>
                                                 <Link href={`/u/${displayPost.user?.handle}`} className="text-sm font-semibold text-foreground hover:underline leading-tight truncate">
                                                     {displayPost.user?.name || displayPost.user?.firstName}
@@ -606,10 +635,8 @@ export function FeedPost({ post }: { post: any }) {
                                         {/* Original Post Image */}
                                         {displayPost.imageUrl && !imageError && (
                                             <div className="border-t border-border/40">
-                                                <img
+                                                <PostImage
                                                     src={displayPost.imageUrl.startsWith('http') ? displayPost.imageUrl : `${API_BASE_URL}${displayPost.imageUrl}`}
-                                                    alt="Post content"
-                                                    className="w-full max-h-64 object-cover"
                                                     onError={() => setImageError(true)}
                                                 />
                                             </div>
@@ -657,11 +684,9 @@ export function FeedPost({ post }: { post: any }) {
                             {/* Image (only for non-quote reposts, since quote shows it in the embedded card) */}
                             {!isQuoteRepost && displayPost.imageUrl && !imageError && (
                                 <div className="mt-3 rounded-xl overflow-hidden border border-border max-h-[512px] flex items-center justify-center bg-muted/50">
-                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img
+                                    <PostImage
                                         src={displayPost.imageUrl.startsWith('http') ? displayPost.imageUrl : `${API_BASE_URL}${displayPost.imageUrl}`}
-                                        alt="Post content"
-                                        className="w-full h-full object-contain"
+                                        contain
                                         onError={() => setImageError(true)}
                                     />
                                 </div>
@@ -785,7 +810,7 @@ export function FeedPost({ post }: { post: any }) {
                                             comments.map((comment: any) => (
                                                 <div key={comment.id} className="flex gap-3">
                                                     <Link href={`/u/${comment.user?.handle}`} className="h-8 w-8 rounded-full bg-muted overflow-hidden flex-shrink-0 hover:opacity-80 transition-opacity">
-                                                        <img src={comment.user?.avatarUrl || "https://github.com/shadcn.png"} alt={comment.user?.handle} className="h-full w-full object-cover" />
+                                                        <AvatarImage src={comment.user?.avatarUrl} alt={comment.user?.handle} size={32} />
                                                     </Link>
                                                     <div className="bg-muted/50 p-3 rounded-2xl rounded-tl-none flex-1">
                                                         <div className="flex items-center justify-between mb-1">
@@ -857,7 +882,7 @@ export function FeedPost({ post }: { post: any }) {
                             {/* User Avatar + Textarea */}
                             <div className="flex gap-3">
                                 <div className="h-10 w-10 rounded-full bg-muted overflow-hidden flex-shrink-0 ring-2 ring-primary/20">
-                                    <img src={currentUser?.avatarUrl || "https://github.com/shadcn.png"} alt="You" className="h-full w-full object-cover" />
+                                    <AvatarImage src={currentUser?.avatarUrl} alt="You" />
                                 </div>
                                 <div className="flex-1">
                                     <textarea
@@ -882,7 +907,7 @@ export function FeedPost({ post }: { post: any }) {
                                 <div className="p-4">
                                     <div className="flex items-center gap-2.5 mb-2.5">
                                         <div className="h-8 w-8 rounded-full bg-muted overflow-hidden flex-shrink-0">
-                                            <img src={displayPost.user?.avatarUrl || "https://github.com/shadcn.png"} alt={displayPost.user?.handle} className="h-full w-full object-cover" />
+                                            <AvatarImage src={displayPost.user?.avatarUrl} alt={displayPost.user?.handle} size={32} />
                                         </div>
                                         <div className="flex flex-col">
                                             <span className="text-sm font-semibold text-foreground leading-tight">{displayPost.user?.name || displayPost.user?.firstName}</span>
@@ -892,7 +917,7 @@ export function FeedPost({ post }: { post: any }) {
                                     <p className="text-sm text-muted-foreground leading-relaxed line-clamp-4">{displayPost.content}</p>
                                     {displayPost.imageUrl && (
                                         <div className="mt-2.5 rounded-lg overflow-hidden border border-border/40 max-h-32">
-                                            <img src={displayPost.imageUrl.startsWith('http') ? displayPost.imageUrl : `${API_BASE_URL}${displayPost.imageUrl}`} alt="" className="w-full h-full object-cover" />
+                                            <PostImage src={displayPost.imageUrl.startsWith('http') ? displayPost.imageUrl : `${API_BASE_URL}${displayPost.imageUrl}`} />
                                         </div>
                                     )}
                                 </div>

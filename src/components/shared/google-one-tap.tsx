@@ -66,13 +66,15 @@ export function GoogleOneTap() {
             if (!window.google || initializedRef.current) return;
             initializedRef.current = true;
 
+            const isLocalhost = typeof window !== 'undefined' && window.location.hostname === 'localhost';
+
             window.google.accounts.id.initialize({
                 client_id: clientId,
                 callback: handleCredentialResponse,
                 auto_select: false,
                 cancel_on_tap_outside: true, // Allow tapping outside to dismiss
-                itp_support: false, // Disable ITP support on localhost to reduce extra checks
-                use_fedcm_for_prompt: false, // Keep disabled to avoid FedCM NetworkErrors on localhost
+                itp_support: !isLocalhost, // Enable on production
+                use_fedcm_for_prompt: !isLocalhost, // Enable on production
             });
 
             // Show the prompt

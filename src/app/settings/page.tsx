@@ -11,6 +11,7 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { API_BASE_URL } from "@/lib/config";
 import { useToast } from "@/hooks/use-toast";
+import Image from "next/image";
 
 export default function SettingsPage() {
     const { user, logout, updateUser, token } = useAuth();
@@ -44,7 +45,14 @@ export default function SettingsPage() {
                         <Card className="bg-card border-none shadow-sm overflow-hidden">
                             <div className="p-4 flex items-center gap-3">
                                 <div className="h-12 w-12 rounded-full bg-muted overflow-hidden">
-                                    <img src={user.avatarUrl || "https://github.com/shadcn.png"} alt={user.handle} className="h-full w-full object-cover" />
+                                    <Image
+                                        src={user.avatarUrl || "https://github.com/shadcn.png"}
+                                        alt={user.handle}
+                                        width={48}
+                                        height={48}
+                                        className="h-full w-full object-cover"
+                                        unoptimized
+                                    />
                                 </div>
                                 <div className="flex-1">
                                     <p className="font-semibold">{user.firstName} {user.lastName}</p>

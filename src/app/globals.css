@@ -161,7 +161,7 @@
     }
 
     .font-outfit {
-        font-family: var(--font-outfit);
+        font-family: var(--font-plus-jakarta-sans), var(--font-inter), sans-serif;
     }
 
     .font-inter {
@@ -194,17 +194,32 @@
         display: none !important;
     }
 
-    /* Custom thin scrollbar for sidebars */
+    /* Custom modern scrollbar for sidebars */
+    .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: hsl(var(--border)) transparent;
+    }
+
     .custom-scrollbar::-webkit-scrollbar {
-        width: 4px;
+        width: 8px;
     }
 
     .custom-scrollbar::-webkit-scrollbar-track {
         background: transparent;
+        border-radius: 9999px;
     }
 
     .custom-scrollbar::-webkit-scrollbar-thumb {
-        @apply bg-border rounded-full hover:bg-muted-foreground/50 transition-colors;
+        background: color-mix(in oklab, hsl(var(--muted-foreground)) 35%, transparent);
+        border-radius: 9999px;
+        border: 2px solid transparent;
+        background-clip: content-box;
+        transition: background-color 160ms ease;
+    }
+
+    .custom-scrollbar:hover::-webkit-scrollbar-thumb {
+        background: color-mix(in oklab, hsl(var(--muted-foreground)) 55%, transparent);
+        background-clip: content-box;
     }
 
     @keyframes scan {

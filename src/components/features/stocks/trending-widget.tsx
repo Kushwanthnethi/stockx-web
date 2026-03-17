@@ -186,7 +186,7 @@ export function TrendingWidget() {
     const stocks = data?.[activeTab] ?? [];
 
     return (
-        <Card className="bg-card border-none shadow-none">
+        <Card className="bg-card border shadow-none">
             <CardHeader className="pb-2 pt-4 px-4 flex flex-row items-center justify-between">
                 <CardTitle className="text-lg text-foreground flex items-center gap-2">
                     <TrendingUp className="h-5 w-5 text-green-500" />

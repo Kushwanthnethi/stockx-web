@@ -43,7 +43,7 @@ export function AppSidebar({ className }: { className?: string }) {
 
     return (
         <aside className={cn("hidden lg:flex flex-col sticky top-20 self-start py-2 h-[calc(100vh-6rem)] gap-2", className)}>
-            <div className="flex-1 overflow-y-auto pr-4 -mr-4 space-y-6 pb-2 scrollbar-hide">
+            <div className="flex-1 overflow-y-auto pr-4 -mr-4 space-y-6 pb-2 custom-scrollbar">
                 {SIDEBAR_GROUPS.map((group, idx) => {
                     const groupItems = group.items.filter(item => !item.authRequired || user);
                     if (groupItems.length === 0) return null;
