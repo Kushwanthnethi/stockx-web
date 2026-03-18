@@ -2,164 +2,203 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, BookOpen, Code2, GraduationCap, LineChart, Mail, MapPin, Send, Target, Terminal } from "lucide-react";
+import { ArrowLeft, BarChart3, BookOpen, Building2, LineChart, Mail, ShieldCheck, Sparkles, Target, Users } from "lucide-react";
 import Link from "next/link";
-import * as motion from "framer-motion/client";
 
 export default function AboutPage() {
     return (
-        <div className="container max-w-5xl mx-auto py-10 space-y-12">
-            {/* Header Section */}
-            <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-                <div className="space-y-4">
-                    <Link href="/" className="inline-flex items-center text-sm text-muted-foreground hover:text-primary transition-colors mb-2">
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        Back to Home
-                    </Link>
-                    <p className="text-sm font-medium text-muted-foreground uppercase tracking-widest">About me</p>
-                    <motion.h1
-                        initial={{ opacity: 0, y: 10, filter: "blur(8px)" }}
-                        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                        transition={{ duration: 0.8, ease: "easeOut" }}
-                        whileHover={{ scale: 1.02 }}
-                        className="text-4xl font-bold tracking-tight lg:text-5xl font-outfit bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-primary/40 animate-shimmer cursor-default"
-                    >
-                        Nethi Kushwanth
-                    </motion.h1>
-                    <p className="text-xl text-muted-foreground max-w-2xl">
-                        Final-year B.Tech student blending technology, finance, and user experience to build professional-grade products.
+        <div className="container max-w-6xl mx-auto py-10 space-y-10">
+            <div className="flex flex-col gap-6">
+                <Link href="/" className="inline-flex items-center text-sm text-muted-foreground hover:text-primary transition-colors w-fit">
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Back to Home
+                </Link>
+
+                <div className="rounded-2xl border bg-card/60 backdrop-blur-sm p-6 md:p-8">
+                    <p className="text-xs md:text-sm font-semibold text-primary uppercase tracking-[0.2em] mb-3">
+                        About StocksX
                     </p>
-                </div>
-                <div className="flex gap-4">
-                    <Button asChild>
-                        <a href="https://mail.google.com/mail/?view=cm&to=nethikushwanth@gmail.com" target="_blank" rel="noopener noreferrer">
-                            <Mail className="mr-2 h-4 w-4" />
-                            Contact Me
-                        </a>
-                    </Button>
-                    <Button variant="outline" asChild>
-                        <a href="https://www.linkedin.com/in/kushwanth-nethi-ba0743281" target="_blank" rel="noopener noreferrer">
-                            LinkedIn
-                        </a>
-                    </Button>
+                    <h1 className="text-3xl md:text-5xl font-bold tracking-tight leading-tight">
+                        Building a Clearer Interface for Market Decisions
+                    </h1>
+                    <p className="text-muted-foreground text-base md:text-lg mt-4 max-w-3xl leading-relaxed">
+                        StocksX is a modern market intelligence platform focused on turning noisy market data into clean,
+                        actionable insights. We combine real-time signals, fundamental context, and thoughtful product design
+                        to help retail investors make better-informed decisions.
+                    </p>
+                    <div className="flex flex-wrap gap-2 mt-6">
+                        <Badge variant="secondary">Real-time Market Monitoring</Badge>
+                        <Badge variant="secondary">Research-First Product Design</Badge>
+                        <Badge variant="secondary">Investor-Centric Workflows</Badge>
+                    </div>
                 </div>
             </div>
 
-            <Separator className="my-8" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <Card className="border-border/60">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-base">
+                            <Target className="h-4 w-4 text-primary" />
+                            Mission
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                            Make high-quality stock market intelligence understandable and usable for everyday investors.
+                        </p>
+                    </CardContent>
+                </Card>
 
-            {/* Main Content Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {/* Left Column: Profile & key info */}
-                <div className="md:col-span-1 space-y-6">
-                    <Card className="overflow-hidden border-2 border-primary/10">
-                        <div className="h-32 bg-gradient-to-r from-blue-600 to-indigo-600"></div>
-                        <CardHeader className="-mt-16 relative z-10">
-                            <div className="w-24 h-24 rounded-full border-4 border-background bg-secondary flex items-center justify-center text-4xl shadow-lg">
-                                {/* Placeholder for avatar if none provided */}
-                                👨‍💻
-                            </div>
-                            <CardTitle className="mt-4 text-2xl">Nethi Kushwanth</CardTitle>
-                            <CardDescription>Developer & Analyst • Frontend • Backend • Finance</CardDescription>
+                <Card className="border-border/60">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-base">
+                            <Sparkles className="h-4 w-4 text-primary" />
+                            Vision
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                            Become a trusted digital companion for long-term investing decisions in Indian markets.
+                        </p>
+                    </CardContent>
+                </Card>
+
+                <Card className="border-border/60">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-base">
+                            <ShieldCheck className="h-4 w-4 text-primary" />
+                            Principles
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                            Clarity over noise, transparency over hype, and consistency over short-term market excitement.
+                        </p>
+                    </CardContent>
+                </Card>
+            </div>
+
+            <Separator />
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2 space-y-6">
+                    <Card className="border-border/60">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <BarChart3 className="h-5 w-5 text-primary" />
+                                What We Build
+                            </CardTitle>
+                            <CardDescription>
+                                Product areas currently available in StocksX.
+                            </CardDescription>
                         </CardHeader>
-                        <CardContent className="space-y-4">
-                            <div className="flex items-center text-sm text-muted-foreground">
-                                <MapPin className="mr-2 h-4 w-4" />
-                                India
+                        <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div className="rounded-lg border p-3 bg-muted/20">
+                                <h3 className="font-medium text-sm">Market Dashboard</h3>
+                                <p className="text-xs text-muted-foreground mt-1">Daily pulse for indices, movers, and latest developments.</p>
                             </div>
-                            <div className="flex items-center text-sm text-muted-foreground">
-                                <GraduationCap className="mr-2 h-4 w-4" />
-                                B.Tech Final Year
+                            <div className="rounded-lg border p-3 bg-muted/20">
+                                <h3 className="font-medium text-sm">Stock Screener</h3>
+                                <p className="text-xs text-muted-foreground mt-1">Filter opportunities using key financial and momentum criteria.</p>
                             </div>
-                            <div className="flex items-center text-sm text-muted-foreground">
-                                <Code2 className="mr-2 h-4 w-4" />
-                                Full Stack Developer
+                            <div className="rounded-lg border p-3 bg-muted/20">
+                                <h3 className="font-medium text-sm">Portfolio Tracking</h3>
+                                <p className="text-xs text-muted-foreground mt-1">Live monitoring of holdings, allocation, and portfolio trends.</p>
+                            </div>
+                            <div className="rounded-lg border p-3 bg-muted/20">
+                                <h3 className="font-medium text-sm">Research Tools</h3>
+                                <p className="text-xs text-muted-foreground mt-1">Contextual insights for results, sectors, and company developments.</p>
                             </div>
                         </CardContent>
                     </Card>
 
-                    <Card>
+                    <Card className="border-border/60">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
-                                <Target className="h-5 w-5 text-primary" />
-                                Skills
+                                <LineChart className="h-5 w-5 text-primary" />
+                                How We Think About News & Insights
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="flex flex-wrap gap-2">
-                            <Badge variant="secondary">Next.js</Badge>
-                            <Badge variant="secondary">React</Badge>
-                            <Badge variant="secondary">Tailwind CSS</Badge>
-                            <Badge variant="secondary">PostgreSQL</Badge>
-                            <Badge variant="secondary">Spring Boot</Badge>
-                            <Badge variant="secondary">NestJS</Badge>
-                            <Badge variant="secondary">JWT Auth</Badge>
-                            <Badge variant="secondary">System Design</Badge>
+                        <CardContent className="space-y-3 text-sm text-muted-foreground leading-relaxed">
+                            <p>
+                                We aim to add original value on top of publicly available market developments by providing context,
+                                structure, and relevance for investors.
+                            </p>
+                            <ul className="list-disc pl-5 space-y-1.5">
+                                <li>Source-first attribution for external headlines and references</li>
+                                <li>Contextual interpretation focused on investor impact</li>
+                                <li>Noise reduction through curation and prioritization</li>
+                                <li>Clear separation between information and personal investment decisions</li>
+                            </ul>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="border-border/60">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <BookOpen className="h-5 w-5 text-primary" />
+                                Important Note
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-sm text-muted-foreground leading-relaxed">
+                                StocksX provides informational content for research purposes only and does not constitute financial advice,
+                                investment recommendation, or solicitation. Always perform your own due diligence or consult a certified
+                                financial advisor before making investment decisions.
+                            </p>
                         </CardContent>
                     </Card>
                 </div>
 
-                {/* Right Column: Detailed Bio */}
-                <div className="md:col-span-2 space-y-8">
+                <div className="space-y-4">
+                    <Card className="border-border/60">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-base">
+                                <Building2 className="h-4 w-4 text-primary" />
+                                Company Profile
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-2 text-sm text-muted-foreground">
+                            <p><span className="text-foreground font-medium">Name:</span> StocksX</p>
+                            <p><span className="text-foreground font-medium">Category:</span> Market Intelligence Platform</p>
+                            <p><span className="text-foreground font-medium">Focus:</span> Indian Equity Markets</p>
+                        </CardContent>
+                    </Card>
 
-                    {/* Current Focus */}
-                    <section className="space-y-4">
-                        <div className="flex items-center gap-2 text-2xl font-semibold text-foreground">
-                            <Terminal className="h-6 w-6 text-primary" />
-                            <h2>Current Focus</h2>
-                        </div>
-                        <p className="text-muted-foreground leading-relaxed">
-                            Currently, I’m working on <strong className="text-foreground">StocksX</strong>, a premium stock intelligence and social platform.
-                            My focus is on bridging the gap between complex financial data and user-friendly interfaces.
-                        </p>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <Card className="bg-secondary/50 border-none">
-                                <CardContent className="pt-6">
-                                    <h3 className="font-semibold mb-2 text-foreground">Frontend Engineering</h3>
-                                    <p className="text-sm text-muted-foreground">Building responsive, high-performance UIs with Next.js and Tailwind CSS.</p>
-                                </CardContent>
-                            </Card>
-                            <Card className="bg-secondary/50 border-none">
-                                <CardContent className="pt-6">
-                                    <h3 className="font-semibold mb-2 text-foreground">Backend Architecture</h3>
-                                    <p className="text-sm text-muted-foreground">Designing scalable APIs with NestJS, handling Authentication (JWT), and optimizing Database queries.</p>
-                                </CardContent>
-                            </Card>
-                        </div>
-                    </section>
-
-                    {/* Financial Analysis */}
-                    <section className="space-y-4">
-                        <div className="flex items-center gap-2 text-2xl font-semibold text-foreground">
-                            <LineChart className="h-6 w-6 text-primary" />
-                            <h2>Financial Interests</h2>
-                        </div>
-                        <p className="text-muted-foreground leading-relaxed">
-                            Beyond coding, I actively analyze financial results, sectors, and investor-focused metrics.
-                            My goal is to understand how big investors think and apply those insights to build better data-driven platforms.
-                        </p>
-                        <ul className="list-disc list-inside space-y-2 text-muted-foreground ml-2">
-                            <li>Analysis of Financial Results & Sectors</li>
-                            <li>Tracking Investor Metrics & Smart Money Flow</li>
-                            <li>Building tools for Retail Investors</li>
-                        </ul>
-                    </section>
-
-                    {/* Philosophy */}
-                    <section className="space-y-4">
-                        <div className="flex items-center gap-2 text-2xl font-semibold text-foreground">
-                            <BookOpen className="h-6 w-6 text-primary" />
-                            <h2>Philosophy & Goals</h2>
-                        </div>
-                        <p className="text-muted-foreground leading-relaxed">
-                            I believe in continuous learning, practical implementation, and clean architecture.
-                            My long-term goal is to build professional-grade, scalable products in the fintech or software domain.
-                        </p>
-                        <div className="p-4 rounded-lg bg-primary/5 border border-primary/20 text-primary-foreground">
-                            <p className="text-sm font-medium text-foreground italic">
-                                "Aiming to step confidently into the industry with a strong foundation in both technical skills and domain knowledge."
+                    <Card className="border-border/60">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-base">
+                                <Users className="h-4 w-4 text-primary" />
+                                Team & Product
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="text-sm text-muted-foreground space-y-2">
+                            <p>
+                                We are a product-first team working at the intersection of software engineering, financial data,
+                                and user experience.
                             </p>
-                        </div>
-                    </section>
+                            <p>
+                                Our goal is to ship fast, iterate responsibly, and keep investor clarity at the center of every release.
+                            </p>
+                        </CardContent>
+                    </Card>
 
+                    <Card className="border-border/60">
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-base">
+                                <Mail className="h-4 w-4 text-primary" />
+                                Contact
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-sm text-muted-foreground mb-3">
+                                For support, feedback, or partnerships, contact our team.
+                            </p>
+                            <Button asChild className="w-full">
+                                <a href="mailto:nethikushwanth@gmail.com">Email Us</a>
+                            </Button>
+                        </CardContent>
+                    </Card>
                 </div>
             </div>
         </div>
