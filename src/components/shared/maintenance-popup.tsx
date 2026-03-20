@@ -19,7 +19,7 @@ export function MaintenancePopup() {
             const now = new Date();
             // Set a future date here to enable the maintenance popup
             // Disabled by default (past date = never shows)
-            const maintenanceEnd = new Date("2026-01-01T00:00:00+05:30");
+            const maintenanceEnd = new Date("2026-04-01T00:00:00+05:30");
 
             if (now < maintenanceEnd) {
                 setOpen(true);
@@ -116,12 +116,7 @@ export function MaintenancePopup() {
                         <p className="text-xs text-muted-foreground/70">
                             Live data, trading functionality, and some features may be temporarily unavailable. Thank you for your patience! 🙏
                         </p>
-                        <button
-                            onClick={() => setOpen(false)}
-                            className="mt-4 text-sm font-medium text-primary hover:text-primary/80 underline underline-offset-4 transition-colors cursor-pointer"
-                        >
-                            I understand, continue browsing
-                        </button>
+                        {/* The popup is non-dismissible */}
                     </motion.div>
                 </div>
             </DialogContent>

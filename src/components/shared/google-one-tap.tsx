@@ -67,29 +67,48 @@ export function GoogleOneTap() {
             initializedRef.current = true;
 
             const isLocalhost = typeof window !== 'undefined' && window.location.hostname === 'localhost';
+            const currentDomain = typeof window !== 'undefined' ? window.location.href : 'unknown';
 
-            window.google.accounts.id.initialize({
-                client_id: clientId,
-                callback: handleCredentialResponse,
-                auto_select: false,
-                cancel_on_tap_outside: true, // Allow tapping outside to dismiss
-                itp_support: !isLocalhost, // Enable on production
-                use_fedcm_for_prompt: !isLocalhost, // Enable on production
+            console.log('[GoogleOneTap Debug]', {
+                isLocalhost,
+                currentDomain,
+                clientId: clientId ? 'configured' : 'missing',
+                timestamp: new Date().toISOString(),
             });
 
-            // Show the prompt
-            window.google.accounts.id.prompt((notification: any) => {
-                if (notification.isNotDisplayed()) {
-                    console.log('One Tap not displayed:', notification.getNotDisplayedReason());
-                }
-                if (notification.isSkippedMoment()) {
-                    console.log('One Tap skipped:', notification.getSkippedReason());
-                }
-                if (notification.isDismissedMoment()) {
-                    // Remember dismissal for this session
-                    sessionStorage.setItem('google_one_tap_dismissed', 'true');
-                }
-            });
+            try {
+                window.google.accounts.id.initialize({
+                    client_id: clientId,
+                    callback: handleCredentialResponse,
+                    auto_select: false,
+                    cancel_on_tap_outside: true,
+                    itp_support: true, // Always enable for better compatibility
+                    use_fedcm_for_prompt: true, // Always enable for better compatibility
+                });
+
+                // Show the prompt
+                window.google.accounts.id.prompt((notification: any) => {
+                    const debugInfo = {
+                        isNotDisplayed: notification.isNotDisplayed(),
+                        isSkippedMoment: notification.isSkippedMoment(),
+                        isDismissedMoment: notification.isDismissedMoment(),
+                    };
+
+                    if (notification.isNotDisplayed()) {
+                        console.warn('[GoogleOneTap] Not displayed - Reason:', notification.getNotDisplayedReason());
+                    }
+                    if (notification.isSkippedMoment()) {
+                        console.log('[GoogleOneTap] Skipped - Reason:', notification.getSkippedReason());
+                    }
+                    if (notification.isDismissedMoment()) {
+                        console.log('[GoogleOneTap] Dismissed - Reason:', notification.getDismissedReason());
+                        sessionStorage.setItem('google_one_tap_dismissed', 'true');
+                    }
+                    console.log('[GoogleOneTap Notification]', debugInfo);
+                });
+            } catch (error) {
+                console.error('[GoogleOneTap] Initialization error:', error);
+            }
         };
 
         document.head.appendChild(script);
